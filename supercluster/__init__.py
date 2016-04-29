@@ -5,6 +5,7 @@ import signal
 from threading import Thread
 from multiprocessing import Pool
 import multiprocessing
+import sys
 
 POTENTIAL_RANGE = 110000 # Resting potential: -70 mV Membrane potential range: +40 mV to -70 mV --- Difference: 110 mV = 110000 microVolt --- https://en.wikipedia.org/wiki/Membrane_potential
 ACTION_POTENTIAL = 15000 # Resting potential: -70 mV Action potential: -55 mV --- Difference: 15mV = 15000 microVolt --- https://faculty.washington.edu/chudler/ap.html
@@ -41,10 +42,10 @@ class Neuron():
 				if id(neuron) != id(self):
 					#if random.randint(1,neuron_count/100) == 1:
 					self.connections[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
-			print "Neuron ID: " + str(id(self))
-			print "    Potential: " + str(self.potential)
-			print "    Error: " + str(self.error)
-			print "    Connections: " + str(len(self.connections))
+			#print "Neuron ID: " + str(id(self))
+			#print "    Potential: " + str(self.potential)
+			#print "    Error: " + str(self.error)
+			#print "    Connections: " + str(len(self.connections))
 
 	def activate(self):
 		while True:
@@ -91,6 +92,5 @@ class Build():
 			self.n += 1
 			#neuron.thread.start()
 			neuron.partially_connect()
-			print "Counter: " + str(self.n)
-
-Build(100000)
+			print "Counter: " + str(self.n) + "\r",
+			sys.stdout.flush()
