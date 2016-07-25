@@ -15,29 +15,27 @@ AVERAGE_SYNAPSES_PER_NEURON = 8200 # The average number of synapses per neuron: 
 
 class Neuron():
 
-	neurons = []
-
-	def __init__(self):
+	def __init__(self,network):
 		self.connections = {}
 		self.potential = 0.0
 		self.error = 0.0
 		#self.create_connections()
 		#self.create_axon_terminals()
-		Neuron.neurons.append(self)
+		network.neurons.append(self)
 		self.thread = Thread(target = self.activate)
 		#self.thread.start()
 		#self.process = multiprocessing.Process(target=self.activate)
 
-	def fully_connect(self):
-		for neuron in Neuron.neurons[len(self.connections):]:
+	def fully_connect(self,network):
+		for neuron in network.neurons[len(self.connections):]:
 			if id(neuron) != id(self):
 				self.connections[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
 
-	def partially_connect(self):
+	def partially_connect(self,network):
 		if len(self.connections) == 0:
-			neuron_count = len(Neuron.neurons)
-			#for neuron in Neuron.neurons:
-			elected = random.sample(Neuron.neurons,100)
+			neuron_count = len(network.neurons)
+			#for neuron in network.neurons:
+			elected = random.sample(network.neurons,100)
 			for neuron in elected:
 				if id(neuron) != id(self):
 					#if random.randint(1,neuron_count/100) == 1:
@@ -47,7 +45,7 @@ class Neuron():
 			#print "    Error: " + str(self.error)
 			#print "    Connections: " + str(len(self.connections))
 
-	def activate(self):
+	def activate(self,network):
 		while True:
 			'''
 			for dendritic_spine in self.connections:
@@ -66,31 +64,34 @@ class Neuron():
 			pass
 
 			'''
-			if abs(len(Neuron.neurons) - len(self.connections) + 1) > 0:
+			if abs(len(network.neurons) - len(self.connections) + 1) > 0:
 				self.create_connections()
 
-			if abs(len(Neuron.neurons) - len(self.axon_terminals) + 1) > 0:
+			if abs(len(network.neurons) - len(self.axon_terminals) + 1) > 0:
 				self.create_axon_terminals()
 			'''
 
-class Build():
+class Network():
 
 	def __init__(self,size):
+		self.neurons = []
 		for i in range(size):
-			Neuron()
+			Neuron(self)
+		print "\n"
 		print str(size) + " neurons created."
 		self.n = 0
 		self.build_connections()
 		#pool = Pool(4, self.init_worker)
 		#pool.apply_async(self.build_connections(), arguments)
-		#map(lambda x: x.partially_connect(),Neuron.neurons)
-		#map(lambda x: x.create_connections(),Neuron.neurons)
-		#map(lambda x: x.create_axon_terminals(),Neuron.neurons)
+		#map(lambda x: x.partially_connect(),network.neurons)
+		#map(lambda x: x.create_connections(),network.neurons)
+		#map(lambda x: x.create_axon_terminals(),network.neurons)
 
 	def build_connections(self):
-		for neuron in Neuron.neurons:
+		for neuron in self.neurons:
 			self.n += 1
 			#neuron.thread.start()
-			neuron.partially_connect()
+			neuron.partially_connect(self)
 			print "Counter: " + str(self.n) + "\r",
 			sys.stdout.flush()
+		print "\n"
