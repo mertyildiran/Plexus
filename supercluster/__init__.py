@@ -40,6 +40,7 @@ class Neuron():
 				if id(neuron) != id(self):
 					#if random.randint(1,neuron_count/100) == 1:
 					self.connections[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
+			network.n += 1
 			#print "Neuron ID: " + str(id(self))
 			#print "    Potential: " + str(self.potential)
 			#print "    Error: " + str(self.error)
@@ -89,9 +90,15 @@ class Network():
 
 	def build_connections(self):
 		for neuron in self.neurons:
-			self.n += 1
 			#neuron.thread.start()
 			neuron.partially_connect(self)
 			print "Counter: " + str(self.n) + "\r",
 			sys.stdout.flush()
 		print "\n"
+
+	def add_neurons(self,size):
+		for i in range(size):
+			Neuron(self)
+		print "\n"
+		print str(size) + " neurons added."
+		self.build_connections()
