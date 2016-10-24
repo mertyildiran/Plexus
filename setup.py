@@ -18,18 +18,18 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 	long_description = f.read()
 
 setup(
-	name='supercluster',
+	name='plexus',
 
 	# Versions should comply with PEP440.  For a discussion on single-sourcing
 	# the version across setup.py and the project code, see
 	# https://packaging.python.org/en/latest/single_source_version.html
 	version='0.0.3',
 
-	description='Supercluster Network is a special kind of Artifical Neural Network that can contain astronomic amount of neurons and learn in a sudden.',
+	description='Plexus Network is the first object-oriented neural network, moreover, it\'s accelerated with multithreading.',
 	long_description=long_description,
 
 	# The project's main homepage.
-	url='https://github.com/mertyildiran/Supercluster',
+	url='https://github.com/mertyildiran/Plexus',
 
 	# Author details
 	author='Mehmet Mert Yildiran',
@@ -97,7 +97,7 @@ setup(
 	# pip to create the appropriate form of executable for the target platform.
 	entry_points={
 		'console_scripts': [
-			'supercluster=supercluster:initiate',
+			'plexus=plexus:initiate',
 		],
 	},
 )

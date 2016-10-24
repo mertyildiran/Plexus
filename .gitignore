@@ -4,6 +4,6 @@
 
 # Ignore directories related with packaging #
 ###################
-supercluster.egg-info/
+plexus.egg-info/
 dist/
 build/
