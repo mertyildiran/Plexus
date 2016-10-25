@@ -23,7 +23,7 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 ### Activation function
 
 <p align="left">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-big.png" alt="Activation function"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.png" alt="Activation function"/>
 </p>
 
 ### Installation

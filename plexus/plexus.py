@@ -103,8 +103,10 @@ class Network():
 		#map(lambda x: x.create_subscriptions(),network.neurons)
 		#map(lambda x: x.create_axon_terminals(),network.neurons)
 
-	def initiate_subscriptions(self):
+	def initiate_subscriptions(self,only_new_ones=0):
 		for neuron in self.neurons:
+			if only_new_ones and len(neuron.subscriptions) != 0:
+				continue
 			#neuron.thread.start()
 			neuron.partially_subscribe(self)
 			print "Counter: " + str(self.n) + "\r",
@@ -116,4 +118,4 @@ class Network():
 			Neuron(self)
 		print "\n"
 		print str(size) + " neurons added."
-		self.initiate_subscriptions()
+		self.initiate_subscriptions(1)
