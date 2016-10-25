@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/full.gif" alt="Plexus"/>
 </p>
 
-### Core Principles
+## Core Principles
 
 These are the core principles of **exceptionally bio-inspired**, a revolutionary approach to the artificial neural networks:
 
@@ -19,6 +19,12 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - Neurons must exhibit characteristics of **cellular automata**.
  - **Number of neurons** in network can be increased or decreased (**scalability**).
  - There must be **no** need for a network-wide **oscillation**.
+
+### Activation function
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-big.png" alt="Activation function"/>
+</p>
 
 ### Installation
 
