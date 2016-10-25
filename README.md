@@ -1,7 +1,3 @@
-# Plexus
-
-Plexus Network is the first object-oriented neural network, moreover, it's accelerated with multithreading.
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/full.gif" alt="Plexus"/>
 </p>
@@ -23,9 +19,6 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - Neurons must exhibit characteristics of **cellular automata**.
  - **Number of neurons** in network can be increased or decreased (**scalability**).
  - There must be **no** need for a network-wide **oscillation**.
-
-### Version
-0.0.6
 
 ### Installation
 

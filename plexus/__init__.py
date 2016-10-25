@@ -6,6 +6,7 @@ from threading import Thread
 from multiprocessing import Pool
 import multiprocessing
 import sys
+import ctypes
 
 POTENTIAL_RANGE = 110000 # Resting potential: -70 mV Membrane potential range: +40 mV to -70 mV --- Difference: 110 mV = 110000 microVolt --- https://en.wikipedia.org/wiki/Membrane_potential
 ACTION_POTENTIAL = 15000 # Resting potential: -70 mV Action potential: -55 mV --- Difference: 15mV = 15000 microVolt --- https://faculty.washington.edu/chudler/ap.html
@@ -45,6 +46,9 @@ class Neuron():
 			#print "    Potential: " + str(self.potential)
 			#print "    Error: " + str(self.error)
 			#print "    Connections: " + str(len(self.connections))
+
+	def get_neuron(self,id):
+		return ctypes.cast(id, ctypes.py_object).value
 
 	def activate(self,network):
 		while True:
