@@ -17,35 +17,35 @@ AVERAGE_SYNAPSES_PER_NEURON = 8200 # The average number of synapses per neuron: 
 class Neuron():
 
 	def __init__(self,network):
-		self.connections = {}
-		self.potential = 0.0
+		self.subscriptions = {}
+		self.value = 0.0
 		self.error = 0.0
-		#self.create_connections()
+		#self.create_subscriptions()
 		#self.create_axon_terminals()
 		network.neurons.append(self)
 		self.thread = Thread(target = self.activate)
 		#self.thread.start()
 		#self.process = multiprocessing.Process(target=self.activate)
 
-	def fully_connect(self,network):
-		for neuron in network.neurons[len(self.connections):]:
+	def fully_subscribe(self,network):
+		for neuron in network.neurons[len(self.subscriptions):]:
 			if id(neuron) != id(self):
-				self.connections[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
+				self.subscriptions[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
 
-	def partially_connect(self,network):
-		if len(self.connections) == 0:
+	def partially_subscribe(self,network):
+		if len(self.subscriptions) == 0:
 			neuron_count = len(network.neurons)
 			#for neuron in network.neurons:
 			elected = random.sample(network.neurons,100)
 			for neuron in elected:
 				if id(neuron) != id(self):
 					#if random.randint(1,neuron_count/100) == 1:
-					self.connections[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
+					self.subscriptions[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
 			network.n += 1
 			#print "Neuron ID: " + str(id(self))
 			#print "    Potential: " + str(self.potential)
 			#print "    Error: " + str(self.error)
-			#print "    Connections: " + str(len(self.connections))
+			#print "    Connections: " + str(len(self.subscriptions))
 
 	def get_neuron(self,id):
 		return ctypes.cast(id, ctypes.py_object).value
@@ -53,7 +53,7 @@ class Neuron():
 	def activate(self,network):
 		while True:
 			'''
-			for dendritic_spine in self.connections:
+			for dendritic_spine in self.subscriptions:
 				if dendritic_spine.axon_terminal is not None:
 					dendritic_spine.potential = dendritic_spine.axon_terminal.potential
 					print dendritic_spine.potential
@@ -62,15 +62,15 @@ class Neuron():
 			for axon_terminal in self.axon_terminals:
 				axon_terminal.potential = terminal_potential
 			'''
-			#if len(self.connections) == 0:
-			#	self.partially_connect()
+			#if len(self.subscriptions) == 0:
+			#	self.partially_subscribe()
 			#else:
-			self.partially_connect()
+			self.partially_subscribe()
 			pass
 
 			'''
-			if abs(len(network.neurons) - len(self.connections) + 1) > 0:
-				self.create_connections()
+			if abs(len(network.neurons) - len(self.subscriptions) + 1) > 0:
+				self.create_subscriptions()
 
 			if abs(len(network.neurons) - len(self.axon_terminals) + 1) > 0:
 				self.create_axon_terminals()
@@ -85,17 +85,17 @@ class Network():
 		print "\n"
 		print str(size) + " neurons created."
 		self.n = 0
-		self.build_connections()
+		self.initiate_subscriptions()
 		#pool = Pool(4, self.init_worker)
-		#pool.apply_async(self.build_connections(), arguments)
-		#map(lambda x: x.partially_connect(),network.neurons)
-		#map(lambda x: x.create_connections(),network.neurons)
+		#pool.apply_async(self.initiate_subscriptions(), arguments)
+		#map(lambda x: x.partially_subscribe(),network.neurons)
+		#map(lambda x: x.create_subscriptions(),network.neurons)
 		#map(lambda x: x.create_axon_terminals(),network.neurons)
 
-	def build_connections(self):
+	def initiate_subscriptions(self):
 		for neuron in self.neurons:
 			#neuron.thread.start()
-			neuron.partially_connect(self)
+			neuron.partially_subscribe(self)
 			print "Counter: " + str(self.n) + "\r",
 			sys.stdout.flush()
 		print "\n"
@@ -105,4 +105,4 @@ class Network():
 			Neuron(self)
 		print "\n"
 		print str(size) + " neurons added."
-		self.build_connections()
+		self.initiate_subscriptions()
