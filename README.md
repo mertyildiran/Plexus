@@ -31,3 +31,32 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 ```Shell
 sudo pip install plexus
 ```
+
+### Development Tips
+
+Install Plexus with:
+
+```Shell
+sudo pip install -e .
+```
+
+Create a new network:
+
+```Shell
+>>> import plexus
+>>> net = plexus.Network(20000)
+
+
+20000 neurons created.
+Counter: 20000
+
+```
+
+Don't forget to call garbage collector when you delete your network:
+
+```Shell
+>>> del net
+>>> import gc
+>>> gc.collect()
+340000
+```
