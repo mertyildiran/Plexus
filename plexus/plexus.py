@@ -25,7 +25,7 @@ class Neuron():
 		#self.create_axon_terminals()
 		network.neurons.append(self)
 		self.thread = Thread(target = self.activate)
-		#self.thread.start()
+		self.thread.start()
 		#self.process = multiprocessing.Process(target=self.activate)
 
 	def fully_subscribe(self,network):
@@ -61,7 +61,7 @@ class Neuron():
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
 
-	def activate(self,network):
+	def activate(self):
 		while True:
 			'''
 			for dendritic_spine in self.subscriptions:
@@ -76,9 +76,8 @@ class Neuron():
 			#if len(self.subscriptions) == 0:
 			#	self.partially_subscribe()
 			#else:
-			self.partially_subscribe()
-			pass
-
+			self.error = round(random.uniform(0.1, 1.0), 2)
+			time.sleep(0.1)
 			'''
 			if abs(len(network.neurons) - len(self.subscriptions) + 1) > 0:
 				self.create_subscriptions()
