@@ -37,7 +37,7 @@ sudo pip install plexus
 Install Plexus with:
 
 ```Shell
-sudo pip install -e .
+pip install -e .
 ```
 
 Create a new network:

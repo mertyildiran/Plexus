@@ -2,7 +2,6 @@ import random
 import itertools
 import time
 import signal
-from threading import Thread
 from multiprocessing import Pool
 import multiprocessing
 import sys
@@ -21,12 +20,7 @@ class Neuron():
 		self.subscriptions = {}
 		self.value = round(random.uniform(0.1, 1.0), 2)
 		self.error = 0.0
-		#self.create_subscriptions()
-		#self.create_axon_terminals()
 		network.neurons.append(self)
-		self.thread = Thread(target = self.activate)
-		self.thread.start()
-		#self.process = multiprocessing.Process(target=self.activate)
 
 	def fully_subscribe(self,network):
 		for neuron in network.neurons[len(self.subscriptions):]:
@@ -61,30 +55,8 @@ class Neuron():
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
 
-	def activate(self):
-		while True:
-			'''
-			for dendritic_spine in self.subscriptions:
-				if dendritic_spine.axon_terminal is not None:
-					dendritic_spine.potential = dendritic_spine.axon_terminal.potential
-					print dendritic_spine.potential
-				self.neuron_potential += dendritic_spine.potential * dendritic_spine.excitement
-			terminal_potential = self.neuron_potential / len(self.axon_terminals)
-			for axon_terminal in self.axon_terminals:
-				axon_terminal.potential = terminal_potential
-			'''
-			#if len(self.subscriptions) == 0:
-			#	self.partially_subscribe()
-			#else:
-			self.error = round(random.uniform(0.1, 1.0), 2)
-			time.sleep(0.1)
-			'''
-			if abs(len(network.neurons) - len(self.subscriptions) + 1) > 0:
-				self.create_subscriptions()
-
-			if abs(len(network.neurons) - len(self.axon_terminals) + 1) > 0:
-				self.create_axon_terminals()
-			'''
+	def fire(self):
+		self.error = round(random.uniform(0.1, 1.0), 2)
 
 class Network():
 
@@ -96,6 +68,7 @@ class Network():
 		print str(size) + " neurons created."
 		self.n = 0
 		self.initiate_subscriptions()
+		self.ignite()
 		#pool = Pool(4, self.init_worker)
 		#pool.apply_async(self.initiate_subscriptions(), arguments)
 		#map(lambda x: x.partially_subscribe(),network.neurons)
@@ -106,7 +79,6 @@ class Network():
 		for neuron in self.neurons:
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
-			#neuron.thread.start()
 			neuron.partially_subscribe(self)
 			print "Counter: " + str(self.n) + "\r",
 			sys.stdout.flush()
@@ -118,3 +90,9 @@ class Network():
 		print "\n"
 		print str(size) + " neurons added."
 		self.initiate_subscriptions(1)
+
+	def ignite(self):
+		counter = 0
+		while counter < 1000000:
+			counter += 1
+			random.sample(self.neurons,1)[0].fire()
