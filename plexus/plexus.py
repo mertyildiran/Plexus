@@ -19,7 +19,7 @@ class Neuron():
 	def __init__(self,network):
 		self.subscriptions = {}
 		self.value = round(random.uniform(0.1, 1.0), 2)
-		self.error = 0.0
+		self.instability = 0.0
 		network.neurons.append(self)
 
 	def fully_subscribe(self,network):
@@ -29,18 +29,12 @@ class Neuron():
 
 	def partially_subscribe(self,network):
 		if len(self.subscriptions) == 0:
-			neuron_count = len(network.neurons)
-			#for neuron in network.neurons:
+			#neuron_count = len(network.neurons)
 			elected = random.sample(network.neurons,100)
 			for neuron in elected:
 				if id(neuron) != id(self):
-					#if random.randint(1,neuron_count/100) == 1:
 					self.subscriptions[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
-			network.n += 1
-			#print "Neuron ID: " + str(id(self))
-			#print "    Potential: " + str(self.potential)
-			#print "    Error: " + str(self.error)
-			#print "    Connections: " + str(len(self.subscriptions))
+			network.initiated_neurons += 1
 
 	def get_neuron(self,id):
 		return ctypes.cast(id, ctypes.py_object).value
@@ -56,7 +50,7 @@ class Neuron():
 		return abs(math.sin(value**2))
 
 	def fire(self):
-		self.error = round(random.uniform(0.1, 1.0), 2)
+		self.instability = round(random.uniform(0.1, 1.0), 2)
 
 class Network():
 
@@ -66,21 +60,16 @@ class Network():
 			Neuron(self)
 		print "\n"
 		print str(size) + " neurons created."
-		self.n = 0
+		self.initiated_neurons = 0
 		self.initiate_subscriptions()
 		self.ignite()
-		#pool = Pool(4, self.init_worker)
-		#pool.apply_async(self.initiate_subscriptions(), arguments)
-		#map(lambda x: x.partially_subscribe(),network.neurons)
-		#map(lambda x: x.create_subscriptions(),network.neurons)
-		#map(lambda x: x.create_axon_terminals(),network.neurons)
 
 	def initiate_subscriptions(self,only_new_ones=0):
 		for neuron in self.neurons:
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe(self)
-			print "Counter: " + str(self.n) + "\r",
+			print "Counter: " + str(self.initiated_neurons) + "\r",
 			sys.stdout.flush()
 		print "\n"
 
