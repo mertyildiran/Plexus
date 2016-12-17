@@ -55,7 +55,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size):
+	def __init__(self,size,input_dim=0):
 		self.neurons = []
 		for i in range(size):
 			Neuron(self)
@@ -63,6 +63,9 @@ class Network():
 		print str(size) + " neurons created."
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
+		self.sensory_neurons = []
+		self.input_dim = input_dim
+		self.pick_sensory_neurons(self.input_dim)
 		self.freezer = False
 		self.ignite()
 
@@ -93,3 +96,8 @@ class Network():
 
 	def freeze(self):
 		self.freezer = True
+
+	def pick_sensory_neurons(self,input_dim):
+		for neuron in random.sample(self.neurons,input_dim):
+			neuron.subscriptions = {}
+			self.sensory_neurons.append(neuron)
