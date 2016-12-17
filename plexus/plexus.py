@@ -7,6 +7,7 @@ import multiprocessing
 import sys
 import ctypes
 import math
+import threading
 
 POTENTIAL_RANGE = 110000 # Resting potential: -70 mV Membrane potential range: +40 mV to -70 mV --- Difference: 110 mV = 110000 microVolt --- https://en.wikipedia.org/wiki/Membrane_potential
 ACTION_POTENTIAL = 15000 # Resting potential: -70 mV Action potential: -55 mV --- Difference: 15mV = 15000 microVolt --- https://faculty.washington.edu/chudler/ap.html
@@ -62,6 +63,7 @@ class Network():
 		print str(size) + " neurons created."
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
+		self.freezer = False
 		self.ignite()
 
 	def initiate_subscriptions(self,only_new_ones=0):
@@ -80,8 +82,14 @@ class Network():
 		print str(size) + " neurons added."
 		self.initiate_subscriptions(1)
 
-	def ignite(self):
-		counter = 0
-		while counter < 1000000:
-			counter += 1
+	def _ignite(self):
+		while not self.freezer:
 			random.sample(self.neurons,1)[0].fire()
+
+	def ignite(self):
+		self.freezer = False
+		self.thread = threading.Thread(target=self._ignite)
+		self.thread.start()
+
+	def freeze(self):
+		self.freezer = True
