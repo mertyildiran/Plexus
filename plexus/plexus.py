@@ -21,6 +21,7 @@ class Neuron():
 		self.subscriptions = {}
 		self.value = round(random.uniform(0.1, 1.0), 2)
 		self.instability = 0.0
+		self.type = 0
 		network.neurons.append(self)
 
 	def fully_subscribe(self,network):
@@ -55,7 +56,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size,input_dim=0):
+	def __init__(self,size,input_dim=0,output_dim=0):
 		self.neurons = []
 		for i in range(size):
 			Neuron(self)
@@ -63,9 +64,15 @@ class Network():
 		print str(size) + " neurons created."
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
+
 		self.sensory_neurons = []
 		self.input_dim = input_dim
 		self.pick_sensory_neurons(self.input_dim)
+
+		self.ultimate_neurons = []
+		self.output_dim = output_dim
+		self.pick_ultimate_neurons(self.output_dim)
+
 		self.freezer = False
 		self.ignite()
 
@@ -98,6 +105,20 @@ class Network():
 		self.freezer = True
 
 	def pick_sensory_neurons(self,input_dim):
-		for neuron in random.sample(self.neurons,input_dim):
+		available_neurons = []
+		for neuron in self.neurons:
+			if neuron.type is not 1:
+				available_neurons.append(neuron)
+		for neuron in random.sample(available_neurons,input_dim):
+			neuron.type = 1
 			neuron.subscriptions = {}
 			self.sensory_neurons.append(neuron)
+
+	def pick_ultimate_neurons(self,output_dim):
+		available_neurons = []
+		for neuron in self.neurons:
+			if neuron.type is not 2:
+				available_neurons.append(neuron)
+		for neuron in random.sample(available_neurons,output_dim):
+			neuron.type = 2
+			self.ultimate_neurons.append(neuron)
