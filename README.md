@@ -32,7 +32,7 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 sudo pip install plexus
 ```
 
-### Development Tips
+### Usage Tips
 
 Install Plexus with:
 
@@ -52,9 +52,22 @@ Counter: 20000
 
 ```
 
+Network will automatically ignite itself when it is created. To freeze the network, call:
+
+```Shell
+net.freeze()
+```
+
+To reignite the network, call:
+
+```Shell
+net.ignite()
+```
+
 Don't forget to call garbage collector when you delete your network:
 
 ```Shell
+>>> net.freeze()
 >>> del net
 >>> import gc
 >>> gc.collect()
