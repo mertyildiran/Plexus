@@ -19,7 +19,7 @@ class Neuron():
 
 	def __init__(self,network):
 		self.subscriptions = {}
-		self.value = round(random.uniform(0.1, 1.0), 2)
+		self.potential = round(random.uniform(0.1, 1.0), 2)
 		self.instability = 0.0
 		self.type = 0
 		network.neurons.append(self)
@@ -39,12 +39,12 @@ class Neuron():
 			network.initiated_neurons += 1
 
 	def get_neuron(self,id):
-		return ctypes.cast(id, ctypes.py_object).value
+		return ctypes.cast(id, ctypes.py_object).potential
 
 	def primitive_calculate(self):
 		grand_total = 0
 		for neuron_id in self.subscriptions:
-			grand_total += self.get_neuron(neuron_id).value * (1 / self.subscriptions[neuron_id])
+			grand_total += self.get_neuron(neuron_id).potential * (1 / self.subscriptions[neuron_id])
 		print grand_total
 		print self.activation_function(grand_total)
 
@@ -69,9 +69,9 @@ class Network():
 		self.input_dim = input_dim
 		self.pick_sensory_neurons(self.input_dim)
 
-		self.ultimate_neurons = []
+		self.cognitive_neurons = []
 		self.output_dim = output_dim
-		self.pick_ultimate_neurons(self.output_dim)
+		self.pick_cognitive_neurons(self.output_dim)
 
 		self.freezer = False
 		self.thread = None
@@ -117,11 +117,11 @@ class Network():
 			neuron.subscriptions = {}
 			self.sensory_neurons.append(neuron)
 
-	def pick_ultimate_neurons(self,output_dim):
+	def pick_cognitive_neurons(self,output_dim):
 		available_neurons = []
 		for neuron in self.neurons:
 			if neuron.type is not 2:
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
-			self.ultimate_neurons.append(neuron)
+			self.cognitive_neurons.append(neuron)
