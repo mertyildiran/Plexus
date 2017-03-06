@@ -74,6 +74,7 @@ class Network():
 		self.pick_ultimate_neurons(self.output_dim)
 
 		self.freezer = False
+		self.thread = None
 		self.ignite()
 
 	def initiate_subscriptions(self,only_new_ones=0):
@@ -81,7 +82,7 @@ class Network():
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe(self)
-			print "Counter: " + str(self.initiated_neurons) + "\r",
+			print "Initiated: " + str(self.initiated_neurons) + "\r",
 			sys.stdout.flush()
 		print "\n"
 
@@ -98,11 +99,13 @@ class Network():
 
 	def ignite(self):
 		self.freezer = False
-		self.thread = threading.Thread(target=self._ignite)
-		self.thread.start()
+		if not self.thread:
+			self.thread = threading.Thread(target=self._ignite)
+			self.thread.start()
 
 	def freeze(self):
 		self.freezer = True
+		self.thread = None
 
 	def pick_sensory_neurons(self,input_dim):
 		available_neurons = []
