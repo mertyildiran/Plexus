@@ -23,25 +23,25 @@ class Neuron():
 		self.potential = round(random.uniform(0.1, 1.0), 2)
 		self.instability = 0.0
 		self.type = 0
-		network.neurons.append(self)
 		self.network = network
+		self.network.neurons.append(self)
 
-	def fully_subscribe(self,network):
-		for neuron in network.neurons[len(self.subscriptions):]:
+	def fully_subscribe(self):
+		for neuron in self.network.neurons[len(self.subscriptions):]:
 			if id(neuron) != id(self):
 				self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
 
-	def partially_subscribe(self,network):
+	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
-			#neuron_count = len(network.neurons)
-			elected = random.sample(network.neurons,100)
+			#neuron_count = len(self.network.neurons)
+			elected = random.sample(self.network.neurons,100)
 			for neuron in elected:
 				if id(neuron) != id(self):
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
-			network.initiated_neurons += 1
+			self.network.initiated_neurons += 1
 
-	def get_neuron(self,neuron_id):
-		#return ctypes.cast(id, ctypes.py_object)
+	def get_neuron_by_id(self,neuron_id):
+		#return ctypes.cast(neuron_id, ctypes.py_object)
 		for neuron in self.network.neurons:
 			if id(neuron) == neuron_id:
 				return neuron
@@ -87,16 +87,16 @@ class Network():
 		for neuron in self.neurons:
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
-			neuron.partially_subscribe(self)
+			neuron.partially_subscribe()
 			print "Initiated: " + str(self.initiated_neurons) + "\r",
 			sys.stdout.flush()
 		print "\n"
 
-	def add_neurons(self,size):
-		for i in range(size):
+	def add_neurons(self,units):
+		for i in range(units):
 			Neuron(self)
 		print "\n"
-		print str(size) + " neurons added."
+		print str(units) + " neurons added."
 		self.initiate_subscriptions(1)
 
 	def _ignite(self):
