@@ -29,7 +29,7 @@ class Neuron():
 	def fully_subscribe(self,network):
 		for neuron in network.neurons[len(self.subscriptions):]:
 			if id(neuron) != id(self):
-				self.subscriptions[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
+				self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
 
 	def partially_subscribe(self,network):
 		if len(self.subscriptions) == 0:
@@ -37,7 +37,7 @@ class Neuron():
 			elected = random.sample(network.neurons,100)
 			for neuron in elected:
 				if id(neuron) != id(self):
-					self.subscriptions[id(neuron)] = round(random.uniform(0.1, 1.0), 2)
+					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
 			network.initiated_neurons += 1
 
 	def get_neuron(self,neuron_id):
@@ -49,9 +49,9 @@ class Neuron():
 
 	def calculate_potential(self):
 		total = 0
-		for neuron_id, weight in self.subscriptions.iteritems():
-			total += self.get_neuron(neuron_id).potential * weight
-		return self.activation_function(total)
+		for neuron, weight in self.subscriptions.iteritems():
+			total += neuron.potential * weight
+		return round(self.activation_function(total), 2)
 
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
