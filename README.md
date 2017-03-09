@@ -32,7 +32,7 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 sudo pip install plexus
 ```
 
-### Usage Tips
+## Details & Usage
 
 Install Plexus with:
 
@@ -46,9 +46,18 @@ Create a new network:
 >>> import plexus
 >>> net = plexus.Network(10000)
 
+Precision of the network will be 0.01
+Each individual neuron will subscribe to 100 different neurons
 
-10000 neurons created.
-Initiated: 10000
+
+10000 neurons created
+Initiated: 10000 neurons
+
+0 neuron picked as sensory neuron
+0 neuron picked as cognitive neuron
+
+
+Network has been ignited
 
 ```
 
@@ -66,7 +75,7 @@ To reignite the network, call:
 Network has been ignited.
 ```
 
-#### Basics
+### Basics
 
 Each neuron will be referenced inside `net.neurons` array. Try to use `len` built-in function of Python to see how many neurons does your network have:
 
@@ -139,6 +148,48 @@ As you can imagine, a neuron in a Plexus network, holds an integer object variab
 - `neuron.type = 1` means it's a sensory neuron.
 - `neuron.type = 2` means it's a cognitive neuron.
 - `neuron.type = 0` means it's neither a sensory nor a cognitive neuron. It means it's an interneuron.
+
+### Let's Start
+
+If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it a simple real life example. Now let's start with creating a relatively small network:
+
+```Shell
+>>> import plexus
+>>> net = plexus.Network(22,4,2,1,1)
+
+Precision of the network will be 0.1
+Each individual neuron will subscribe to 22 different neurons
+
+
+22 neurons created
+Initiated: 22 neurons
+
+4 neuron picked as sensory neuron
+2 neuron picked as cognitive neuron
+
+
+Network has been ignited
+
+```
+
+Here is a simple dataset for this network:
+
+```no-highlight
+Input: [0.6, 0.7, 0.8, 0.9] - Output: [1.0, 0.0]
+Input: [0.4, 0.3, 0.2, 0.1] - Output: [0.0, 1.0]
+```
+
+Now let's load the first data:
+
+```Shell
+net.load([0.6, 0.7, 0.8, 0.9], [1.0, 0.0])
+```
+
+The network will automatically start learning because it's already ignited. So wait a few seconds and then plug in the second data:
+
+```Shell
+net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
+```
 
 #### Destroying The Network
 

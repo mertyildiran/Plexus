@@ -22,7 +22,8 @@ class Neuron():
 		self.network = network
 		self.subscriptions = {}
 		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
-		self.instability = 0.0
+		self.fault = 0.0
+		self.instability = 0
 		self.type = 0
 		self.network.neurons.append(self)
 
@@ -60,7 +61,9 @@ class Neuron():
 		if self.type == 1:
 			return False
 		self.potential = self.calculate_potential()
-		self.instability = round(random.uniform(0.1, 1.0), self.network.precision)
+		if self.type == 2 and self.desired_potential != None:
+			self.fault = round(abs(self.desired_potential - self.potential), self.network.precision)
+		self.instability = random.randint(0,9)
 
 class Network():
 
