@@ -79,16 +79,20 @@ class Network():
 		self.output_dim = output_dim
 		self.pick_cognitive_neurons(self.output_dim)
 
+		print "\n"
+
 		self.freezer = False
 		self.thread = None
 		self.ignite()
+
+		print "\n"
 
 	def initiate_subscriptions(self,only_new_ones=0):
 		for neuron in self.neurons:
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe()
-			print "Initiated: " + str(self.initiated_neurons) + "\r",
+			print "Initiated: " + str(self.initiated_neurons) + " neurons.\r",
 			sys.stdout.flush()
 		print "\n"
 
@@ -108,10 +112,17 @@ class Network():
 		if not self.thread:
 			self.thread = threading.Thread(target=self._ignite)
 			self.thread.start()
+		print "Network has been ignited."
 
 	def freeze(self):
 		self.freezer = True
 		self.thread = None
+		print "Network is now frozen."
+
+	def breakit(self):
+		for neuron in self.neurons:
+			neuron.subscriptions = {}
+		print "All subscriptions in the network is now broken."
 
 	def pick_sensory_neurons(self,input_dim):
 		available_neurons = []
@@ -122,6 +133,7 @@ class Network():
 			neuron.type = 1
 			neuron.subscriptions = {}
 			self.sensory_neurons.append(neuron)
+		print str(input_dim) + " neuron picked as sensory neuron."
 
 	def pick_cognitive_neurons(self,output_dim):
 		available_neurons = []
@@ -130,4 +142,6 @@ class Network():
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
+			neuron.desired_potential = None
 			self.cognitive_neurons.append(neuron)
+		print str(output_dim) + " neuron picked as cognitive neuron."

@@ -55,13 +55,15 @@ Initiated: 20000
 Network will automatically ignite itself when it is created. To freeze the network, call:
 
 ```python
-net.freeze()
+>>> net.freeze()
+Network is now frozen.
 ```
 
 To reignite the network, call:
 
 ```python
-net.ignite()
+>>> net.ignite()
+Network has been ignited.
 ```
 
 #### Basics
@@ -121,6 +123,7 @@ The difference of sensory neurons from the interneurons (that neither sensory no
 
 ```python
 >>> net.pick_sensory_neurons(12288)
+12288 neuron picked as sensory neuron.
 >>> len(net.sensory_neurons)
 12288
 >>> net.sensory_neurons[0]
@@ -143,6 +146,9 @@ Lastly, don't forget to call garbage collector when you want to stop and delete 
 
 ```python
 >>> net.freeze()
+Network is now frozen.
+>>> net.breakit()
+All subscriptions in the network is now broken.
 >>> del net
 >>> import gc
 >>> gc.collect()
