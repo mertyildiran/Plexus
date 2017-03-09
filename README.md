@@ -93,7 +93,7 @@ Each individual neuron holds two floating point number called **potential** and 
 0.45
 ```
 
-Value of **potential** may only be updated by the **fire()** function of the same neuron and its being calculated by this simple formula each time when the neuron is fired (each time when the **fire()** function called):
+Value of **potential** may only be updated by the neuron itself and its being calculated by this simple formula each time when the neuron is fired:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_potential.gif" alt="Calculation of potential"/>
@@ -101,7 +101,7 @@ Value of **potential** may only be updated by the **fire()** function of the sam
 
 <!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
 
-Value of **instability** may only be updated by the neurons which have been subscribed to the subject neuron with a similar manner with classical backward propagation of errors. But in Plexus networks the error is called **fault**. I'll explain the calculation of **fault** later in this article. Just like the updating of **potential**, the update of **instability** happens in the **fire()** function (when the neuron is fired). But as I said it updates the subscriptions not the same neuron, like this:
+Value of **instability** may only be updated by the neurons which have been subscribed to the subject neuron with a similar manner with classical backward propagation of errors. But in Plexus networks the error is called **fault**. I'll explain the calculation of **fault** later in this article. Just like the updating of **potential**, the update of **instability** happens when the neuron is fired. But as I said, it updates the subscriptions not the same neuron, like this:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_instability.gif" alt="Calculation of instability"/>
@@ -113,13 +113,13 @@ Value of **instability** may only be updated by the neurons which have been subs
 
 Currently, an individual neuron in a Plexus network is fired randomly by a single-core threaded process. The process picks a neuron from the network randomly and fires it. Firing a neuron literally means calling an instance method named **fire()** of the neuron instance and nothing more.
 
-Because the Plexus network project rely on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
+Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
 
 #### Sensory and Cognitive Neurons
 
-Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks and Target/Output Layer renamed as **Cognitive Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
+Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Cognitive Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
 
-The difference of sensory neurons from the interneurons (that neither sensory nor cognitive ones) is, they do not actually fire. They just stand still for your **potential** assignments. As you can guess they do not have any subscriptions to the other neurons (0 subscriptions). But they can be subscribed by the other neurons, including cognitive ones. They do not learn, they do not consume any CPU resource. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons. For example you can prepare the network for the assignment of a 64x64 RGB image like that:
+The difference of sensory neurons from the interneurons (that neither sensory nor cognitive ones) is, they do not actually fire. They just stand still for the data load. As you can guess they do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including cognitive ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons. For example you can prepare the network for the assignment of a 64x64 RGB image like:
 
 ```Shell
 >>> net.pick_sensory_neurons(12288)
@@ -132,9 +132,9 @@ The difference of sensory neurons from the interneurons (that neither sensory no
 {}
 ```
 
-The difference of cognitive neurons form the other neurons is, they are only responsible to the network. They act as the source of the learning and calculation of the fault. The network dictates a desired potential on a cognitive neuron. The cognitive neuron calculates its potential, compares it with desired potential, calculates fault then backpropagates it through the subscriptions. This is why they hold an additional potential variable called **desired_potential**. You can define the number of cognitive neurons similarly by using `net.pick_cognitive_neurons(output_dim)` function.
+The difference of cognitive neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each cognitive neuron. The cognitive neuron calculates its potential, compares it with desired potential, calculates the fault then backpropagates it through the subscriptions. This is why they hold an additional potential variable called **desired_potential**. You can define the number of cognitive neurons similarly by using `net.pick_cognitive_neurons(output_dim)` function.
 
-As you can imagine, a neuron in a Plexus network holds an integer object variable called **type** to determine its type.
+As you can imagine, a neuron in a Plexus network, holds an integer object variable called **type** to determine its type.
 
 - `neuron.type = 1` means it's a sensory neuron.
 - `neuron.type = 2` means it's a cognitive neuron.
