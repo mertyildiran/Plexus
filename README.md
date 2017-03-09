@@ -148,7 +148,7 @@ Lastly, don't forget to call garbage collector when you want to stop and delete 
 >>> net.freeze()
 Network is now frozen.
 >>> net.breakit()
-All subscriptions in the network is now broken.
+All the subscriptions are now broken.
 >>> del net
 >>> import gc
 >>> gc.collect()

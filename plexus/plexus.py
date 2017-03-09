@@ -57,12 +57,14 @@ class Neuron():
 		return abs(math.sin(value**2))
 
 	def fire(self):
+		if self.type == 1:
+			return False
 		self.potential = self.calculate_potential()
 		self.instability = round(random.uniform(0.1, 1.0), self.network.precision)
 
 class Network():
 
-	def __init__(self,size,precision=2,connectivity=0.01,input_dim=0,output_dim=0):
+	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2):
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
@@ -128,12 +130,12 @@ class Network():
 	def breakit(self):
 		for neuron in self.neurons:
 			neuron.subscriptions = {}
-		print "All subscriptions in the network is now broken"
+		print "All the subscriptions are now broken"
 
 	def pick_sensory_neurons(self,input_dim):
 		available_neurons = []
 		for neuron in self.neurons:
-			if neuron.type is not 1:
+			if neuron.type is 0:
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,input_dim):
 			neuron.type = 1
@@ -144,10 +146,29 @@ class Network():
 	def pick_cognitive_neurons(self,output_dim):
 		available_neurons = []
 		for neuron in self.neurons:
-			if neuron.type is not 2:
+			if neuron.type is 0:
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
 			neuron.desired_potential = None
 			self.cognitive_neurons.append(neuron)
 		print str(output_dim) + " neuron picked as cognitive neuron"
+
+	def load(self,input_arr,output_arr):
+		if len(self.sensory_neurons) != len(input_arr):
+			print "Size of the input array: " + str(len(input_arr))
+			print "Number of the sensory neurons: " + str(len(self.sensory_neurons))
+			print "Size of the input array and number of the sensory neurons are not matching! Please try again"
+		if len(self.cognitive_neurons) != len(output_arr):
+			print "Size of the output/target array: " + str(len(output_arr))
+			print "Number of the cognitive_neurons: " + str(len(self.cognitive_neurons))
+			print "Size of the output/target array and number of the cognitive neurons are not matching! Please try again"
+		step = 0
+		for neuron in self.sensory_neurons:
+			neuron.potential = input_arr[step]
+			step += 1
+		step = 0
+		for neuron in self.cognitive_neurons:
+			neuron.desired_potential = output_arr[step]
+			step += 1
+		print "Data was successfully loaded"
