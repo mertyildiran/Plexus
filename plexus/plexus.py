@@ -19,25 +19,25 @@ AVERAGE_SYNAPSES_PER_NEURON = 8200 # The average number of synapses per neuron: 
 class Neuron():
 
 	def __init__(self,network):
+		self.network = network
 		self.subscriptions = {}
-		self.potential = round(random.uniform(0.1, 1.0), 2)
+		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
 		self.instability = 0.0
 		self.type = 0
-		self.network = network
 		self.network.neurons.append(self)
 
 	def fully_subscribe(self):
 		for neuron in self.network.neurons[len(self.subscriptions):]:
 			if id(neuron) != id(self):
-				self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
+				self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
 
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
 			#neuron_count = len(self.network.neurons)
-			elected = random.sample(self.network.neurons,100)
+			elected = random.sample(self.network.neurons, self.network.connectivity)
 			for neuron in elected:
 				if id(neuron) != id(self):
-					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), 2)
+					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
 			self.network.initiated_neurons += 1
 
 	def get_neuron_by_id(self,neuron_id):
@@ -51,23 +51,29 @@ class Neuron():
 		total = 0
 		for neuron, weight in self.subscriptions.iteritems():
 			total += neuron.potential * weight
-		return round(self.activation_function(total), 2)
+		return round(self.activation_function(total), self.network.precision)
 
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
 
 	def fire(self):
 		self.potential = self.calculate_potential()
-		self.instability = round(random.uniform(0.1, 1.0), 2)
+		self.instability = round(random.uniform(0.1, 1.0), self.network.precision)
 
 class Network():
 
-	def __init__(self,size,input_dim=0,output_dim=0):
+	def __init__(self,size,precision=2,connectivity=0.01,input_dim=0,output_dim=0):
+		self.precision = precision
+		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
+		self.connectivity = int(size * connectivity)
+		print "Each individual neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
+
 		self.neurons = []
 		for i in range(size):
 			Neuron(self)
 		print "\n"
-		print str(size) + " neurons created."
+		print str(size) + " neurons created"
+
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
 
@@ -85,14 +91,14 @@ class Network():
 		self.thread = None
 		self.ignite()
 
-		print "\n"
+		print ""
 
 	def initiate_subscriptions(self,only_new_ones=0):
 		for neuron in self.neurons:
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe()
-			print "Initiated: " + str(self.initiated_neurons) + " neurons.\r",
+			print "Initiated: " + str(self.initiated_neurons) + " neurons\r",
 			sys.stdout.flush()
 		print "\n"
 
@@ -100,7 +106,7 @@ class Network():
 		for i in range(units):
 			Neuron(self)
 		print "\n"
-		print str(units) + " neurons added."
+		print str(units) + " neurons added"
 		self.initiate_subscriptions(1)
 
 	def _ignite(self):
@@ -112,17 +118,17 @@ class Network():
 		if not self.thread:
 			self.thread = threading.Thread(target=self._ignite)
 			self.thread.start()
-		print "Network has been ignited."
+		print "Network has been ignited"
 
 	def freeze(self):
 		self.freezer = True
 		self.thread = None
-		print "Network is now frozen."
+		print "Network is now frozen"
 
 	def breakit(self):
 		for neuron in self.neurons:
 			neuron.subscriptions = {}
-		print "All subscriptions in the network is now broken."
+		print "All subscriptions in the network is now broken"
 
 	def pick_sensory_neurons(self,input_dim):
 		available_neurons = []
@@ -133,7 +139,7 @@ class Network():
 			neuron.type = 1
 			neuron.subscriptions = {}
 			self.sensory_neurons.append(neuron)
-		print str(input_dim) + " neuron picked as sensory neuron."
+		print str(input_dim) + " neuron picked as sensory neuron"
 
 	def pick_cognitive_neurons(self,output_dim):
 		available_neurons = []
@@ -144,4 +150,4 @@ class Network():
 			neuron.type = 2
 			neuron.desired_potential = None
 			self.cognitive_neurons.append(neuron)
-		print str(output_dim) + " neuron picked as cognitive neuron."
+		print str(output_dim) + " neuron picked as cognitive neuron"
