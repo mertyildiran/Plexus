@@ -179,21 +179,29 @@ class Network():
 			self.cognitive_neurons.append(neuron)
 		print str(output_dim) + " neuron picked as cognitive neuron"
 
-	def load(self,input_arr,output_arr):
+	def load(self,input_arr,output_arr=None):
 		if len(self.sensory_neurons) != len(input_arr):
 			print "Size of the input array: " + str(len(input_arr))
 			print "Number of the sensory neurons: " + str(len(self.sensory_neurons))
 			print "Size of the input array and number of the sensory neurons are not matching! Please try again"
-		if len(self.cognitive_neurons) != len(output_arr):
-			print "Size of the output/target array: " + str(len(output_arr))
-			print "Number of the cognitive_neurons: " + str(len(self.cognitive_neurons))
-			print "Size of the output/target array and number of the cognitive neurons are not matching! Please try again"
-		step = 0
-		for neuron in self.sensory_neurons:
-			neuron.potential = input_arr[step]
-			step += 1
-		step = 0
-		for neuron in self.cognitive_neurons:
-			neuron.desired_potential = output_arr[step]
-			step += 1
+		else:
+			step = 0
+			for neuron in self.sensory_neurons:
+				neuron.potential = input_arr[step]
+				step += 1
+		if output_arr == None:
+			step = 0
+			for neuron in self.cognitive_neurons:
+				neuron.desired_potential = None
+				step += 1
+		else:
+			if len(self.cognitive_neurons) != len(output_arr):
+				print "Size of the output/target array: " + str(len(output_arr))
+				print "Number of the cognitive_neurons: " + str(len(self.cognitive_neurons))
+				print "Size of the output/target array and number of the cognitive neurons are not matching! Please try again"
+			else:
+				step = 0
+				for neuron in self.cognitive_neurons:
+					neuron.desired_potential = output_arr[step]
+					step += 1					
 		print "Data was successfully loaded"

@@ -151,7 +151,7 @@ As you can imagine, a neuron in a Plexus network, holds an integer object variab
 
 ### Let's Start
 
-If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it a simple real life example. Now let's start with creating a relatively small network:
+If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it in a simple real life example. Now let's start with creating a relatively small network:
 
 ```Shell
 >>> import plexus
@@ -172,7 +172,7 @@ Network has been ignited
 
 ```
 
-Here is a simple dataset for this network:
+Here is a simple dataset aiming to classifying numbers bigger and smaller than 0.5 for this network:
 
 ```no-highlight
 Input: [0.6, 0.7, 0.8, 0.9] - Output: [1.0, 0.0]
@@ -194,6 +194,8 @@ net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
 ```
 
 Just like the previous data, you should experience the similar effect when you examine the value of `net.cognitive_neurons[0].potential` using the Python Interactive Shell.
+
+You will continue to observe similar trends in the network even if you just plug in only the input arrays like below. Which is the true confirmation that our network successfully learned the dataset.
 
 As you can see, maybe the one of the most unique features of Plexus network is, learning process is non-blocking, real-time and interactive.
 
