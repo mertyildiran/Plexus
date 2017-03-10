@@ -185,11 +185,17 @@ Now let's load the first data:
 net.load([0.6, 0.7, 0.8, 0.9], [1.0, 0.0])
 ```
 
-The network will automatically start learning because it's already ignited. So wait a few seconds and then plug in the second data:
+The network will automatically start learning because it's already ignited. Now examine the potential of first cognitive neuron with entering `net.cognitive_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
+
+Now make sure you have waited at least a few seconds and then plug in the second data:
 
 ```Shell
 net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
 ```
+
+Just like the previous data, you should experience the similar effect when you examine the value of `net.cognitive_neurons[0].potential` using the Python Interactive Shell.
+
+As you can see, maybe the one of the most unique features of Plexus network is, learning process is non-blocking, real-time and interactive.
 
 #### Destroying The Network
 

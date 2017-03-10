@@ -9,6 +9,7 @@ import ctypes
 import math
 import threading
 import gc
+from itertools import repeat
 
 POTENTIAL_RANGE = 110000 # Resting potential: -70 mV Membrane potential range: +40 mV to -70 mV --- Difference: 110 mV = 110000 microVolt --- https://en.wikipedia.org/wiki/Membrane_potential
 ACTION_POTENTIAL = 15000 # Resting potential: -70 mV Action potential: -55 mV --- Difference: 15mV = 15000 microVolt --- https://faculty.washington.edu/chudler/ap.html
@@ -22,7 +23,8 @@ class Neuron():
 		self.network = network
 		self.subscriptions = {}
 		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
-		self.fault = 0.0
+		self.desired_potential = None
+		self.fault = None
 		self.instability = 0
 		self.type = 0
 		self.network.neurons.append(self)
@@ -60,9 +62,30 @@ class Neuron():
 	def fire(self):
 		if self.type == 1:
 			return False
+
 		self.potential = self.calculate_potential()
-		if self.type == 2 and self.desired_potential != None:
+		if self.desired_potential != None:
 			self.fault = round(abs(self.desired_potential - self.potential), self.network.precision)
+
+		improved_with_weight_update = 0
+		potential_zero = self.potential
+		subscriptions_zero = self.subscriptions
+		fault_zero = self.fault
+
+		if self.desired_potential != None and self.fault != None:
+			for i in repeat(None, 8):
+				for neuron, weight in self.subscriptions.iteritems():
+					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+				self.potential = self.calculate_potential()
+				self.fault = round(abs(self.desired_potential - self.potential), self.network.precision)
+				if self.fault < fault_zero:
+					improved_with_weight_update = 1
+					break
+			if not improved_with_weight_update:
+				self.potential = potential_zero
+				self.subscriptions = subscriptions_zero
+				self.fault = fault_zero
+
 		self.instability = random.randint(0,9)
 
 class Network():
@@ -153,7 +176,6 @@ class Network():
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
-			neuron.desired_potential = None
 			self.cognitive_neurons.append(neuron)
 		print str(output_dim) + " neuron picked as cognitive neuron"
 
