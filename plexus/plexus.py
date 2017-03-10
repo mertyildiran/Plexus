@@ -55,11 +55,21 @@ class Neuron():
 			total += neuron.potential * weight
 		return round(self.activation_function(total), self.network.precision)
 
+	def calculate_potential_hypothetical(self,subscriptions_hypothetical):
+		total = 0
+		for neuron, weight_potential_pair in subscriptions_hypothetical.iteritems():
+			total += weight_potential_pair[1] * weight_potential_pair[0]
+			pass
+		return round(self.activation_function(total), self.network.precision)
+
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
 
 	def calculate_fault(self):
 		return round(abs(self.desired_potential - self.potential), self.network.precision)
+
+	def calculate_fault_hypothetical(self,potential_hypothetical):
+		return round(abs(self.desired_potential - potential_hypothetical), self.network.precision)
 
 	def fire(self):
 		if self.type == 1:
@@ -87,6 +97,17 @@ class Neuron():
 				self.potential = potential_zero
 				self.subscriptions = subscriptions_zero
 				self.fault = fault_zero
+
+				for i in repeat(None, int(math.sqrt(math.sqrt(self.network.connectivity)))):
+					subscriptions_hypothetical = self.subscriptions.copy()
+					for neuron, weight in subscriptions_hypothetical.iteritems():
+						subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
+					potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
+					fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
+					if fault_hypothetical < fault_zero:
+						for neuron, weight in self.subscriptions.iteritems():
+							neuron.desired_potential = subscriptions_hypothetical[neuron][1]
+						break
 
 
 class Network():
