@@ -10,8 +10,8 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - Each neuron should have **its own thread**.
  - **Network** must be **architecture-free** (adaptive).
  - Network must have a **layerless design**.
- - There must be three types of neurons: **sensory neurons**, **interneurons** and **cognitive neurons**.
- - Input of network must be made of sensory neurons. Any neuron can be picked as an element of output or input.
+ - There must be fundamentally two types of neurons: **sensory neuron**, **interneuron**.
+ - Input of network must be made of sensory neurons. Any interneuron can be picked as a **cognitive neuron** (an element of output). There is literally no difference between an interneuron and a cognitive neuron except the intervene of the network for igniting the wick of learning process through cognitive neurons.
  - There can be arbitrary amount of I/O groups in a single network.
  - Forget about batch size, iteration, and epoch concepts, training examples must be fed on time basis; *e.g. learn first sample for ten seconds, OK done? then learn second sample for twenty seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
  - **Network** must be **retrainable**.
@@ -19,12 +19,15 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - Neurons must exhibit characteristics of **cellular automata**.
  - **Number of neurons** in network can be increased or decreased (**scalability**).
  - There must be **no** need for a network-wide **oscillation**.
+ - Network should use **randomness** and/or **uncertainty principle** flawlessly.
 
 ### Activation function
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.png" alt="Activation function"/>
 </p>
+
+[Draw](https://www.desmos.com/calculator) this equation to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being stuck in an endless loop.
 
 ### Installation
 
@@ -93,13 +96,11 @@ Now please freeze the network for a moment and take a look at the subscriptions 
 
 The above output tells us how the neuron gets its feed. Each individual key-value pair stores a reference to the subscribed neuron as the key and the weight of that subscription as the value. Learning process in a Plexus network is nothing more than updating those weights and/or adding neurons to this list or dropping neurons from the list.
 
-Each individual neuron holds two floating point number called **potential** and **instability**. To get those values:
+Each individual neuron holds a floating point number called **potential** which is the only meaningful value except weight. If you want to investigate this word choice, please take a look to its biological counterpart [Action potential](https://en.wikipedia.org/wiki/Action_potential). To read this value:
 
 ```Shell
 >>> net.neurons[0].potential
 0.91
->>> net.neurons[0].instability
-0.45
 ```
 
 Value of **potential** may only be updated by the neuron itself and its being calculated by this simple formula each time when the neuron is fired:
@@ -110,13 +111,15 @@ Value of **potential** may only be updated by the neuron itself and its being ca
 
 <!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
 
-Value of **instability** may only be updated by the neurons which have been subscribed to the subject neuron with a similar manner with classical backward propagation of errors. But in Plexus networks the error is called **fault**. I'll explain the calculation of **fault** later in this article. Just like the updating of **potential**, the update of **instability** happens when the neuron is fired. But as I said, it updates the subscriptions not the same neuron, like this:
+#### Calculation of fault
+
+First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron; "It's neuron's fault!". Fault is not calculated just at the output (unlike the error in classical neural networks) but in every neuron except sensory ones and its being calculated with this obvious equation:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_instability.gif" alt="Calculation of instability"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
 </p>
 
-<!-- LaTeX of above image: \center neuron_{0}instability_{1} = neuron_{0}instability_{0} \ \pm \ fault \\ \center neuron_{1}instability_{1} = neuron_{1}instability_{0} \ \pm \ fault \\ \center neuron_{2}instability_{1} = neuron_{2}instability_{0} \ \pm \ fault \\ \center \ \vdots -->
+<!-- LaTeX of above image: Fault = \left | \Delta P \right | -->
 
 #### How an individual neuron is fired?
 
@@ -182,7 +185,8 @@ Input: [0.4, 0.3, 0.2, 0.1] - Output: [0.0, 1.0]
 Now let's load the first data:
 
 ```Shell
-net.load([0.6, 0.7, 0.8, 0.9], [1.0, 0.0])
+>>> net.load([0.6, 0.7, 0.8, 0.9], [1.0, 0.0])
+Data was successfully loaded
 ```
 
 The network will automatically start learning because it's already ignited. Now examine the potential of first cognitive neuron with entering `net.cognitive_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
@@ -190,12 +194,24 @@ The network will automatically start learning because it's already ignited. Now 
 Now make sure you have waited at least a few seconds and then plug in the second data:
 
 ```Shell
-net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
+>>> net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
+Data was successfully loaded
 ```
 
 Just like the previous data, you should experience the similar effect when you examine the value of `net.cognitive_neurons[0].potential` using the Python Interactive Shell.
 
 You will continue to observe similar trends in the network even if you just plug in only the input arrays like below. Which is the true confirmation that our network successfully learned the dataset.
+
+```Shell
+>>> net.load([0.6, 0.7, 0.8, 0.9])
+Data was successfully loaded
+>>> net.cognitive_neurons[0].potential
+0.9
+>>> net.load([0.4, 0.3, 0.2, 0.1])
+Data was successfully loaded
+>>> net.cognitive_neurons[0].potential
+0.2
+```
 
 As you can see, maybe the one of the most unique features of Plexus network is, learning process is non-blocking, real-time and interactive.
 

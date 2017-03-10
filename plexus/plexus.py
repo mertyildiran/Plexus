@@ -25,7 +25,6 @@ class Neuron():
 		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
 		self.desired_potential = None
 		self.fault = None
-		self.instability = 0
 		self.type = 0
 		self.network.neurons.append(self)
 
@@ -59,13 +58,16 @@ class Neuron():
 	def activation_function(self,value):
 		return abs(math.sin(value**2))
 
+	def calculate_fault(self):
+		return round(abs(self.desired_potential - self.potential), self.network.precision)
+
 	def fire(self):
 		if self.type == 1:
 			return False
 
 		self.potential = self.calculate_potential()
 		if self.desired_potential != None:
-			self.fault = round(abs(self.desired_potential - self.potential), self.network.precision)
+			self.fault = self.calculate_fault()
 
 		improved_with_weight_update = 0
 		potential_zero = self.potential
@@ -77,7 +79,7 @@ class Neuron():
 				for neuron, weight in self.subscriptions.iteritems():
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
 				self.potential = self.calculate_potential()
-				self.fault = round(abs(self.desired_potential - self.potential), self.network.precision)
+				self.fault = self.calculate_fault()
 				if self.fault < fault_zero:
 					improved_with_weight_update = 1
 					break
@@ -86,7 +88,6 @@ class Neuron():
 				self.subscriptions = subscriptions_zero
 				self.fault = fault_zero
 
-		self.instability = random.randint(0,9)
 
 class Network():
 
@@ -203,5 +204,5 @@ class Network():
 				step = 0
 				for neuron in self.cognitive_neurons:
 					neuron.desired_potential = output_arr[step]
-					step += 1					
+					step += 1
 		print "Data was successfully loaded"
