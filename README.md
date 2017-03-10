@@ -113,7 +113,7 @@ Value of **potential** may only be updated by the neuron itself and its being ca
 
 #### Calculation of fault
 
-First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron; "It's neuron's fault!". Fault is not calculated just at the output (unlike the error in classical neural networks) but in every neuron except sensory ones and its being calculated with this obvious equation:
+First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron; "It's neuron's fault!". Fault is not calculated just at the output but in every neuron except sensory ones (unlike the error in classical neural networks) and its being calculated with this obvious equation:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
@@ -123,7 +123,7 @@ First of all why a term like fault? Strange word choices continue... Fault becau
 
 #### How an individual neuron is fired?
 
-Currently, an individual neuron in a Plexus network is fired randomly by a single-core threaded process. The process picks a neuron from the network randomly and fires it. Firing a neuron literally means calling an instance method named **fire()** of the neuron instance and nothing more.
+Currently, an individual neuron in a Plexus network is fired randomly by a single-core threaded process. The process picks a neuron from the network randomly and fires it. Firing a neuron literally means calling an instance method named **fire()** and nothing more.
 
 Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
 
@@ -144,7 +144,7 @@ The difference of sensory neurons from the interneurons (that neither sensory no
 {}
 ```
 
-The difference of cognitive neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each cognitive neuron. The cognitive neuron calculates its potential, compares it with desired potential, calculates the fault then backpropagates it through the subscriptions. This is why they hold an additional potential variable called **desired_potential**. You can define the number of cognitive neurons similarly by using `net.pick_cognitive_neurons(output_dim)` function.
+The difference of cognitive neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each cognitive neuron. The cognitive neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, cognitive neurons can also dictates a desired potential on other neurons. This is why any neuron holds an additional potential variable called **desired_potential**. You can define the number of cognitive neurons similarly by using `net.pick_cognitive_neurons(output_dim)` function.
 
 As you can imagine, a neuron in a Plexus network, holds an integer object variable called **type** to determine its type.
 
@@ -152,7 +152,13 @@ As you can imagine, a neuron in a Plexus network, holds an integer object variab
 - `neuron.type = 2` means it's a cognitive neuron.
 - `neuron.type = 0` means it's neither a sensory nor a cognitive neuron. It means it's an interneuron.
 
+But most important distinction here is being **type 1 or not**. If a neuron is type 1, it's a sensory neurons and it does not fire. And second important distinction is being a neuron with **desired_potential** rather than **None** because if a neuron holds a real value in its desired_potential, it means that it's in trouble now and it has to learn something.
+
 ### Let's Start
+
+#### Basic Example
+
+(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)
 
 If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it in a simple real life example. Now let's start with creating a relatively small network:
 
@@ -175,7 +181,7 @@ Network has been ignited
 
 ```
 
-Here is a simple dataset aiming to classifying numbers bigger and smaller than 0.5 for this network:
+Here is a simple dataset aiming to classify numbers bigger and smaller than 0.5 for this network:
 
 ```no-highlight
 Input: [0.6, 0.7, 0.8, 0.9] - Output: [1.0, 0.0]
@@ -190,6 +196,8 @@ Data was successfully loaded
 ```
 
 The network will automatically start learning because it's already ignited. Now examine the potential of first cognitive neuron with entering `net.cognitive_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
+
+*Note that, later on a Freeze Lock added to the load process to prevent corruption.*
 
 Now make sure you have waited at least a few seconds and then plug in the second data:
 
