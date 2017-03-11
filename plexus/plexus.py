@@ -80,6 +80,7 @@ class Neuron():
 	def fire(self):
 		if self.type == 1:
 			return False
+		self.network.fire_counter += 1
 
 		self.potential = self.calculate_potential()
 		if self.desired_potential != None:
@@ -142,6 +143,8 @@ class Network():
 		self.cognitive_neurons = []
 		self.output_dim = output_dim
 		self.pick_cognitive_neurons(self.output_dim)
+
+		self.fire_counter = 0
 
 		print "\n"
 
