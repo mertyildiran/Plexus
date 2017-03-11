@@ -7,7 +7,9 @@ SIZE = 16384
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
 CONNECTIVITY = 0.005
-PRECISION = 2
+PRECISION = 1
+
+TRAINING_DURATION = 3
 
 def generate_list_bigger():
     generated_list = []
@@ -29,19 +31,19 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION)
 
 print "\n*** LEARNING ***"
 
-print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Bigger Than 0.5 & Learn for 3 Seconds Each"
+print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Bigger Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
 for i in repeat(None, 10):
     generated_list = generate_list_bigger()
-    print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait 3 seconds"
+    print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
     net.load(generated_list, [1.0, 0.0])
-    time.sleep(3)
+    time.sleep(TRAINING_DURATION)
 
-print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Smaller Than 0.5 & Learn for 3 Seconds Each"
+print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
 for i in repeat(None, 10):
     generated_list = generate_list_smaller()
-    print "Load Input: " + str(generated_list) + "\tOutput: [0.0, 1.0]\tand wait 3 seconds"
+    print "Load Input: " + str(generated_list) + "\tOutput: [0.0, 1.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
     net.load(generated_list, [0.0, 1.0])
-    time.sleep(3)
+    time.sleep(TRAINING_DURATION)
 
 print "\n\n*** TESTING ***"
 
@@ -86,6 +88,7 @@ for i in repeat(None, 10):
     print "\tAVARAGE: " + str(output) + "\tExpected: [0.0, 1.0]"
 error2 = error2 / 200
 
+print ""
 net.freeze()
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
 error = (error1 + error2) / 2

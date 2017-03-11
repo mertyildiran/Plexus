@@ -80,43 +80,42 @@ class Neuron():
 	def fire(self):
 		if self.type == 1:
 			return False
-		self.network.fire_counter += 1
 
 		self.potential = self.calculate_potential()
+		self.network.fire_counter += 1
+
 		if self.desired_potential != None:
 			self.fault = self.calculate_fault()
 
-		improved_with_weight_update = 0
-		potential_zero = self.potential
-		subscriptions_zero = self.subscriptions
-		fault_zero = self.fault
-
 		if self.desired_potential != None and self.fault != None:
-			for i in repeat(None, int(math.sqrt(self.network.connectivity))):
+			potential_zero = self.potential
+			subscriptions_zero = self.subscriptions.copy()
+			fault_zero = self.fault
+
+			for i in repeat(None, self.network.connectivity):
 				for neuron, weight in self.subscriptions.iteritems():
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
 				self.potential = self.calculate_potential()
 				self.fault = self.calculate_fault()
 				if self.fault < fault_zero:
-					improved_with_weight_update = 1
-					break
-			if not improved_with_weight_update:
-				self.potential = potential_zero
-				self.subscriptions = subscriptions_zero
-				self.fault = fault_zero
+					return True
 
-				for i in repeat(None, int(math.sqrt(math.sqrt(self.network.connectivity)))):
-					subscriptions_hypothetical = self.subscriptions.copy()
-					for neuron, weight in subscriptions_hypothetical.iteritems():
-						subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
-					potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
-					fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
-					if fault_hypothetical == None:
-						break
-					if fault_hypothetical < fault_zero:
-						for neuron, weight in self.subscriptions.iteritems():
-							neuron.desired_potential = subscriptions_hypothetical[neuron][1]
-						break
+			self.potential = potential_zero
+			self.subscriptions = subscriptions_zero.copy()
+			self.fault = fault_zero
+
+			for i in repeat(None, int(math.sqrt(self.network.connectivity))):
+				subscriptions_hypothetical = self.subscriptions.copy()
+				for neuron, weight in subscriptions_hypothetical.iteritems():
+					subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
+				potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
+				fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
+				if fault_hypothetical == None:
+					break
+				if fault_hypothetical < fault_zero:
+					for neuron, weight in self.subscriptions.iteritems():
+						neuron.desired_potential = subscriptions_hypothetical[neuron][1]
+					break
 
 
 class Network():

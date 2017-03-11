@@ -158,7 +158,7 @@ But most important distinction here is being **type 1 or not**. If a neuron is t
 
 #### Basic Example
 
-<sub><sup>*(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)*</sup></sub>
+<sup>*(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)*</sup>
 
 If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it in a simple real life example. Now let's start with creating a relatively small network:
 
