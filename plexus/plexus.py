@@ -66,10 +66,16 @@ class Neuron():
 		return abs(math.sin(value**2))
 
 	def calculate_fault(self):
-		return round(abs(self.desired_potential - self.potential), self.network.precision)
+		if self.desired_potential != None:
+			return round(abs(self.desired_potential - self.potential), self.network.precision)
+		else:
+			return None
 
 	def calculate_fault_hypothetical(self,potential_hypothetical):
-		return round(abs(self.desired_potential - potential_hypothetical), self.network.precision)
+		if self.desired_potential != None:
+			return round(abs(self.desired_potential - potential_hypothetical), self.network.precision)
+		else:
+			return None
 
 	def fire(self):
 		if self.type == 1:
@@ -104,6 +110,8 @@ class Neuron():
 						subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
 					potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
 					fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
+					if fault_hypothetical == None:
+						break
 					if fault_hypothetical < fault_zero:
 						for neuron, weight in self.subscriptions.iteritems():
 							neuron.desired_potential = subscriptions_hypothetical[neuron][1]
@@ -202,13 +210,10 @@ class Network():
 		print str(output_dim) + " neuron picked as cognitive neuron"
 
 	def load(self,input_arr,output_arr=None):
-		self.freeze()
-		load_error = 0
 		if len(self.sensory_neurons) != len(input_arr):
 			print "Size of the input array: " + str(len(input_arr))
 			print "Number of the sensory neurons: " + str(len(self.sensory_neurons))
 			print "Size of the input array and number of the sensory neurons are not matching! Please try again"
-			load_error = 1
 		else:
 			step = 0
 			for neuron in self.sensory_neurons:
@@ -224,12 +229,8 @@ class Network():
 				print "Size of the output/target array: " + str(len(output_arr))
 				print "Number of the cognitive_neurons: " + str(len(self.cognitive_neurons))
 				print "Size of the output/target array and number of the cognitive neurons are not matching! Please try again"
-				load_error = 1
 			else:
 				step = 0
 				for neuron in self.cognitive_neurons:
 					neuron.desired_potential = output_arr[step]
 					step += 1
-		if not load_error:
-			print "Data was successfully loaded"
-		self.ignite()
