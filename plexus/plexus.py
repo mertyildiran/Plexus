@@ -77,6 +77,13 @@ class Neuron():
 		else:
 			return None
 
+	def calculate_neurons_with_desired_potential(self):
+		counter = 0
+		for neuron in self.network.neurons:
+			if neuron.desired_potential != None:
+				counter += 1
+		return counter
+
 	def fire(self):
 		if self.type == 1:
 			return False
@@ -86,8 +93,6 @@ class Neuron():
 
 		if self.desired_potential != None:
 			self.fault = self.calculate_fault()
-
-		if self.desired_potential != None and self.fault != None:
 			potential_zero = self.potential
 			subscriptions_zero = self.subscriptions.copy()
 			fault_zero = self.fault
@@ -111,11 +116,11 @@ class Neuron():
 				potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
 				fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
 				if fault_hypothetical == None:
-					break
+					return True
 				if fault_hypothetical < fault_zero:
 					for neuron, weight in self.subscriptions.iteritems():
 						neuron.desired_potential = subscriptions_hypothetical[neuron][1]
-					break
+					return True
 
 
 class Network():
