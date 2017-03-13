@@ -47,42 +47,43 @@ for i in repeat(None, 10):
 
 print "\n\n*** TESTING ***"
 
-print "\nGenerate Test Data (0.30 - 0.40 sec after load, 100 times) With The Numbers Bigger Than 0.5 & Test The Network for a Second Each"
+print "\nGenerate Test Data (10 Times) With The Numbers Bigger Than 0.5"
 error1 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_bigger()
+    output = [None,None]
     net.load(generated_list)
-    time.sleep(0.30)
-    output = [0,0]
-    for i in repeat(None, 100):
-        output[0] += net.cognitive_neurons[0].potential
-        output[1] += net.cognitive_neurons[1].potential
-        error1 += abs(1.0 - net.cognitive_neurons[0].potential)
-        error1 += abs(0.0 - net.cognitive_neurons[1].potential)
+    output_zero = net.output
+    while True:
+        output_current = net.output
+        if output_zero != output_current:
+            output[0] = net.cognitive_neurons[0].potential
+            output[1] = net.cognitive_neurons[1].potential
+            error1 += abs(1.0 - net.cognitive_neurons[0].potential)
+            error1 += abs(0.0 - net.cognitive_neurons[1].potential)
+            break
         time.sleep(0.001)
-    output[0] = round(output[0] / 100, PRECISION)
-    output[1] = round(output[1] / 100, PRECISION)
-    print "Load Input: " + str(generated_list) + "\tAVARAGE: " + str(output) + "\tExpected: [1.0, 0.0]"
-error1 = error1 / 2000
+    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [1.0, 0.0]"
+error1 = error1 / 20
 
-
-print "\nGenerate Test Data (0.30 - 0.40 sec after load, 100 times) With The Numbers Smaller Than 0.5 & Test The Network for a Second Each"
+print "\nGenerate Test Data (10 Times) With The Numbers Smaller Than 0.5"
 error2 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_smaller()
+    output = [None,None]
     net.load(generated_list)
-    time.sleep(0.30)
-    output = [0,0]
-    for i in repeat(None, 100):
-        output[0] += net.cognitive_neurons[0].potential
-        output[1] += net.cognitive_neurons[1].potential
-        error2 += abs(0.0 - net.cognitive_neurons[0].potential)
-        error2 += abs(1.0 - net.cognitive_neurons[1].potential)
+    output_zero = net.output
+    while True:
+        output_current = net.output
+        if output_zero != output_current:
+            output[0] = net.cognitive_neurons[0].potential
+            output[1] = net.cognitive_neurons[1].potential
+            error2 += abs(0.0 - net.cognitive_neurons[0].potential)
+            error2 += abs(1.0 - net.cognitive_neurons[1].potential)
+            break
         time.sleep(0.001)
-    output[0] = round(output[0] / 100, PRECISION)
-    output[1] = round(output[1] / 100, PRECISION)
-    print "Load Input: " + str(generated_list) + "\tAVARAGE: " + str(output) + "\tExpected: [0.0, 1.0]"
-error2 = error2 / 2000
+    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [0.0, 1.0]"
+error2 = error2 / 20
 
 print ""
 net.freeze()
