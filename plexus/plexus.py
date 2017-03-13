@@ -28,6 +28,7 @@ class Neuron():
 		self.fault = None
 		self.type = 0
 		self.network.neurons.append(self)
+		self.fire_counter = 0
 
 	def fully_subscribe(self):
 		for neuron in self.network.neurons[len(self.subscriptions):]:
@@ -91,6 +92,7 @@ class Neuron():
 
 			self.potential = self.calculate_potential()
 			self.network.fire_counter += 1
+			self.fire_counter += 1
 
 			if self.desired_potential != None:
 				self.fault = self.calculate_fault()
@@ -183,8 +185,15 @@ class Network():
 		self.initiate_subscriptions(1)
 
 	def _ignite(self):
+		#t0 = time.time()
+		ban_list = []
 		while not self.freezer:
 			if not self.next_wave:
+				#print "Delta time: " + str(time.time() - t0)
+				#t0 = time.time()
+				ban_list = []
+				print "Output: " + str(self.get_output()) + "\r",
+				sys.stdout.flush()
 				for neuron in self.sensory_neurons:
 					self.next_wave[neuron] = 0
 			current_wave = self.next_wave.copy()
@@ -192,8 +201,10 @@ class Network():
 			while current_wave:
 				neuron = random.choice(current_wave.keys())
 				current_wave.pop(neuron)
-				neuron.fire()
-				self.next_wave.update(neuron.publications)
+				if neuron not in ban_list:
+					neuron.fire()
+					ban_list.append(neuron)
+					self.next_wave.update(neuron.publications)
 
 	def ignite(self):
 		self.freezer = False
@@ -258,3 +269,9 @@ class Network():
 				for neuron in self.cognitive_neurons:
 					neuron.desired_potential = output_arr[step]
 					step += 1
+
+	def get_output(self):
+		output = []
+		for neuron in self.cognitive_neurons:
+			output.append(neuron.potential)
+		return output

@@ -3,10 +3,10 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 4096
+SIZE = 256
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
-CONNECTIVITY = 0.005
+CONNECTIVITY = 0.1
 PRECISION = 1
 
 TRAINING_DURATION = 3
@@ -47,49 +47,51 @@ for i in repeat(None, 10):
 
 print "\n\n*** TESTING ***"
 
-print "\nGenerate Test Data (10 Items Long) With The Numbers Bigger Than 0.5 & Test The Network for a Second Each"
+print "\nGenerate Test Data (0.30 - 0.40 sec after load, 100 times) With The Numbers Bigger Than 0.5 & Test The Network for a Second Each"
 error1 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_bigger()
-    print "Load Input: " + str(generated_list) + "",
     net.load(generated_list)
-    time.sleep(0.5)
-    #print "Calculate The Avarage Output by Testing 10 Times Each 50 Milliseconds"
+    time.sleep(0.30)
     output = [0,0]
-    for i in repeat(None, 10):
+    for i in repeat(None, 100):
         output[0] += net.cognitive_neurons[0].potential
         output[1] += net.cognitive_neurons[1].potential
         error1 += abs(1.0 - net.cognitive_neurons[0].potential)
         error1 += abs(0.0 - net.cognitive_neurons[1].potential)
-        time.sleep(0.05)
-    output[0] = round(output[0] / 10, PRECISION)
-    output[1] = round(output[1] / 10, PRECISION)
-    print "\tAVARAGE: " + str(output) + "\tExpected: [1.0, 0.0]"
-error1 = error1 / 200
+        time.sleep(0.001)
+    output[0] = round(output[0] / 100, PRECISION)
+    output[1] = round(output[1] / 100, PRECISION)
+    print "Load Input: " + str(generated_list) + "\tAVARAGE: " + str(output) + "\tExpected: [1.0, 0.0]"
+error1 = error1 / 2000
 
 
-print "\nGenerate Test Data (10 Items Long) With The Numbers Smaller Than 0.5 & Test The Network for a Second Each"
+print "\nGenerate Test Data (0.30 - 0.40 sec after load, 100 times) With The Numbers Smaller Than 0.5 & Test The Network for a Second Each"
 error2 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_smaller()
-    print "Load Input: " + str(generated_list) + "",
     net.load(generated_list)
-    time.sleep(0.5)
-    #print "Calculate The Avarage Output by Testing 10 Times Each 50 Milliseconds"
+    time.sleep(0.30)
     output = [0,0]
-    for i in repeat(None, 10):
+    for i in repeat(None, 100):
         output[0] += net.cognitive_neurons[0].potential
         output[1] += net.cognitive_neurons[1].potential
         error2 += abs(0.0 - net.cognitive_neurons[0].potential)
         error2 += abs(1.0 - net.cognitive_neurons[1].potential)
-        time.sleep(0.05)
-    output[0] = round(output[0] / 10, PRECISION)
-    output[1] = round(output[1] / 10, PRECISION)
-    print "\tAVARAGE: " + str(output) + "\tExpected: [0.0, 1.0]"
-error2 = error2 / 200
+        time.sleep(0.001)
+    output[0] = round(output[0] / 100, PRECISION)
+    output[1] = round(output[1] / 100, PRECISION)
+    print "Load Input: " + str(generated_list) + "\tAVARAGE: " + str(output) + "\tExpected: [0.0, 1.0]"
+error2 = error2 / 2000
 
 print ""
 net.freeze()
+
+#print ""
+#for neuron in net.neurons:
+#    print "A type " + str(neuron.type) + " neuron fired " + str(neuron.fire_counter) + " times"
+#print ""
+
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
 error = (error1 + error2) / 2
 print "\nOverall error: " + str(error) + "\n"
