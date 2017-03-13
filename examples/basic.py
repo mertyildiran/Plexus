@@ -3,7 +3,7 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 8192
+SIZE = 4096
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
 CONNECTIVITY = 0.005

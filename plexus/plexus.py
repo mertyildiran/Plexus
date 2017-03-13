@@ -22,6 +22,7 @@ class Neuron():
 	def __init__(self,network):
 		self.network = network
 		self.subscriptions = {}
+		self.publications = {}
 		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
 		self.desired_potential = None
 		self.fault = None
@@ -40,6 +41,7 @@ class Neuron():
 			for neuron in elected:
 				if id(neuron) != id(self):
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+					neuron.publications[self] = 0
 			self.network.initiated_neurons += 1
 
 	def get_neuron_by_id(self,neuron_id):
@@ -85,42 +87,47 @@ class Neuron():
 		return counter
 
 	def fire(self):
-		if self.type == 1:
-			return False
+		if self.type != 1:
 
-		self.potential = self.calculate_potential()
-		self.network.fire_counter += 1
+			self.potential = self.calculate_potential()
+			self.network.fire_counter += 1
 
-		if self.desired_potential != None:
-			self.fault = self.calculate_fault()
-			potential_zero = self.potential
-			subscriptions_zero = self.subscriptions.copy()
-			fault_zero = self.fault
-
-			for i in repeat(None, self.network.connectivity):
-				for neuron, weight in self.subscriptions.iteritems():
-					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
-				self.potential = self.calculate_potential()
+			if self.desired_potential != None:
 				self.fault = self.calculate_fault()
-				if self.fault < fault_zero:
-					return True
+				potential_zero = self.potential
+				subscriptions_zero = self.subscriptions.copy()
+				fault_zero = self.fault
 
-			self.potential = potential_zero
-			self.subscriptions = subscriptions_zero.copy()
-			self.fault = fault_zero
+				improved = 0
 
-			for i in repeat(None, int(math.sqrt(self.network.connectivity))):
-				subscriptions_hypothetical = self.subscriptions.copy()
-				for neuron, weight in subscriptions_hypothetical.iteritems():
-					subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
-				potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
-				fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
-				if fault_hypothetical == None:
-					return True
-				if fault_hypothetical < fault_zero:
-					for neuron, weight in self.subscriptions.iteritems():
-						neuron.desired_potential = subscriptions_hypothetical[neuron][1]
-					return True
+				if not improved:
+					for i in repeat(None, self.network.connectivity):
+						for neuron, weight in self.subscriptions.iteritems():
+							self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+						self.potential = self.calculate_potential()
+						self.fault = self.calculate_fault()
+						if self.fault < fault_zero:
+							improved = 1
+							break
+
+				if not improved:
+					self.potential = potential_zero
+					self.subscriptions = subscriptions_zero.copy()
+					self.fault = fault_zero
+					for i in repeat(None, int(math.sqrt(self.network.connectivity))):
+						subscriptions_hypothetical = self.subscriptions.copy()
+						for neuron, weight in subscriptions_hypothetical.iteritems():
+							subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
+						potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
+						fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
+						if fault_hypothetical == None:
+							improved = 1
+							break
+						if fault_hypothetical < fault_zero:
+							for neuron, weight in self.subscriptions.iteritems():
+								neuron.desired_potential = subscriptions_hypothetical[neuron][1]
+							improved = 1
+							break
 
 
 class Network():
@@ -149,6 +156,7 @@ class Network():
 		self.pick_cognitive_neurons(self.output_dim)
 
 		self.fire_counter = 0
+		self.next_wave = {}
 
 		print "\n"
 
@@ -176,7 +184,16 @@ class Network():
 
 	def _ignite(self):
 		while not self.freezer:
-			random.sample(self.neurons,1)[0].fire()
+			if not self.next_wave:
+				for neuron in self.sensory_neurons:
+					self.next_wave[neuron] = 0
+			current_wave = self.next_wave.copy()
+			self.next_wave = {}
+			while current_wave:
+				neuron = random.choice(current_wave.keys())
+				current_wave.pop(neuron)
+				neuron.fire()
+				self.next_wave.update(neuron.publications)
 
 	def ignite(self):
 		self.freezer = False
