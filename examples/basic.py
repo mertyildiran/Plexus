@@ -48,44 +48,20 @@ for i in repeat(None, 10):
 print "\n\n*** TESTING ***"
 
 print "\nGenerate Test Data (10 Times) With The Numbers Bigger Than 0.5"
-error1 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_bigger()
-    output = [None,None]
+    print "Load Input: " + str(generated_list) + "\tExpected: [1.0, 0.0]"
     net.load(generated_list)
-    output_zero = net.output
-    while True:
-        output_current = net.output
-        if output_zero != output_current:
-            output[0] = net.cognitive_neurons[0].potential
-            output[1] = net.cognitive_neurons[1].potential
-            error1 += abs(1.0 - net.cognitive_neurons[0].potential)
-            error1 += abs(0.0 - net.cognitive_neurons[1].potential)
-            break
-        time.sleep(0.001)
-    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [1.0, 0.0]"
-error1 = error1 / 20
+    time.sleep(TRAINING_DURATION)
 
 print "\nGenerate Test Data (10 Times) With The Numbers Smaller Than 0.5"
-error2 = 0
 for i in repeat(None, 10):
     generated_list = generate_list_smaller()
-    output = [None,None]
+    print "Load Input: " + str(generated_list) + "\tExpected: [0.0, 1.0]"
     net.load(generated_list)
-    output_zero = net.output
-    while True:
-        output_current = net.output
-        if output_zero != output_current:
-            output[0] = net.cognitive_neurons[0].potential
-            output[1] = net.cognitive_neurons[1].potential
-            error2 += abs(0.0 - net.cognitive_neurons[0].potential)
-            error2 += abs(1.0 - net.cognitive_neurons[1].potential)
-            break
-        time.sleep(0.001)
-    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [0.0, 1.0]"
-error2 = error2 / 20
+    time.sleep(TRAINING_DURATION)
 
-print ""
+print "\n"
 net.freeze()
 
 #print ""
@@ -93,7 +69,8 @@ net.freeze()
 #    print "A type " + str(neuron.type) + " neuron fired " + str(neuron.fire_counter) + " times"
 #print ""
 
+print "\n" + str(net.wave_counter) + " waves are executed throughout the network"
+
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
-error = (error1 + error2) / 2
-print "\nOverall error: " + str(error) + "\n"
+
 print "Exit the program"

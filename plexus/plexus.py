@@ -160,6 +160,7 @@ class Network():
 		self.fire_counter = 0
 		self.next_wave = {}
 		self.output = []
+		self.wave_counter = 0
 
 		print "\n"
 
@@ -276,4 +277,5 @@ class Network():
 		for neuron in self.cognitive_neurons:
 			output.append(neuron.potential)
 		self.output = output
+		self.wave_counter += 1
 		return output
