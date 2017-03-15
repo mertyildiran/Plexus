@@ -3,13 +3,14 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 256
+SIZE = 64
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
-CONNECTIVITY = 0.1
+CONNECTIVITY = 1
 PRECISION = 1
 
 TRAINING_DURATION = 3
+DOMINANCE_THRESHOLD = 0.3
 
 def generate_list_bigger():
     generated_list = []
@@ -32,14 +33,14 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION)
 print "\n*** LEARNING ***"
 
 print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Bigger Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in repeat(None, 10):
+for i in repeat(None, 100):
     generated_list = generate_list_bigger()
     print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
     net.load(generated_list, [1.0, 0.0])
     time.sleep(TRAINING_DURATION)
 
 print "\nGenerate The Dataset (10 Items Long) To Classify The Numbers Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in repeat(None, 10):
+for i in repeat(None, 100):
     generated_list = generate_list_smaller()
     print "Load Input: " + str(generated_list) + "\tOutput: [0.0, 1.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
     net.load(generated_list, [0.0, 1.0])
@@ -48,18 +49,46 @@ for i in repeat(None, 10):
 print "\n\n*** TESTING ***"
 
 print "\nGenerate Test Data (10 Times) With The Numbers Bigger Than 0.5"
-for i in repeat(None, 10):
+error1 = 0
+error1_divisor = 0
+for i in repeat(None, 100):
     generated_list = generate_list_bigger()
-    print "Load Input: " + str(generated_list) + "\tExpected: [1.0, 0.0]"
     net.load(generated_list)
-    time.sleep(TRAINING_DURATION)
+    wave_zero = net.wave_counter
+    while True:
+        wave_current = net.wave_counter
+        if wave_current > wave_zero:
+            wave_zero = wave_current
+            output = net.output
+            if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
+                error1 += abs(1.0 - output[0])
+                error1 += abs(0.0 - output[1])
+                error1_divisor += 2
+                break
+        time.sleep(0.001)
+    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [1.0, 0.0]"
+error1 = error1 / error1_divisor
 
 print "\nGenerate Test Data (10 Times) With The Numbers Smaller Than 0.5"
-for i in repeat(None, 10):
+error2 = 0
+error2_divisor = 0
+for i in repeat(None, 100):
     generated_list = generate_list_smaller()
-    print "Load Input: " + str(generated_list) + "\tExpected: [0.0, 1.0]"
     net.load(generated_list)
-    time.sleep(TRAINING_DURATION)
+    wave_zero = net.wave_counter
+    while True:
+        wave_current = net.wave_counter
+        if wave_current > wave_zero:
+            wave_zero = wave_current
+            output = net.output
+            if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
+                error2 += abs(0.0 - output[0])
+                error2 += abs(1.0 - output[1])
+                error2_divisor += 2
+                break
+        time.sleep(0.001)
+    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [0.0, 1.0]"
+error2 = error2 / error2_divisor
 
 print "\n"
 net.freeze()
@@ -72,5 +101,8 @@ net.freeze()
 print "\n" + str(net.wave_counter) + " waves are executed throughout the network"
 
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
+
+error = (error1 + error2) / 2
+print "\nOverall error: " + str(error) + "\n"
 
 print "Exit the program"

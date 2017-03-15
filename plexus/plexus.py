@@ -138,7 +138,7 @@ class Network():
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
-		print "Each individual neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
+		print "Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
 
 		self.neurons = []
 		for i in range(size):
