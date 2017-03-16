@@ -88,11 +88,13 @@ class Neuron():
 		return counter
 
 	def fire(self):
+		time.sleep(0.00001)
 		if self.type != 1:
 
 			self.potential = self.calculate_potential()
 			self.network.fire_counter += 1
 			self.fire_counter += 1
+			self.network.sleep_cycle += 1
 
 			if self.desired_potential != None:
 				self.fault = self.calculate_fault()
@@ -161,6 +163,7 @@ class Network():
 		self.next_wave = {}
 		self.output = []
 		self.wave_counter = 0
+		self.sleep_cycle = 0
 
 		print "\n"
 
@@ -194,8 +197,10 @@ class Network():
 				#print "Delta time: " + str(time.time() - t0)
 				#t0 = time.time()
 				ban_list = []
-				print "Output: " + str(self.get_output()) + "\r",
-				sys.stdout.flush()
+				#print "Output: " + str(self.get_output()) + "\r",
+				#sys.stdout.flush()
+				self.output = self.get_output()
+				self.wave_counter += 1
 				for neuron in self.sensory_neurons:
 					self.next_wave[neuron] = 0
 			current_wave = self.next_wave.copy()
@@ -276,6 +281,4 @@ class Network():
 		output = []
 		for neuron in self.cognitive_neurons:
 			output.append(neuron.potential)
-		self.output = output
-		self.wave_counter += 1
 		return output
