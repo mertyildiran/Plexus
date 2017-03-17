@@ -88,7 +88,9 @@ class Neuron():
 		return counter
 
 	def fire(self):
-		time.sleep(0.00001)
+		#time.sleep(0.001)
+		#print "Neuron fired: " + str(self.network.fire_counter) + "\r",
+		#sys.stdout.flush()
 		if self.type != 1:
 
 			self.potential = self.calculate_potential()
@@ -136,7 +138,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2):
+	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False):
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
@@ -158,6 +160,9 @@ class Network():
 		self.cognitive_neurons = []
 		self.output_dim = output_dim
 		self.pick_cognitive_neurons(self.output_dim)
+
+		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
+		self.randomly_fire = randomly_fire
 
 		self.fire_counter = 0
 		self.next_wave = {}
@@ -193,25 +198,30 @@ class Network():
 		#t0 = time.time()
 		ban_list = []
 		while not self.freezer:
-			if not self.next_wave:
-				#print "Delta time: " + str(time.time() - t0)
-				#t0 = time.time()
-				ban_list = []
-				#print "Output: " + str(self.get_output()) + "\r",
-				#sys.stdout.flush()
-				self.output = self.get_output()
-				self.wave_counter += 1
-				for neuron in self.sensory_neurons:
-					self.next_wave[neuron] = 0
-			current_wave = self.next_wave.copy()
-			self.next_wave = {}
-			while current_wave:
-				neuron = random.choice(current_wave.keys())
-				current_wave.pop(neuron)
-				if neuron not in ban_list:
-					neuron.fire()
-					ban_list.append(neuron)
-					self.next_wave.update(neuron.publications)
+			if self.randomly_fire:
+				random.sample(self.nonsensory_neurons,1)[0].fire()
+			else:
+				if not self.next_wave:
+					#print "Delta time: " + str(time.time() - t0)
+					#t0 = time.time()
+					ban_list = []
+					print "Output: " + str(self.get_output()) + "\r",
+					sys.stdout.flush()
+					self.output = self.get_output()
+					self.wave_counter += 1
+					for neuron in self.sensory_neurons:
+						self.next_wave[neuron] = 0
+				current_wave = self.next_wave.copy()
+				self.next_wave = {}
+				for neuron in ban_list:
+					current_wave.pop(neuron, None)
+				while current_wave:
+					neuron = random.choice(current_wave.keys())
+					current_wave.pop(neuron)
+					if neuron not in ban_list:
+						neuron.fire()
+						ban_list.append(neuron)
+						self.next_wave.update(neuron.publications)
 
 	def ignite(self):
 		self.freezer = False
@@ -261,7 +271,7 @@ class Network():
 			for neuron in self.sensory_neurons:
 				neuron.potential = input_arr[step]
 				step += 1
-		if output_arr == None:
+		if output_arr is None:
 			step = 0
 			for neuron in self.cognitive_neurons:
 				neuron.desired_potential = None

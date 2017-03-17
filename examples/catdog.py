@@ -5,14 +5,17 @@ import cv2
 import random
 import plexus
 from itertools import repeat
+import sys
+import time
 
-SIZE = 32 * 32 * 3 * 2
+SIZE = 32 * 32 * 3 + 3
 INPUT_SIZE = 32 * 32 * 3
-OUTPUT_SIZE = 32 * 32 * 3
-CONNECTIVITY = 0.0016
+OUTPUT_SIZE = 3
+CONNECTIVITY = 0.01
 PRECISION = 3
 
 TRAINING_DURATION = 3
+RANDOMLY_FIRE = True
 
 TRAINING_SAMPLE_SIZE = 100
 TESTING_SAMPLE_SIZE = 100
@@ -86,33 +89,85 @@ for i in range(0, num_train_samples/5 - 1):
 test_cats_sample = random.sample(test_cats, TESTING_SAMPLE_SIZE)
 test_dogs_sample = random.sample(test_dogs, TESTING_SAMPLE_SIZE)
 
-blue = np.full((32, 32, 3), [255, 0, 0])
-red = np.full((32, 32, 3), [0, 0, 255])
-blue_normalized = np.true_divide(blue, 255).flatten()
-red_normalized = np.true_divide(red, 255).flatten()
+blue = np.array([255, 0, 0])
+red = np.array([0, 0, 255])
+blue_normalized = np.true_divide(blue, 255)
+red_normalized = np.true_divide(red, 255)
 
 print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them cognitive, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION)
-#net.freeze()
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE)
 
+print "\n*** LEARNING ***"
+
+print "\nMap 100 Different Cat Images to Color Blue - Training Duration: " + str(TRAINING_DURATION*100) + " seconds"
 for cat in cats_sample:
     cat_normalized = np.true_divide(cat, 255).flatten()
     blue_normalized = np.true_divide(blue, 255).flatten()
     cv2.imshow("Input", cat)
     net.load(cat_normalized,blue_normalized)
     for i in repeat(None, 20 * TRAINING_DURATION):
-        output = np.array(net.get_output()).reshape(32, 32, 3)
+        output = net.get_output()
+        denormalized = [round(x*255) for x in output]
+        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
+        sys.stdout.flush()
+        output = np.full((32, 32, 3), output)
+        output = np.multiply(output, 255)
+        #print str(net.fire_counter)
+        cv2.imshow("Output", output)
+        cv2.waitKey(50)
+
+print "\nMap 100 Different Dog Images to Color Red - Training Duration: " + str(TRAINING_DURATION*100) + " seconds"
+for dog in dogs_sample:
+    dog_normalized = np.true_divide(dog, 255).flatten()
+    red_normalized = np.true_divide(red, 255).flatten()
+    cv2.imshow("Input", dog)
+    net.load(dog_normalized,red_normalized)
+    for i in repeat(None, 20 * TRAINING_DURATION):
+        output = net.get_output()
+        denormalized = [round(x*255) for x in output]
+        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
+        sys.stdout.flush()
+        output = np.full((32, 32, 3), output)
+        output = np.multiply(output, 255)
+        #print str(net.fire_counter)
+        cv2.imshow("Output", output)
+        cv2.waitKey(50)
+
+print "\nTest 100 Different Cat Images - Testing Duration: " + str(TRAINING_DURATION/3*100) + " seconds"
+for cat in test_cats_sample:
+    cat_normalized = np.true_divide(cat, 255).flatten()
+    blue_normalized = np.true_divide(blue, 255).flatten()
+    cv2.imshow("Input", cat)
+    net.load(cat_normalized)
+    for i in repeat(None, 20 * TRAINING_DURATION/3):
+        output = net.get_output()
+        denormalized = [round(x*255) for x in output]
+        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
+        sys.stdout.flush()
+        output = np.full((32, 32, 3), output)
+        output = np.multiply(output, 255)
+        #print str(net.fire_counter)
+        cv2.imshow("Output", output)
+        cv2.waitKey(50)
+
+print "\nTest 100 Different Dog Images - Testing Duration: " + str(TRAINING_DURATION/3*100) + " seconds"
+for dog in test_dogs_sample:
+    dog_normalized = np.true_divide(dog, 255).flatten()
+    red_normalized = np.true_divide(red, 255).flatten()
+    cv2.imshow("Input", dog)
+    net.load(dog_normalized)
+    for i in repeat(None, 20 * TRAINING_DURATION/3):
+        output = net.get_output()
+        denormalized = [round(x*255) for x in output]
+        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
+        sys.stdout.flush()
+        output = np.full((32, 32, 3), output)
         output = np.multiply(output, 255)
         #print str(net.fire_counter)
         cv2.imshow("Output", output)
         cv2.waitKey(50)
 
 
-#net.freeze()
-
-cv2.imshow("Original Frame", blue)
-key = cv2.waitKey(50)
-cv2.imshow("Original Frame", red)
-key = cv2.waitKey(1000)
-
-print x_test[0].shape
+net.freeze()
+cv2.destroyAllWindows()
+print "Exit the program"
