@@ -17,8 +17,8 @@ PRECISION = 3
 TRAINING_DURATION = 3
 RANDOMLY_FIRE = True
 
-TRAINING_SAMPLE_SIZE = 100
-TESTING_SAMPLE_SIZE = 100
+TRAINING_SAMPLE_SIZE = 10
+TESTING_SAMPLE_SIZE = 10
 
 def load_batch(fpath, label_key='labels'):
     # Internal utility for parsing CIFAR data
@@ -30,6 +30,16 @@ def load_batch(fpath, label_key='labels'):
 
     data = data.reshape(data.shape[0], 3, 32, 32)
     return data, labels
+
+def show_output(net):
+    for i in repeat(None, 10 * TRAINING_DURATION):
+        output = net.get_output()
+        output = [round(x*255) for x in output]
+        print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
+        sys.stdout.flush()
+        output = np.full((32, 32, 3), output, dtype='uint8')
+        cv2.imshow("Output", output)
+        cv2.waitKey(100)
 
 
 print "\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n"
@@ -99,75 +109,39 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY
 
 print "\n*** LEARNING ***"
 
-print "\nMap 100 Different Cat Images to Color Blue - Training Duration: " + str(TRAINING_DURATION*100) + " seconds"
+print "\nMap " + str(TRAINING_SAMPLE_SIZE) + " Different Cat Images to Color Blue - Training Duration: " + str(TRAINING_DURATION * TRAINING_SAMPLE_SIZE) + " seconds"
 for cat in cats_sample:
     cat_normalized = np.true_divide(cat, 255).flatten()
     blue_normalized = np.true_divide(blue, 255).flatten()
     cv2.imshow("Input", cat)
     net.load(cat_normalized,blue_normalized)
-    for i in repeat(None, 20 * TRAINING_DURATION):
-        output = net.get_output()
-        denormalized = [round(x*255) for x in output]
-        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
-        sys.stdout.flush()
-        output = np.full((32, 32, 3), output)
-        output = np.multiply(output, 255)
-        #print str(net.fire_counter)
-        cv2.imshow("Output", output)
-        cv2.waitKey(50)
+    show_output(net)
 
-print "\nMap 100 Different Dog Images to Color Red - Training Duration: " + str(TRAINING_DURATION*100) + " seconds"
+print "\nMap " + str(TRAINING_SAMPLE_SIZE) + " Different Dog Images to Color Red - Training Duration: " + str(TRAINING_DURATION * TRAINING_SAMPLE_SIZE) + " seconds"
 for dog in dogs_sample:
     dog_normalized = np.true_divide(dog, 255).flatten()
     red_normalized = np.true_divide(red, 255).flatten()
     cv2.imshow("Input", dog)
     net.load(dog_normalized,red_normalized)
-    for i in repeat(None, 20 * TRAINING_DURATION):
-        output = net.get_output()
-        denormalized = [round(x*255) for x in output]
-        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
-        sys.stdout.flush()
-        output = np.full((32, 32, 3), output)
-        output = np.multiply(output, 255)
-        #print str(net.fire_counter)
-        cv2.imshow("Output", output)
-        cv2.waitKey(50)
+    show_output(net)
 
-print "\nTest 100 Different Cat Images - Testing Duration: " + str(TRAINING_DURATION/3*100) + " seconds"
+print "\nTest " + str(TESTING_SAMPLE_SIZE) + " Different Cat Images - Testing Duration: " + str(TRAINING_DURATION * TESTING_SAMPLE_SIZE) + " seconds"
 for cat in test_cats_sample:
     cat_normalized = np.true_divide(cat, 255).flatten()
-    blue_normalized = np.true_divide(blue, 255).flatten()
     cv2.imshow("Input", cat)
     net.load(cat_normalized)
-    for i in repeat(None, 20 * TRAINING_DURATION/3):
-        output = net.get_output()
-        denormalized = [round(x*255) for x in output]
-        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
-        sys.stdout.flush()
-        output = np.full((32, 32, 3), output)
-        output = np.multiply(output, 255)
-        #print str(net.fire_counter)
-        cv2.imshow("Output", output)
-        cv2.waitKey(50)
+    show_output(net)
 
-print "\nTest 100 Different Dog Images - Testing Duration: " + str(TRAINING_DURATION/3*100) + " seconds"
+print "\nTest " + str(TESTING_SAMPLE_SIZE) + " Different Dog Images - Testing Duration: " + str(TRAINING_DURATION * TESTING_SAMPLE_SIZE) + " seconds"
 for dog in test_dogs_sample:
     dog_normalized = np.true_divide(dog, 255).flatten()
-    red_normalized = np.true_divide(red, 255).flatten()
     cv2.imshow("Input", dog)
     net.load(dog_normalized)
-    for i in repeat(None, 20 * TRAINING_DURATION/3):
-        output = net.get_output()
-        denormalized = [round(x*255) for x in output]
-        print "Red: " + str(denormalized[2]) + "\t" + "Green: " + str(denormalized[1]) + "\t" + "Blue: " + str(denormalized[0]) + "\r",
-        sys.stdout.flush()
-        output = np.full((32, 32, 3), output)
-        output = np.multiply(output, 255)
-        #print str(net.fire_counter)
-        cv2.imshow("Output", output)
-        cv2.waitKey(50)
+    show_output(net)
 
 
 net.freeze()
 cv2.destroyAllWindows()
+
+print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
 print "Exit the program"
