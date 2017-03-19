@@ -8,10 +8,10 @@ from itertools import repeat
 import sys
 import time
 
-SIZE = 32 * 32 * 3 + 3
+SIZE = 32 * 32 * 3 + 3 + 32 * 3
 INPUT_SIZE = 32 * 32 * 3
 OUTPUT_SIZE = 3
-CONNECTIVITY = 0.01
+CONNECTIVITY = 0.1
 PRECISION = 3
 
 TRAINING_DURATION = 3
@@ -19,6 +19,10 @@ RANDOMLY_FIRE = True
 
 TRAINING_SAMPLE_SIZE = 10
 TESTING_SAMPLE_SIZE = 10
+
+DOMINANCE_THRESHOLD = 0.3
+error = 0
+error_divisor = 0
 
 def load_batch(fpath, label_key='labels'):
     # Internal utility for parsing CIFAR data
@@ -31,15 +35,34 @@ def load_batch(fpath, label_key='labels'):
     data = data.reshape(data.shape[0], 3, 32, 32)
     return data, labels
 
-def show_output(net):
-    for i in repeat(None, 10 * TRAINING_DURATION):
-        output = net.get_output()
-        output = [round(x*255) for x in output]
-        print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
-        sys.stdout.flush()
-        output = np.full((32, 32, 3), output, dtype='uint8')
-        cv2.imshow("Output", output)
-        cv2.waitKey(100)
+def show_output(net,testing=False):
+    global error
+    global error_divisor
+
+    if testing:
+        while True:
+            output = net.get_output()
+            output_init = output # Only different line
+            output = [round(x*255) for x in output]
+            print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
+            sys.stdout.flush()
+            output = np.full((32, 32, 3), output, dtype='uint8')
+            cv2.imshow("Output", output)
+            cv2.waitKey(100)
+            if abs(output_init[2] - output_init[0]) > DOMINANCE_THRESHOLD:
+                error += abs(testing[2] - output_init[2])
+                error += abs(testing[0] - output_init[0])
+                error_divisor += 2
+                break
+    else:
+        for i in repeat(None, 10 * TRAINING_DURATION):
+            output = net.get_output()
+            output = [round(x*255) for x in output]
+            print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
+            sys.stdout.flush()
+            output = np.full((32, 32, 3), output, dtype='uint8')
+            cv2.imshow("Output", output)
+            cv2.waitKey(100)
 
 
 print "\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n"
@@ -130,18 +153,21 @@ for cat in test_cats_sample:
     cat_normalized = np.true_divide(cat, 255).flatten()
     cv2.imshow("Input", cat)
     net.load(cat_normalized)
-    show_output(net)
+    show_output(net,[1.0, 0.0, 0.0])
 
 print "\nTest " + str(TESTING_SAMPLE_SIZE) + " Different Dog Images - Testing Duration: " + str(TRAINING_DURATION * TESTING_SAMPLE_SIZE) + " seconds"
 for dog in test_dogs_sample:
     dog_normalized = np.true_divide(dog, 255).flatten()
     cv2.imshow("Input", dog)
     net.load(dog_normalized)
-    show_output(net)
+    show_output(net,[0.0, 0.0, 1.0])
 
 
 net.freeze()
 cv2.destroyAllWindows()
 
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
+
+print "\nOverall error: " + str(error/error_divisor) + "\n"
+
 print "Exit the program"
