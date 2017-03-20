@@ -12,6 +12,9 @@ PRECISION = 1
 TRAINING_DURATION = 3
 DOMINANCE_THRESHOLD = 0.3
 
+RANDOMLY_FIRE = False
+DYNAMIC_OUTPUT = True
+
 def generate_list_bigger():
     generated_list = []
     for i in repeat(None, 4):
@@ -28,7 +31,7 @@ def generate_list_smaller():
 print "\n___ PLEXUS NETWORK BASIC EXAMPLE ___\n"
 
 print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them cognitive, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION)
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
 
 print "\n*** LEARNING ***"
 

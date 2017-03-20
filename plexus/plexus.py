@@ -138,7 +138,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False):
+	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False):
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
@@ -149,9 +149,6 @@ class Network():
 			Neuron(self)
 		print "\n"
 		print str(size) + " neurons created"
-
-		self.initiated_neurons = 0
-		self.initiate_subscriptions()
 
 		self.sensory_neurons = []
 		self.input_dim = input_dim
@@ -164,7 +161,13 @@ class Network():
 		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
 		self.randomly_fire = randomly_fire
 
+		self.dynamic_output = dynamic_output
+
+		self.initiated_neurons = 0
+		self.initiate_subscriptions()
+
 		self.fire_counter = 0
+		self.first_wave = {}
 		self.next_wave = {}
 		self.output = []
 		self.wave_counter = 0
@@ -179,7 +182,10 @@ class Network():
 		print ""
 
 	def initiate_subscriptions(self,only_new_ones=0):
+		print ""
 		for neuron in self.neurons:
+			if neuron.type == 1:
+				continue
 			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe()
@@ -205,19 +211,24 @@ class Network():
 					#print "Delta time: " + str(time.time() - t0)
 					#t0 = time.time()
 					ban_list = []
-					print "Output: " + str(self.get_output()) + "\r",
-					sys.stdout.flush()
+					if self.dynamic_output:
+						print "Output: " + str(self.get_output()) + "\r",
+						sys.stdout.flush()
 					self.output = self.get_output()
 					self.wave_counter += 1
-					for neuron in self.sensory_neurons:
-						self.next_wave[neuron] = 0
+
+					if not self.first_wave:
+						for neuron in self.sensory_neurons:
+							self.first_wave.update(neuron.publications)
+					self.next_wave = self.first_wave.copy()
+
 				current_wave = self.next_wave.copy()
 				self.next_wave = {}
 				for neuron in ban_list:
 					current_wave.pop(neuron, None)
 				while current_wave:
 					neuron = random.choice(current_wave.keys())
-					current_wave.pop(neuron)
+					current_wave.pop(neuron, None)
 					if neuron not in ban_list:
 						neuron.fire()
 						ban_list.append(neuron)
@@ -247,7 +258,6 @@ class Network():
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,input_dim):
 			neuron.type = 1
-			neuron.subscriptions = {}
 			self.sensory_neurons.append(neuron)
 		print str(input_dim) + " neuron picked as sensory neuron"
 

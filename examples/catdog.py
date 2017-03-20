@@ -15,10 +15,11 @@ CONNECTIVITY = 0.1
 PRECISION = 3
 
 TRAINING_DURATION = 3
-RANDOMLY_FIRE = True
+RANDOMLY_FIRE = False
+DYNAMIC_OUTPUT = False
 
-TRAINING_SAMPLE_SIZE = 10
-TESTING_SAMPLE_SIZE = 10
+TRAINING_SAMPLE_SIZE = 100
+TESTING_SAMPLE_SIZE = 100
 
 DOMINANCE_THRESHOLD = 0.3
 error = 0
@@ -128,7 +129,7 @@ blue_normalized = np.true_divide(blue, 255)
 red_normalized = np.true_divide(red, 255)
 
 print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them cognitive, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE)
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
 
 print "\n*** LEARNING ***"
 
@@ -165,6 +166,8 @@ for dog in test_dogs_sample:
 
 net.freeze()
 cv2.destroyAllWindows()
+
+print "\n" + str(net.wave_counter) + " waves are executed throughout the network"
 
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
 
