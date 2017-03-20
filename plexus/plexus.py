@@ -167,8 +167,8 @@ class Network():
 		self.initiate_subscriptions()
 
 		self.fire_counter = 0
-		self.first_wave = {}
-		self.next_wave = {}
+		self.first_queue = {}
+		self.next_queue = {}
 		self.output = []
 		self.wave_counter = 0
 		self.sleep_cycle = 0
@@ -207,7 +207,7 @@ class Network():
 			if self.randomly_fire:
 				random.sample(self.nonsensory_neurons,1)[0].fire()
 			else:
-				if not self.next_wave:
+				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
 					#t0 = time.time()
 					ban_list = []
@@ -217,22 +217,22 @@ class Network():
 					self.output = self.get_output()
 					self.wave_counter += 1
 
-					if not self.first_wave:
+					if not self.first_queue:
 						for neuron in self.sensory_neurons:
-							self.first_wave.update(neuron.publications)
-					self.next_wave = self.first_wave.copy()
+							self.first_queue.update(neuron.publications)
+					self.next_queue = self.first_queue.copy()
 
-				current_wave = self.next_wave.copy()
-				self.next_wave = {}
+				current_queue = self.next_queue.copy()
+				self.next_queue = {}
 				for neuron in ban_list:
-					current_wave.pop(neuron, None)
-				while current_wave:
-					neuron = random.choice(current_wave.keys())
-					current_wave.pop(neuron, None)
+					current_queue.pop(neuron, None)
+				while current_queue:
+					neuron = random.choice(current_queue.keys())
+					current_queue.pop(neuron, None)
 					if neuron not in ban_list:
 						neuron.fire()
 						ban_list.append(neuron)
-						self.next_wave.update(neuron.publications)
+						self.next_queue.update(neuron.publications)
 
 	def ignite(self):
 		self.freezer = False
