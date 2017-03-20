@@ -69,15 +69,15 @@ class Neuron():
 		return abs(math.sin(value**2))
 
 	def calculate_fault(self):
-		if self.desired_potential != None:
+		try:
 			return round(abs(self.desired_potential - self.potential), self.network.precision)
-		else:
+		except:
 			return None
 
 	def calculate_fault_hypothetical(self,potential_hypothetical):
-		if self.desired_potential != None:
+		try:
 			return round(abs(self.desired_potential - potential_hypothetical), self.network.precision)
-		else:
+		except:
 			return None
 
 	def calculate_neurons_with_desired_potential(self):
