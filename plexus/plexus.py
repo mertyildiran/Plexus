@@ -104,6 +104,10 @@ class Neuron():
 				subscriptions_zero = self.subscriptions.copy()
 				fault_zero = self.fault
 
+				if self.fault == 0:
+					self.desired_potential = None
+					return True
+
 				improved = 0
 
 				if not improved:
@@ -131,7 +135,8 @@ class Neuron():
 							break
 						if fault_hypothetical < fault_zero:
 							for neuron, weight in self.subscriptions.iteritems():
-								neuron.desired_potential = subscriptions_hypothetical[neuron][1]
+								if neuron.desired_potential == None:
+									neuron.desired_potential = subscriptions_hypothetical[neuron][1]
 							improved = 1
 							break
 
