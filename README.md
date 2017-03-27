@@ -23,11 +23,13 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 
 ### Activation function
 
+<sup>*( c : average connectivity of a neuron )*</sup>
+
 <p align="left">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.png" alt="Activation function"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.gif" alt="Activation function"/>
 </p>
 
-[Draw](https://www.desmos.com/calculator) this equation to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being stuck in an endless loop.
+Open [the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation and play with the slider to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being trapped.
 
 ### Installation
 

@@ -66,7 +66,7 @@ class Neuron():
 		return round(self.activation_function(total), self.network.precision)
 
 	def activation_function(self,value):
-		return abs(math.sin(value**2))
+		return abs(math.sin( (value**2) / self.network.connectivity_sqrt ))
 
 	def calculate_fault(self):
 		try:
@@ -124,7 +124,7 @@ class Neuron():
 					self.potential = potential_zero
 					self.subscriptions = subscriptions_zero.copy()
 					self.fault = fault_zero
-					for i in repeat(None, int(math.sqrt(self.network.connectivity))):
+					for i in repeat(None, self.network.connectivity_sqrt):
 						subscriptions_hypothetical = self.subscriptions.copy()
 						for neuron, weight in subscriptions_hypothetical.iteritems():
 							subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
@@ -147,6 +147,7 @@ class Network():
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
+		self.connectivity_sqrt = int(math.sqrt(self.connectivity))
 		print "Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
 
 		self.neurons = []
