@@ -212,6 +212,12 @@ class Network():
 		while not self.freezer:
 			if self.randomly_fire:
 				random.sample(self.nonsensory_neurons,1)[0].fire()
+				if 1 == random.randint(1,len(self.nonsensory_neurons)):
+					if self.dynamic_output:
+						print "Output: " + str(self.get_output()) + "\r",
+						sys.stdout.flush()
+					self.output = self.get_output()
+					self.wave_counter += 1
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
