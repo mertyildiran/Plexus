@@ -166,6 +166,7 @@ class Network():
 
 		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
 		self.randomly_fire = randomly_fire
+		self.cognitive_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.cognitive_neurons) ))
 
 		self.dynamic_output = dynamic_output
 
@@ -208,16 +209,24 @@ class Network():
 
 	def _ignite(self):
 		#t0 = time.time()
+		cognitive_fire_counter = 0
 		ban_list = []
 		while not self.freezer:
 			if self.randomly_fire:
-				random.sample(self.nonsensory_neurons,1)[0].fire()
-				if 1 == random.randint(1,len(self.nonsensory_neurons)):
+				neuron = random.sample(self.nonsensory_neurons,1)[0]
+				if neuron.type == 2:
+					if 1 != random.randint(1,self.cognitive_randomly_fire_rate):
+						continue
+					else:
+						cognitive_fire_counter += 1
+				neuron.fire()
+				if cognitive_fire_counter >= len(self.cognitive_neurons):
 					if self.dynamic_output:
 						print "Output: " + str(self.get_output()) + "\r",
 						sys.stdout.flush()
 					self.output = self.get_output()
 					self.wave_counter += 1
+					cognitive_fire_counter = 0
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
