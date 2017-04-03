@@ -29,6 +29,7 @@ class Neuron():
 		self.type = 0
 		self.network.neurons.append(self)
 		self.fire_counter = 0
+		self.blame_lock = None
 
 	def fully_subscribe(self):
 		for neuron in self.network.neurons[len(self.subscriptions):]:
@@ -96,7 +97,6 @@ class Neuron():
 			self.potential = self.calculate_potential()
 			self.network.fire_counter += 1
 			self.fire_counter += 1
-			self.network.sleep_cycle += 1
 
 			if self.desired_potential != None:
 				self.fault = self.calculate_fault()
@@ -107,6 +107,12 @@ class Neuron():
 				if self.fault == 0:
 					self.desired_potential = None
 					return True
+
+				if self.blame_lock:
+					if (self.network.wave_counter - self.blame_lock) < self.network.connectivity:
+						return True
+					else:
+						self.blame_lock = None
 
 				improved = 0
 
@@ -138,6 +144,7 @@ class Neuron():
 								if neuron.desired_potential == None:
 									neuron.desired_potential = subscriptions_hypothetical[neuron][1]
 							improved = 1
+							self.blame_lock = self.network.wave_counter
 							break
 
 
@@ -178,7 +185,6 @@ class Network():
 		self.next_queue = {}
 		self.output = []
 		self.wave_counter = 0
-		self.sleep_cycle = 0
 
 		print "\n"
 
