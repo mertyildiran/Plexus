@@ -35,48 +35,34 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY
 
 print "\n*** LEARNING ***"
 
-print "\nGenerate The Dataset (100 Items Long) To Classify The Numbers Bigger Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in repeat(None, 100):
-    generated_list = generate_list_bigger()
-    print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
-    net.load(generated_list, [1.0, 0.0])
+print "\nGenerate The Dataset (200 Items Long) To Classify The Numbers Bigger & Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
+for i in range(1,200):
+    if (i % 2) == 0:
+        generated_list = generate_list_bigger()
+        print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
+        net.load(generated_list, [1.0, 0.0])
+    else:
+        generated_list = generate_list_smaller()
+        print "Load Input: " + str(generated_list) + "\tOutput: [0.0, 1.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
+        net.load(generated_list, [0.0, 1.0])
     time.sleep(TRAINING_DURATION)
 
-print "\nGenerate The Dataset (100 Items Long) To Classify The Numbers Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in repeat(None, 100):
-    generated_list = generate_list_smaller()
-    print "Load Input: " + str(generated_list) + "\tOutput: [0.0, 1.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
-    net.load(generated_list, [0.0, 1.0])
-    time.sleep(TRAINING_DURATION)
+
 
 print "\n\n*** TESTING ***"
 
-print "\nGenerate Test Data (100 Times) With The Numbers Bigger Than 0.5"
-error1 = 0
-error1_divisor = 0
-for i in repeat(None, 100):
-    generated_list = generate_list_bigger()
-    net.load(generated_list)
-    wave_zero = net.wave_counter
-    while True:
-        wave_current = net.wave_counter
-        if wave_current > wave_zero:
-            wave_zero = wave_current
-            output = net.output
-            if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
-                error1 += abs(1.0 - output[0])
-                error1 += abs(0.0 - output[1])
-                error1_divisor += 2
-                break
-        time.sleep(0.001)
-    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [1.0, 0.0]"
-error1 = error1 / error1_divisor
+print "\nTest the network with random data (200 times)"
+error = 0
+error_divisor = 0
+for i in repeat(None, 200):
+    binary_random = random.randint(0,1)
+    if binary_random == 0:
+        generated_list = generate_list_bigger()
+        expected = [1.0, 0.0]
+    else:
+        generated_list = generate_list_smaller()
+        expected = [0.0, 1.0]
 
-print "\nGenerate Test Data (100 Times) With The Numbers Smaller Than 0.5"
-error2 = 0
-error2_divisor = 0
-for i in repeat(None, 100):
-    generated_list = generate_list_smaller()
     net.load(generated_list)
     wave_zero = net.wave_counter
     while True:
@@ -85,13 +71,14 @@ for i in repeat(None, 100):
             wave_zero = wave_current
             output = net.output
             if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
-                error2 += abs(0.0 - output[0])
-                error2 += abs(1.0 - output[1])
-                error2_divisor += 2
+                error += abs(expected[0] - output[0])
+                error += abs(expected[1] - output[1])
+                error_divisor += 2
                 break
         time.sleep(0.001)
-    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: [0.0, 1.0]"
-error2 = error2 / error2_divisor
+    print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: " + str(expected)
+
+
 
 print "\n"
 net.freeze()
@@ -105,7 +92,7 @@ print "\n" + str(net.wave_counter) + " waves are executed throughout the network
 
 print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
 
-error = (error1 + error2) / 2
+error = error / error_divisor
 print "\nOverall error: " + str(error) + "\n"
 
 print "Exit the program"
