@@ -10,20 +10,20 @@ CONNECTIVITY = 0.5
 PRECISION = 1
 
 TRAINING_DURATION = 3
-DOMINANCE_THRESHOLD = 0.4
+DOMINANCE_THRESHOLD = 0.7
 
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
 
 def generate_list_bigger():
     generated_list = []
-    for i in repeat(None, 4):
+    for i in repeat(None, INPUT_SIZE):
         generated_list.append(round(random.uniform(0.6, 1.0), PRECISION))
     return generated_list
 
 def generate_list_smaller():
     generated_list = []
-    for i in repeat(None, 4):
+    for i in repeat(None, INPUT_SIZE):
         generated_list.append(round(random.uniform(0.0, 0.4), PRECISION))
     return generated_list
 
@@ -36,7 +36,7 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY
 print "\n*** LEARNING ***"
 
 print "\nGenerate The Dataset (200 Items Long) To Classify The Numbers Bigger & Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in range(1,200):
+for i in range(1,80):
     if (i % 2) == 0:
         generated_list = generate_list_bigger()
         print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
