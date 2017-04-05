@@ -10,7 +10,7 @@ CONNECTIVITY = 0.5
 PRECISION = 1
 
 TRAINING_DURATION = 3
-DOMINANCE_THRESHOLD = 0.5
+DOMINANCE_THRESHOLD = 0.4
 
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
@@ -54,7 +54,7 @@ print "\n\n*** TESTING ***"
 print "\nTest the network with random data (200 times)"
 error = 0
 error_divisor = 0
-for i in repeat(None, 200):
+for i in repeat(None, 20):
     binary_random = random.randint(0,1)
     if binary_random == 0:
         generated_list = generate_list_bigger()

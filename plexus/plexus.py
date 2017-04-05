@@ -30,6 +30,7 @@ class Neuron():
 		self.network.neurons.append(self)
 		self.fire_counter = 0
 		self.blame_lock = None
+		self.ban_counter = 0
 
 	def fully_subscribe(self):
 		for neuron in self.network.neurons[len(self.subscriptions):]:
@@ -51,7 +52,7 @@ class Neuron():
 		for neuron in self.network.neurons:
 			if id(neuron) == neuron_id:
 				return neuron
-		raise Exception("No found")
+		raise Exception("Not found")
 
 	def calculate_potential(self):
 		total = 0
@@ -155,6 +156,7 @@ class Network():
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
 		self.connectivity_sqrt = int(math.sqrt(self.connectivity))
+		self.connectivity_sqrt_sqrt = int(math.sqrt(self.connectivity_sqrt))
 		print "Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
 
 		self.neurons = []
@@ -237,6 +239,8 @@ class Network():
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
 					#t0 = time.time()
+					for neuron in ban_list:
+						neuron.ban_counter = 0
 					ban_list = []
 					if self.dynamic_output:
 						print "Output: " + str(self.get_output()) + "\r",
@@ -252,13 +256,15 @@ class Network():
 				current_queue = self.next_queue.copy()
 				self.next_queue = {}
 				for neuron in ban_list:
-					current_queue.pop(neuron, None)
+					if neuron.ban_counter > self.connectivity_sqrt_sqrt:
+						current_queue.pop(neuron, None)
 				while current_queue:
 					neuron = random.choice(current_queue.keys())
 					current_queue.pop(neuron, None)
-					if neuron not in ban_list:
+					if neuron.ban_counter <= self.connectivity_sqrt_sqrt:
 						neuron.fire()
 						ban_list.append(neuron)
+						neuron.ban_counter += 1
 						self.next_queue.update(neuron.publications)
 
 	def ignite(self):
