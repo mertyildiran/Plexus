@@ -40,7 +40,7 @@ class Neuron():
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
 			#neuron_count = len(self.network.neurons)
-			elected = random.sample(self.network.neurons, self.network.connectivity)
+			elected = random.sample(self.network.nonmotor_neurons, self.network.connectivity)
 			for neuron in elected:
 				if id(neuron) != id(self):
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
@@ -174,6 +174,7 @@ class Network():
 		self.pick_motor_neurons(self.output_dim)
 
 		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
+		self.nonmotor_neurons = [x for x in self.neurons if x not in self.motor_neurons]
 		self.randomly_fire = randomly_fire
 		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
 

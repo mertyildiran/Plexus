@@ -20,7 +20,7 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - **Number of neurons** in the network can be increased or decreased (**scalability**).
  - There must be **no** need for a network-wide **oscillation**. Yet the execution of neurons should follow a path very similar to flow of electric current nevertheless it's not compulsory.
  - Network should use **randomness** and/or **uncertainty principle** flawlessly.
- - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible iterate the dataset on real life situations. Because of that the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network you should follow a path like; *on my left hand there is an apple and on my right hand there is a banana, apple... banana... apple, banana, apple, banana, ...* if you want to teach the difference between apple and banana and don't follow a path like; *apple, apple, apple, apple, banana, banana, banana, banana, ...* More technically; if you have two classes to train the network, use a diverse feed but not grouped feed (*ideally repetitive like 121212121212 but not 1111111222222*).
+ - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible iterate the dataset on real life situations if the system is continuous like in robotics. Because of that the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network you should follow a path like; *on my left hand there is an apple and on my right hand there is a banana, apple... banana... apple, banana, apple, banana, ...* if you want to teach the difference between apple and banana and don't follow a path like; *apple, apple, apple, apple, banana, banana, banana, banana, ...* More technically; if you have two classes to train the network, use a diverse feed but not grouped feed (*ideally repetitive like 121212121212 but not 1111111222222*).
 
 ### Activation function
 
@@ -44,27 +44,27 @@ Reading this paper requires basic knowledge of Computer Science and Neuroscience
 
 The algorithm is named as **Plexus Network**. Plexus Network has only two classes; **Network** and **Neuron**. In a Plexus Network, there are many instances of Neuron class but there is only one instance of Network class.
 
-When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of neurons in the network*, *precision of the network* So that the network builds itself.
+When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of a neuron in the network*, *precision of the network* So that the network builds itself.
 
  - **size** is literally equal to total number of neurons in the network. All neurons are referenced in an instance variable called `Network.neurons`
  - **input dimension** specifies the number of sensory neurons. Sensory neurons are randomly selected from neurons.
  - **output dimension** specifies the number of motor neurons. Motor neurons are randomly selected from non-sensory neurons.
- - **average connectivity of neurons** specifies the average number of subscriptions of a single neuron.
+ - **average connectivity of a neuron** specifies the average number of subscriptions made by a single neuron.
  - **precision** simply defines the precision of the all calculations will be made by neurons (how many digits after the decimal point).
 
 After the network has been successfully created. It will ignite itself automatically. Ignition in simple terms, no matter if you have plugged in some data or not, it will fire the neurons with using some mechanism very similar to flow of electric current (*will be explained later on this paper*).
 
-#### Anatomy of a single neuron
+#### Anatomy of a Single Neuron
 
 A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *fault* and *type*
 
 There are eventually there types of neurons:
 
- - `neuron.type = 1` means it's a sensory neuron.
- - `neuron.type = 2` means it's a motor neuron.
- - `neuron.type = 0` means it's neither a sensory nor a motor neuron. It means it's an cognitive interneuron (or just cognitive neuron).
+ - `Neuron.type = 1` means it's a sensory neuron.
+ - `Neuron.type = 2` means it's a motor neuron.
+ - `Neuron.type = 0` means it's neither a sensory nor a motor neuron. It means it's an cognitive interneuron (or just cognitive neuron).
 
-A neuron's functionality is relative to it's type.
+Functionality of a neuron is relative to its type.
 
 **subscriptions** is neuron's indirect data feed. Each non-sensory neuron subscribes to some other neurons of any type. For sensory neurons subscriptions are completely meaningless and empty by default because it gets its data feed from outside world by assignments of the network. It is literally the Plexus Network equivalent of **Dendrites** in biological neurons. *subscriptions* is a dictionary that holds **Neuron(reference)** as key and **Weight** as value.
 
@@ -78,7 +78,7 @@ A neuron's functionality is relative to it's type.
 
 <!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
 
-**desired_potential** is the ideal value of the neuron's that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network.
+**desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then neuron don't learn anything and just calculates potential when it's fired.
 
 **fault** is not calculated just at the output but in every neuron except sensory ones and it is equal to absolute difference between desired potential and current potential.
 
@@ -89,6 +89,12 @@ A neuron's functionality is relative to it's type.
 <!-- LaTeX of above image: Fault = \left | \Delta P \right | -->
 
 All numerical values inside a neuron are floating point numbers and all the calculations obey to precision given at start.
+
+#### Sensory and Motor Neurons
+
+Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Motor Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
+
+The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. They do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons.
 
 ### Installation
 
