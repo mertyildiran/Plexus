@@ -40,7 +40,7 @@ class Neuron():
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
 			#neuron_count = len(self.network.neurons)
-			elected = random.sample(self.network.nonmotor_neurons, self.network.connectivity)
+			elected = random.sample(self.network.nonmotor_neurons, int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt)))
 			for neuron in elected:
 				if id(neuron) != id(self):
 					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
