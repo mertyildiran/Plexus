@@ -30,9 +30,65 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.gif" alt="Activation function"/>
 </p>
 
-<sup>Open [the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation and play with the slider to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being trapped.</sup>
+<sup>[Draw the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not completely repetitive so a neuron freely walk on this equation without being trapped.</sup>
 
 Rest of the paper will explain the algorithm's itself and usage. An algorithm that implemented by following the criteria listed in Core Principles and by relying on the given activation function above.
+
+Implementation of this algorithm in Python programming language is publicly accessible through this link: https://github.com/mertyildiran/Plexus/blob/master/plexus/plexus.py
+
+Reading this paper requires basic knowledge of Computer Science and Neuroscience.
+
+## Algorithm
+
+### Basics
+
+The algorithm is named as **Plexus Network**. Plexus Network has only two classes; **Network** and **Neuron**. In a Plexus Network, there are many instances of Neuron class but there is only one instance of Network class.
+
+When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of neurons in the network*, *precision of the network* So that the network builds itself.
+
+ - **size** is literally equal to total number of neurons in the network. All neurons are referenced in an instance variable called `Network.neurons`
+ - **input dimension** specifies the number of sensory neurons. Sensory neurons are randomly selected from neurons.
+ - **output dimension** specifies the number of motor neurons. Motor neurons are randomly selected from non-sensory neurons.
+ - **average connectivity of neurons** specifies the average number of subscriptions of a single neuron.
+ - **precision** simply defines the precision of the all calculations will be made by neurons (how many digits after the decimal point).
+
+After the network has been successfully created. It will ignite itself automatically. Ignition in simple terms, no matter if you have plugged in some data or not, it will fire the neurons with using some mechanism very similar to flow of electric current (*will be explained later on this paper*).
+
+#### Anatomy of a single neuron
+
+A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *fault* and *type*
+
+There are eventually there types of neurons:
+
+ - `neuron.type = 1` means it's a sensory neuron.
+ - `neuron.type = 2` means it's a motor neuron.
+ - `neuron.type = 0` means it's neither a sensory nor a motor neuron. It means it's an cognitive interneuron (or just cognitive neuron).
+
+A neuron's functionality is relative to it's type.
+
+**subscriptions** is neuron's indirect data feed. Each non-sensory neuron subscribes to some other neurons of any type. For sensory neurons subscriptions are completely meaningless and empty by default because it gets its data feed from outside world by assignments of the network. It is literally the Plexus Network equivalent of **Dendrites** in biological neurons. *subscriptions* is a dictionary that holds **Neuron(reference)** as key and **Weight** as value.
+
+**publications** holds literally the mirror data of *subscriptions* in the target neurons. In other words; any subscription creates also a publication reference in the target neuron. Similarly, *publications* is the Plexus Network equivalent of **Axons** in biological neurons.
+
+**potential** is the overall total potential value of all subscriptions multiplied by the corresponding weights. Only in sensory neurons, it is directly assigned by the network. Value of **potential** may only be updated by the neuron's itself and its being calculated by this simple formula each time when the neuron is fired:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_potential.gif" alt="Calculation of potential"/>
+</p>
+
+<!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
+
+**desired_potential** is the ideal value of the neuron's that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network.
+
+**fault** is not calculated just at the output but in every neuron except sensory ones and it is equal to absolute difference between desired potential and current potential.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
+</p>
+
+<!-- LaTeX of above image: Fault = \left | \Delta P \right | -->
+
+All numerical values inside a neuron are floating point numbers and all the calculations obey to precision given at start.
 
 ### Installation
 
@@ -107,24 +163,6 @@ Each individual neuron holds a floating point number called **potential** which 
 >>> net.neurons[0].potential
 0.91
 ```
-
-Value of **potential** may only be updated by the neuron itself and its being calculated by this simple formula each time when the neuron is fired:
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_potential.gif" alt="Calculation of potential"/>
-</p>
-
-<!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
-
-#### Calculation of fault
-
-First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron like; "It's neuron's fault!". Fault is not calculated just at the output but in every neuron except sensory ones (unlike the error in classical neural networks) and its being calculated with this simple equation:
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
-</p>
-
-<!-- LaTeX of above image: Fault = \left | \Delta P \right | -->
 
 #### How an individual neuron is fired?
 
