@@ -48,6 +48,12 @@ The algorithm is named as **Plexus Network**. Plexus Network has only two classe
 
 When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of a neuron in the network*, *precision of the network* So that the network builds itself.
 
+<p align="left">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/init.png" alt="Network init function"/>
+</p>
+
+<!-- LaTeX of above image:  \Theta (n,i,o,c, \rho )  -->
+
  - **size** is literally equal to total number of neurons in the network. All neurons are referenced in an instance variable called `Network.neurons`
  - **input dimension** specifies the number of sensory neurons. Sensory neurons are randomly selected from neurons.
  - **output dimension** specifies the number of motor neurons. Motor neurons are randomly selected from non-sensory neurons.
