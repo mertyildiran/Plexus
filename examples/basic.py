@@ -15,6 +15,9 @@ DOMINANCE_THRESHOLD = 0.7
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
 
+TRAINING_SAMPLE_SIZE = 80
+TESTING_SAMPLE_SIZE = 20
+
 def generate_list_bigger():
     generated_list = []
     for i in repeat(None, INPUT_SIZE):
@@ -35,8 +38,8 @@ net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY
 
 print "\n*** LEARNING ***"
 
-print "\nGenerate The Dataset (200 Items Long) To Classify The Numbers Bigger & Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
-for i in range(1,80):
+print "\nGenerate The Dataset (" + str(TRAINING_SAMPLE_SIZE) + " Items Long) To Classify The Numbers Bigger & Smaller Than 0.5 & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
+for i in range(1,TRAINING_SAMPLE_SIZE):
     if (i % 2) == 0:
         generated_list = generate_list_bigger()
         print "Load Input: " + str(generated_list) + "\tOutput: [1.0, 0.0]\tand wait " + str(TRAINING_DURATION) + " seconds"
@@ -51,10 +54,10 @@ for i in range(1,80):
 
 print "\n\n*** TESTING ***"
 
-print "\nTest the network with random data (200 times)"
+print "\nTest the network with random data (" + str(TESTING_SAMPLE_SIZE) + " times)"
 error = 0
 error_divisor = 0
-for i in repeat(None, 20):
+for i in repeat(None, TESTING_SAMPLE_SIZE):
     binary_random = random.randint(0,1)
     if binary_random == 0:
         generated_list = generate_list_bigger()
