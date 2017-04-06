@@ -11,7 +11,7 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - **Network** must be **architecture-free** (adaptive).
  - Network must have a **layerless design**.
  - There must be fundamentally two types of neurons: **sensory neuron**, **interneuron**.
- - Input of network must be made of sensory neurons. Any interneuron can be picked as a **cognitive neuron** (an element of output). There is literally no difference between an interneuron and a cognitive neuron except the intervene of the network for igniting the wick of learning process through cognitive neurons.
+ - Input of network must be made of sensory neurons. Any interneuron can be picked as a **motor neuron** (an element of output). There is literally no difference between an interneuron and a motor neuron except the intervene of the network for igniting the wick of learning process through motor neurons. Any non-motor interneuron can be assumed as a cognitive neuron.
  - There can be arbitrary amount of I/O groups in a single network.
  - Forget about batch size, iteration, and epoch concepts, training examples must be fed on time basis; *e.g. learn first sample for ten seconds, OK done? then learn second sample for twenty seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
  - **Network** must be **retrainable**.
@@ -59,7 +59,7 @@ Each individual neuron will subscribe to 100 different neurons
 Initiated: 10000 neurons
 
 0 neuron picked as sensory neuron
-0 neuron picked as cognitive neuron
+0 neuron picked as motor neuron
 
 
 Network has been ignited
@@ -115,7 +115,7 @@ Value of **potential** may only be updated by the neuron itself and its being ca
 
 #### Calculation of fault
 
-First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron; "It's neuron's fault!". Fault is not calculated just at the output but in every neuron except sensory ones (unlike the error in classical neural networks) and its being calculated with this obvious equation:
+First of all why a term like fault? Strange word choices continue... Fault because it symbolizes error per neuron like; "It's neuron's fault!". Fault is not calculated just at the output but in every neuron except sensory ones (unlike the error in classical neural networks) and its being calculated with this simple equation:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
@@ -129,11 +129,11 @@ Currently, an individual neuron in a Plexus network is fired randomly by a singl
 
 Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
 
-#### Sensory and Cognitive Neurons
+#### Sensory and Motor Neurons
 
-Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Cognitive Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
+Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Motor Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
 
-The difference of sensory neurons from the interneurons (that neither sensory nor cognitive ones) is, they do not actually fire. They just stand still for the data load. As you can guess they do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including cognitive ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons. For example you can prepare the network for the assignment of a 64x64 RGB image like:
+The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. As you can guess they do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons. For example you can prepare the network for the assignment of a 64x64 RGB image like:
 
 ```Shell
 >>> net.pick_sensory_neurons(12288)
@@ -146,13 +146,13 @@ The difference of sensory neurons from the interneurons (that neither sensory no
 {}
 ```
 
-The difference of cognitive neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each cognitive neuron. The cognitive neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, cognitive neurons can also dictates a desired potential on other neurons. This is why any neuron holds an additional potential variable called **desired_potential**. You can define the number of cognitive neurons similarly by using `net.pick_cognitive_neurons(output_dim)` function.
+The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other neurons. This is why any neuron holds an additional potential variable called **desired_potential**. You can define the number of motor neurons similarly by using `net.pick_motor_neurons(output_dim)` function.
 
 As you can imagine, a neuron in a Plexus network, holds an integer object variable called **type** to determine its type.
 
 - `neuron.type = 1` means it's a sensory neuron.
-- `neuron.type = 2` means it's a cognitive neuron.
-- `neuron.type = 0` means it's neither a sensory nor a cognitive neuron. It means it's an interneuron.
+- `neuron.type = 2` means it's a motor neuron.
+- `neuron.type = 0` means it's neither a sensory nor a motor neuron. It means it's an cognitive interneuron (or just cognitive neuron).
 
 But most important distinction here is being **type 1 or not**. If a neuron is type 1, it's a sensory neurons and it does not fire. And second important distinction is being a neuron with **desired_potential** rather than **None** because if a neuron holds a real value in its desired_potential, it means that it's in trouble now and it has to learn something.
 
@@ -176,7 +176,7 @@ Each individual neuron will subscribe to 22 different neurons
 Initiated: 22 neurons
 
 4 neuron picked as sensory neuron
-2 neuron picked as cognitive neuron
+2 neuron picked as motor neuron
 
 
 Network has been ignited
@@ -197,7 +197,7 @@ Now let's load the first data:
 Data was successfully loaded
 ```
 
-The network will automatically start learning because it's already ignited. Now examine the potential of first cognitive neuron with entering `net.cognitive_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
+The network will automatically start learning because it's already ignited. Now examine the potential of first motor neuron with entering `net.motor_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
 
 *Note that, later on a Freeze Lock added to the load process to prevent corruption.*
 
@@ -208,18 +208,18 @@ Now make sure you have waited at least a few seconds and then plug in the second
 Data was successfully loaded
 ```
 
-Just like the previous data, you should experience the similar effect when you examine the value of `net.cognitive_neurons[0].potential` using the Python Interactive Shell.
+Just like the previous data, you should experience the similar effect when you examine the value of `net.motor_neurons[0].potential` using the Python Interactive Shell.
 
 You will continue to observe similar trends in the network even if you just plug in only the input arrays like below. Which is the true confirmation that our network successfully learned the dataset.
 
 ```Shell
 >>> net.load([0.6, 0.7, 0.8, 0.9])
 Data was successfully loaded
->>> net.cognitive_neurons[0].potential
+>>> net.motor_neurons[0].potential
 0.9
 >>> net.load([0.4, 0.3, 0.2, 0.1])
 Data was successfully loaded
->>> net.cognitive_neurons[0].potential
+>>> net.motor_neurons[0].potential
 0.2
 ```
 

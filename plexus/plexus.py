@@ -169,13 +169,13 @@ class Network():
 		self.input_dim = input_dim
 		self.pick_sensory_neurons(self.input_dim)
 
-		self.cognitive_neurons = []
+		self.motor_neurons = []
 		self.output_dim = output_dim
-		self.pick_cognitive_neurons(self.output_dim)
+		self.pick_motor_neurons(self.output_dim)
 
 		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
 		self.randomly_fire = randomly_fire
-		self.cognitive_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.cognitive_neurons) ))
+		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
 
 		self.dynamic_output = dynamic_output
 
@@ -217,24 +217,24 @@ class Network():
 
 	def _ignite(self):
 		#t0 = time.time()
-		cognitive_fire_counter = 0
+		motor_fire_counter = 0
 		ban_list = []
 		while not self.freezer:
 			if self.randomly_fire:
 				neuron = random.sample(self.nonsensory_neurons,1)[0]
 				if neuron.type == 2:
-					if 1 != random.randint(1,self.cognitive_randomly_fire_rate):
+					if 1 != random.randint(1,self.motor_randomly_fire_rate):
 						continue
 					else:
-						cognitive_fire_counter += 1
+						motor_fire_counter += 1
 				neuron.fire()
-				if cognitive_fire_counter >= len(self.cognitive_neurons):
+				if motor_fire_counter >= len(self.motor_neurons):
 					if self.dynamic_output:
 						print "Output: " + str(self.get_output()) + "\r",
 						sys.stdout.flush()
 					self.output = self.get_output()
 					self.wave_counter += 1
-					cognitive_fire_counter = 0
+					motor_fire_counter = 0
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
@@ -294,15 +294,15 @@ class Network():
 			self.sensory_neurons.append(neuron)
 		print str(input_dim) + " neuron picked as sensory neuron"
 
-	def pick_cognitive_neurons(self,output_dim):
+	def pick_motor_neurons(self,output_dim):
 		available_neurons = []
 		for neuron in self.neurons:
 			if neuron.type is 0:
 				available_neurons.append(neuron)
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
-			self.cognitive_neurons.append(neuron)
-		print str(output_dim) + " neuron picked as cognitive neuron"
+			self.motor_neurons.append(neuron)
+		print str(output_dim) + " neuron picked as motor neuron"
 
 	def load(self,input_arr,output_arr=None):
 		if len(self.sensory_neurons) != len(input_arr):
@@ -316,22 +316,22 @@ class Network():
 				step += 1
 		if output_arr is None:
 			step = 0
-			for neuron in self.cognitive_neurons:
+			for neuron in self.motor_neurons:
 				neuron.desired_potential = None
 				step += 1
 		else:
-			if len(self.cognitive_neurons) != len(output_arr):
+			if len(self.motor_neurons) != len(output_arr):
 				print "Size of the output/target array: " + str(len(output_arr))
-				print "Number of the cognitive_neurons: " + str(len(self.cognitive_neurons))
-				print "Size of the output/target array and number of the cognitive neurons are not matching! Please try again"
+				print "Number of the motor_neurons: " + str(len(self.motor_neurons))
+				print "Size of the output/target array and number of the motor neurons are not matching! Please try again"
 			else:
 				step = 0
-				for neuron in self.cognitive_neurons:
+				for neuron in self.motor_neurons:
 					neuron.desired_potential = output_arr[step]
 					step += 1
 
 	def get_output(self):
 		output = []
-		for neuron in self.cognitive_neurons:
+		for neuron in self.motor_neurons:
 			output.append(neuron.potential)
 		return output
