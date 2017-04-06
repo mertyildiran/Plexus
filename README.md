@@ -27,8 +27,10 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
 <sup>*( c : average connectivity of a neuron )*</sup>
 
 <p align="left">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.gif" alt="Activation function"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation.png" alt="Activation function"/>
 </p>
+
+<!-- LaTeX of above image:  \varphi (x) = \left |  \sin \bigg(\frac{ x^2 }{ \sqrt{c} }\bigg) \right |  -->
 
 <sup>[Draw the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not completely repetitive so a neuron freely walk on this equation without being trapped.</sup>
 
@@ -73,20 +75,26 @@ Functionality of a neuron is relative to its type.
 **potential** is the overall total potential value of all subscriptions multiplied by the corresponding weights. Only in sensory neurons, it is directly assigned by the network. Value of **potential** may only be updated by the neuron's itself and its being calculated by this simple formula each time when the neuron is fired:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_potential.gif" alt="Calculation of potential"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/total_potential.png" alt="Total potential"/>
 </p>
 
-<!-- LaTeX of above image: Total = ( potential_{0} \times weight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{N} \times w_{N} ) \\ \center Potential = \left | sin(T^{2}) \right | -->
+<!-- LaTeX of above image:  \underline{t}otal = ( \underline{p}otential_{0} \times \underline{w}eight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{n} \times w_{n} )  -->
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/apply_activation.png" alt="Apply activation"/>
+</p>
+
+<!-- LaTeX of above image:  \underline{p}otential =  \varphi (t)  -->
 
 **desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then neuron don't learn anything and just calculates potential when it's fired.
 
 **fault** is not calculated just at the output but in every neuron except sensory ones and it is equal to absolute difference between desired potential and current potential.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.gif" alt="Calculation of fault"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.png" alt="Calculation of fault"/>
 </p>
 
-<!-- LaTeX of above image: Fault = \left | \Delta P \right | -->
+<!-- LaTeX of above image:  \underline{f} ault = \left | \Delta p \right |  -->
 
 All numerical values inside a neuron are floating point numbers and all the calculations obey to precision given at start.
 
@@ -95,6 +103,8 @@ All numerical values inside a neuron are floating point numbers and all the calc
 Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Motor Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
 
 The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. They do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons.
+
+The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other non-motor neurons. This is why any neuron holds an additional potential variable called **desired_potential**.
 
 ### Installation
 
@@ -176,32 +186,9 @@ Currently, an individual neuron in a Plexus network is fired randomly by a singl
 
 Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
 
-#### Sensory and Motor Neurons
 
-Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Motor Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
 
-The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. As you can guess they do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons. For example you can prepare the network for the assignment of a 64x64 RGB image like:
 
-```Shell
->>> net.pick_sensory_neurons(12288)
-12288 neuron picked as sensory neuron.
->>> len(net.sensory_neurons)
-12288
->>> net.sensory_neurons[0]
-<plexus.plexus.Neuron instance at 0x7f103d3473f8>
->>> net.sensory_neurons[0].subscriptions
-{}
-```
-
-The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other neurons. This is why any neuron holds an additional potential variable called **desired_potential**. You can define the number of motor neurons similarly by using `net.pick_motor_neurons(output_dim)` function.
-
-As you can imagine, a neuron in a Plexus network, holds an integer object variable called **type** to determine its type.
-
-- `neuron.type = 1` means it's a sensory neuron.
-- `neuron.type = 2` means it's a motor neuron.
-- `neuron.type = 0` means it's neither a sensory nor a motor neuron. It means it's an cognitive interneuron (or just cognitive neuron).
-
-But most important distinction here is being **type 1 or not**. If a neuron is type 1, it's a sensory neurons and it does not fire. And second important distinction is being a neuron with **desired_potential** rather than **None** because if a neuron holds a real value in its desired_potential, it means that it's in trouble now and it has to learn something.
 
 ### Let's Start
 
