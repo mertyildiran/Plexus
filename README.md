@@ -48,7 +48,7 @@ The algorithm is named as **Plexus Network**. Plexus Network has only two classe
 
 When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of a neuron in the network*, *precision of the network* So that the network builds itself.
 
-<p align="left">
+<p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/init.png" alt="Network init function"/>
 </p>
 
@@ -64,7 +64,7 @@ After the network has been successfully created. It will ignite itself automatic
 
 #### Anatomy of a Single Neuron
 
-A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *fault* and *type*
+A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *loss* and *type*
 
 There are eventually there types of neurons:
 
@@ -94,10 +94,10 @@ Functionality of a neuron is relative to its type.
 
 **desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then neuron don't learn anything and just calculates potential when it's fired.
 
-**fault** is not calculated just at the output but in every neuron except sensory ones and it is equal to absolute difference between desired potential and current potential.
+**loss** is calculated not just at the output but in every neuron except sensory ones and it is equal to absolute difference (*distance*) between desired potential and current potential.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_fault.png" alt="Calculation of fault"/>
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_loss.png" alt="Calculation of loss"/>
 </p>
 
 <!-- LaTeX of above image:  \underline{f} ault = \left | \Delta p \right |  -->
@@ -110,7 +110,7 @@ Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexu
 
 The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. They do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons.
 
-The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the fault. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the fault then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other non-motor neurons. This is why any neuron holds an additional potential variable called **desired_potential**.
+The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the loss. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the loss then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other non-motor neurons. This is why any neuron holds an additional potential variable called **desired_potential**.
 
 ### Installation
 

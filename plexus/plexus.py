@@ -25,7 +25,7 @@ class Neuron():
 		self.publications = {}
 		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
 		self.desired_potential = None
-		self.fault = None
+		self.loss = None
 		self.type = 0
 		self.network.neurons.append(self)
 		self.fire_counter = 0
@@ -70,13 +70,13 @@ class Neuron():
 	def activation_function(self,value):
 		return abs(math.sin( (value**2) / self.network.connectivity_sqrt ))
 
-	def calculate_fault(self):
+	def calculate_loss(self):
 		try:
 			return round(abs(self.desired_potential - self.potential), self.network.precision)
 		except:
 			return None
 
-	def calculate_fault_hypothetical(self,potential_hypothetical):
+	def calculate_loss_hypothetical(self,potential_hypothetical):
 		try:
 			return round(abs(self.desired_potential - potential_hypothetical), self.network.precision)
 		except:
@@ -100,12 +100,12 @@ class Neuron():
 			self.fire_counter += 1
 
 			if self.desired_potential != None:
-				self.fault = self.calculate_fault()
+				self.loss = self.calculate_loss()
 				potential_zero = self.potential
 				subscriptions_zero = self.subscriptions.copy()
-				fault_zero = self.fault
+				loss_zero = self.loss
 
-				if self.fault == 0:
+				if self.loss == 0:
 					self.desired_potential = None
 					return True
 
@@ -122,25 +122,25 @@ class Neuron():
 						for neuron, weight in self.subscriptions.iteritems():
 							self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
 						self.potential = self.calculate_potential()
-						self.fault = self.calculate_fault()
-						if self.fault < fault_zero:
+						self.loss = self.calculate_loss()
+						if self.loss < loss_zero:
 							improved = 1
 							break
 
 				if not improved:
 					self.potential = potential_zero
 					self.subscriptions = subscriptions_zero.copy()
-					self.fault = fault_zero
+					self.loss = loss_zero
 					for i in repeat(None, self.network.connectivity_sqrt):
 						subscriptions_hypothetical = self.subscriptions.copy()
 						for neuron, weight in subscriptions_hypothetical.iteritems():
 							subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
 						potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
-						fault_hypothetical = self.calculate_fault_hypothetical(potential_hypothetical)
-						if fault_hypothetical == None:
+						loss_hypothetical = self.calculate_loss_hypothetical(potential_hypothetical)
+						if loss_hypothetical == None:
 							improved = 1
 							break
-						if fault_hypothetical < fault_zero:
+						if loss_hypothetical < loss_zero:
 							for neuron, weight in self.subscriptions.iteritems():
 								if neuron.desired_potential == None:
 									neuron.desired_potential = subscriptions_hypothetical[neuron][1]
