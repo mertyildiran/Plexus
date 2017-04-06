@@ -46,7 +46,7 @@ Reading this paper requires basic knowledge of Computer Science and Neuroscience
 
 The algorithm is named as **Plexus Network**. Plexus Network has only two classes; **Network** and **Neuron**. In a Plexus Network, there are many instances of Neuron class but there is only one instance of Network class.
 
-When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *average connectivity of a neuron in the network*, *precision of the network* So that the network builds itself.
+When you crate a new Plexus Network you give these five parameters to the Network class: *size of the network*, *input dimension*, *output dimension*, *connectivity rate*, *precision of the network* So that the network builds itself.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/init.png" alt="Network init function"/>
@@ -57,7 +57,7 @@ When you crate a new Plexus Network you give these five parameters to the Networ
  - **size** is literally equal to total number of neurons in the network. All neurons are referenced in an instance variable called `Network.neurons`
  - **input dimension** specifies the number of sensory neurons. Sensory neurons are randomly selected from neurons.
  - **output dimension** specifies the number of motor neurons. Motor neurons are randomly selected from non-sensory neurons.
- - **average connectivity of a neuron** specifies the average number of subscriptions made by a single neuron.
+ - number of neurons multiplied by **connectivity rate** gives the average number of subscriptions made by a single neuron.
  - **precision** simply defines the precision of the all calculations will be made by neurons (how many digits after the decimal point).
 
 After the network has been successfully created. It will ignite itself automatically. Ignition in simple terms, no matter if you have plugged in some data or not, it will fire the neurons with using some mechanism very similar to flow of electric current (*will be explained later on this paper*).
@@ -102,7 +102,7 @@ Functionality of a neuron is relative to its type.
 
 <!-- LaTeX of above image:  \underline{f} ault = \left | \Delta p \right |  -->
 
-All numerical values inside a neuron are floating point numbers and all the calculations obey to precision given at start.
+All numerical values inside a neuron are floating point numbers and all the calculations obey to precision that given at start.
 
 #### Sensory and Motor Neurons
 
@@ -111,6 +111,16 @@ Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexu
 The difference of sensory neurons from the cognitive neurons (that neither sensory nor motor ones) is, they do not actually fire. They just stand still for the data load. They do not have any subscriptions to the other neurons (literally no subscriptions). But they can be subscribed by the other neurons, including motor ones. They do not learn, they do not consume any CPU resources. They just stored in the memory. You can assign an image, a frame of a video, or a chunk of an audio to a group of sensory neurons.
 
 The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the loss. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the loss then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons can also dictates a desired potential on the other non-motor neurons. This is why any neuron holds an additional potential variable called **desired_potential**.
+
+#### Partially Subscribe
+
+On the second phase of the network initiation, any non-sensory neurons are forced to subscribe to some non-motor neurons which are selected by random sampling. Length of this sample is also selected by a random sampling (*rounds to nearest integer*) is done from a normal distribution. Such a normal distribution that, the average connectivity of a neuron is the mean, and square root of the mean is the standard deviation. (*e.g. if neurons on average has 100 subscriptions then the mean is 100 and the standard deviation is 10*)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/normal_distribution.png" alt="Normal distribution"/>
+</p>
+
+<!-- LaTeX of above image:  P(x) = \frac{1}{{ \sqrt {2\pi c } }} \ e^{ - \frac{( x - c )^2}{2c}}  -->
 
 ### Installation
 
