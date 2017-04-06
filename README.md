@@ -7,19 +7,20 @@
 These are the core principles of **exceptionally bio-inspired**, a revolutionary approach to the artificial neural networks:
 
  - **Neurons** must be **objects** not tensors between matrices.
- - Each neuron should have **its own thread**.
- - **Network** must be **architecture-free** (adaptive).
+ - Each neuron should have **its own thread** (ideally).
+ - **Network** must be **architecture-free** (i.e. adaptive).
  - Network must have a **layerless design**.
  - There must be fundamentally two types of neurons: **sensory neuron**, **interneuron**.
- - Input of network must be made of sensory neurons. Any interneuron can be picked as a **motor neuron** (an element of output). There is literally no difference between an interneuron and a motor neuron except the intervene of the network for igniting the wick of learning process through motor neurons. Any non-motor interneuron can be assumed as a cognitive neuron.
+ - Input of the network must be made of sensory neurons. Any interneuron can be picked as a **motor neuron** (an element of the output). There is literally no difference between an interneuron and a motor neuron except the intervene of the network for igniting the wick of learning process through the motor neurons. Any non-motor interneuron can be assumed as a **cognitive neuron** which collectively forms the cognition of network.
  - There can be arbitrary amount of I/O groups in a single network.
- - Forget about batch size, iteration, and epoch concepts, training examples must be fed on time basis; *e.g. learn first sample for ten seconds, OK done? then learn second sample for twenty seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
+ - Forget about batch size, iteration, and epoch concepts, training examples must be fed on time basis with a manner like; *learn first sample for ten seconds, OK done? then learn second sample for twenty seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
  - **Network** must be **retrainable**.
- - Network must be **modular**. In other words: You must be able to train a small network and then plug that network into a bigger network (I'm talking about some kind of **self-fusing** here).
- - Neurons must exhibit characteristics of **cellular automata**.
- - **Number of neurons** in network can be increased or decreased (**scalability**).
- - There must be **no** need for a network-wide **oscillation**.
+ - Network must be **modular**. In other words: You must be able to train a small network and then plug that network into a bigger network (we are talking about some kind of **self-fusing** here).
+ - Neurons must exhibit the characteristics of **cellular automata**.
+ - **Number of neurons** in the network can be increased or decreased (**scalability**).
+ - There must be **no** need for a network-wide **oscillation**. Yet the execution of neurons should follow a path very similar to flow of electric current nevertheless it's not compulsory.
  - Network should use **randomness** and/or **uncertainty principle** flawlessly.
+ - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible iterate the dataset on real life situations. Because of that the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network you should follow a path like; *on my left hand there is an apple and on my right hand there is a banana, apple... banana... apple, banana, apple, banana, ...* if you want to teach the difference between apple and banana and don't follow a path like; *apple, apple, apple, apple, banana, banana, banana, banana, ...* More technically; if you have two classes to train the network, use a diverse feed but not grouped feed (*ideally repetitive like 121212121212 but not 1111111222222*).
 
 ### Activation function
 
@@ -29,7 +30,9 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation-small.gif" alt="Activation function"/>
 </p>
 
-Open [the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation and play with the slider to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being trapped.
+<sup>Open [the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation and play with the slider to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not repetitive so a neuron freely walk on this equation without being trapped.</sup>
+
+Rest of the paper will explain the algorithm's itself and usage. An algorithm that implemented by following the criteria listed in Core Principles and by relying on the given activation function above.
 
 ### Installation
 
