@@ -148,7 +148,19 @@ class Neuron():
 							self.blame_lock = self.network.wave_counter
 							break
 
-
+				if not improved:
+					binary_random = random.randint(0,1)
+					quantity = random.randint(1,self.network.connectivity_sqrt)
+					if binary_random == 0:
+						for i in repeat(None, quantity):
+							neuron = random.sample(self.network.nonmotor_neurons,1)[0]
+							self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+							neuron.publications[self] = 0
+					else:
+						for i in repeat(None, quantity):
+							neuron = random.sample(self.subscriptions,1)[0]
+							self.subscriptions.pop(neuron, None)
+							neuron.publications.pop(self, None)
 class Network():
 
 	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False):
