@@ -126,7 +126,7 @@ Even so the Python implementation of Plexus Network is easy to understand, it wi
 
 ### Initiation
 
-```
+```{r, eval = FALSE}
 algorithm initiate the network is
     connectivity ← size * connectivity_rate
     connectivity_sqrt ← sqrt(connectivity)
@@ -146,7 +146,7 @@ Initiation is nothing more than a "make the assignments for once" phase until th
 
 ### Initiate Subscriptions
 
-```
+```{r, eval = FALSE}
 algorithm initiate subscriptions is
     for each neuron in neurons, do
         if neuron is not a sensory neuron, then
@@ -156,7 +156,7 @@ algorithm initiate subscriptions is
 
 ### Partially Subscribe
 
-```
+```{r, eval = FALSE}
 algorithm partially subscribe is
     sample ← randomly sample approximately "connectivity" units of a neuron from within all non-motor neurons
     for each neuron in sample, do
@@ -167,6 +167,36 @@ algorithm partially subscribe is
 ```
 
 The time complexity of the algorithm "initiate subscriptions" is O(n<sup>2</sup>) so it can take a while if the size of the network and connectivity is big.
+
+### Ignite
+
+```{r, eval = FALSE}
+algorithm ignite subscriptions is
+    create an empty ban_list
+    while network is not freezed, do
+        if next_queue is empty, then
+            get the output of network and print it
+            increase the wave_counter
+            if first_queue is empty, then
+                for each neuron in sensory neurons, do
+                    for each target_neuron in neuron.publications, do
+                        append target_neuron to first_queue
+                copy first_queue to next_queue
+        copy next_queue to current_queue
+        empty next_queue
+        for each neuron in ban_list, do
+            if neuron.ban_counter > connectivity_sqrt_sqrt, then
+                remove the neuron from current_queue
+        while current_queue is not empty, do
+            neuron ← select a random neuron from current_queue
+            remove the neuron from current_queue
+            if neuron.ban_counter <= connectivity_sqrt_sqrt, then
+                call neuron.fire()
+                append the neuron to ban_list
+                increase neuron.ban_counter
+                for each target_neuron in neuron.publications, do
+                    append target_neuron to next_queue
+```
 
 ### Installation
 
