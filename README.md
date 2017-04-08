@@ -126,77 +126,106 @@ Even so the Python implementation of Plexus Network is easy to understand, it wi
 
 ### Initiation
 
-```{r, eval = FALSE}
-algorithm initiate the network is
-    connectivity ← size * connectivity_rate
-    connectivity_sqrt ← sqrt(connectivity)
-    connectivity_sqrt_sqrt ← sqrt(connectivity_sqrt)
-    for each item in size, do
-        create neuron
-    pick sensory neurons randomly
-    pick motor neurons randomly
-    determine non-sensory neurons
-    determine non-motor neurons
-    initiate subscriptions
-    initiate instance variables
-    ignite the network
+```pascal
+procedure initiate the network is
+    connectivity ← size * connectivity_rate;
+    connectivity_sqrt ← sqrt(connectivity);
+    connectivity_sqrt_sqrt ← sqrt(connectivity_sqrt);
+    for item in size, do
+        create neuron;
+    end
+    pick sensory neurons randomly;
+    pick motor neurons randomly;
+    determine non-sensory neurons;
+    determine non-motor neurons;
+    initiate subscriptions;
+    initiate instance variables;
+    ignite the network;
 ```
 
-Initiation is nothing more than a "make the assignments for once" phase until the ignition. The final step (ignition) never stops but can be paused.
+Initiation is nothing more than a "make the assignments for once" phase until the ignition. The final step (ignition) never stops but can be paused (if user wants).
 
 ### Initiate Subscriptions
 
-```{r, eval = FALSE}
-algorithm initiate subscriptions is
-    for each neuron in neurons, do
+```pascal
+procedure initiate subscriptions is
+    for neuron in neurons, do
         if neuron is not a sensory neuron, then
-            call neuron.partially_subscribe()
-    return True
+            call neuron.partially_subscribe();
+        end
+    end
+    return True;
 ```
 
 ### Partially Subscribe
 
-```{r, eval = FALSE}
-algorithm partially subscribe is
-    sample ← randomly sample approximately "connectivity" units of a neuron from within all non-motor neurons
-    for each neuron in sample, do
+```pascal
+procedure partially subscribe is
+    sample ← randomly sample approximately "connectivity" units of a neuron from within all non-motor neurons;
+    for neuron in sample, do
         if neuron is not self, then
-            establish a subscription    // weight is randomly assigned
-            establish a publication
-    return True
+            establish a subscription;    // weight is randomly assigned
+            establish a publication;
+        end
+    end
+    return True;
 ```
 
-The time complexity of the algorithm "initiate subscriptions" is O(n<sup>2</sup>) so it can take a while if the size of the network and connectivity is big.
+The time complexity of the procedure "initiate subscriptions" is O(n<sup>2</sup>), so it can take a while if the size of the network and connectivity is big.
 
 ### Ignite
 
-```{r, eval = FALSE}
-algorithm ignite subscriptions is
-    create an empty ban_list
-    while network is not freezed, do
+```pascal
+procedure ignite subscriptions is
+    create an empty ban_list;
+    while network is not frozen, do
         if next_queue is empty, then
-            get the output of network and print it
-            increase the wave_counter
+            get the output of network and print it;
+            increase the wave_counter;
             if first_queue is empty, then
-                for each neuron in sensory neurons, do
-                    for each target_neuron in neuron.publications, do
-                        append target_neuron to first_queue
-                copy first_queue to next_queue
-        copy next_queue to current_queue
-        empty next_queue
-        for each neuron in ban_list, do
+                for neuron in sensory neurons, do
+                    for target_neuron in neuron.publications, do
+                        append target_neuron to first_queue;
+                    end
+                end
+                copy first_queue to next_queue;
+            end
+        end
+        copy next_queue to current_queue;
+        empty next_queue;
+        for neuron in ban_list, do
             if neuron.ban_counter > connectivity_sqrt_sqrt, then
-                remove the neuron from current_queue
+                remove the neuron from current_queue;
+            end
+        end
         while current_queue is not empty, do
-            neuron ← select a random neuron from current_queue
-            remove the neuron from current_queue
+            neuron ← select a random neuron from current_queue;
+            remove the neuron from current_queue;
             if neuron.ban_counter <= connectivity_sqrt_sqrt, then
-                call neuron.fire()
-                append the neuron to ban_list
-                increase neuron.ban_counter
-                for each target_neuron in neuron.publications, do
-                    append target_neuron to next_queue
+                call neuron.fire();
+                append the neuron to ban_list;
+                increase neuron.ban_counter;
+                for target_neuron in neuron.publications, do
+                    append target_neuron to next_queue;
+                end
+            end
+        end
+    end
 ```
+
+Procedure "ignite" regulates the firing order of neurons and creates an effect very similar to flow of electric current, network wide. It continuously runs until the network frozen, nothing else can stop it. It fires the neurons step by step through adding them to a queue.
+
+It generates its first queue from the publications of sensory neurons. Time complexity of `if next_queue is empty, then` block is O(n<sup>2</sup>) but it can be ignored because it runs once per wave.
+
+It eliminates banned neurons with `for neuron in ban_list, do` block. Function of `ban_counter` is giving neurons `connectivity_sqrt_sqrt` amount of chance after they added to `ban_list`. Then it fires the neurons inside current_queue one by one choosing them randomly.
+
+After a neuron fired, it adds the fired neuron to `ban_list` and lastly copies the publications of that neuron to `next_queue` so execution(firing process) can follow the path through the connections.
+
+Each execution from first sensory neuron to last motor neuron symbolizes one wave. Every time a wave finished, procedure falls into `if next_queue is empty, then` block so wave starts over from the sensory neurons.
+
+`ban_counter` and `connectivity_sqrt_sqrt` comparison creates execution loops inside cognitive neurons and these loops act like **memory units** which is a pretty important concept. Because loops creates the relation between currently fed data and previously learned data. Without these loops the network fails on both classification and regression problems.
+
+Because `neuron.fire()` has a time complexity of O(n<sup>2</sup>), each turn inside `while network is not frozen, do` block, has a time complexity of O(n<sup>4</sup>). `while network is not frozen, do` block is ignored because it's an endless loop under normal conditions.
 
 ### Installation
 
