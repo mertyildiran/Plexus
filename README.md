@@ -39,9 +39,7 @@ Implementation of this algorithm in Python programming language is publicly acce
 
 Reading this paper requires basic knowledge of Computer Science and Neuroscience.
 
-## Algorithm
-
-### Basics
+## Basics
 
 Plexus Network has only two classes; **Network** and **Neuron**. In a Plexus Network, there are many instances of Neuron class but there is only one instance of Network class.
 
@@ -66,7 +64,7 @@ When you crate a new Plexus Network you give these five parameters to the Networ
 
 After the network has been successfully created. It will ignite itself automatically. Ignition in simple terms, no matter if you have plugged in some data or not, it will fire the neurons with using some mechanism very similar to flow of electric current (*will be explained later on this paper*).
 
-#### Anatomy of a Single Neuron
+### Anatomy of a Single Neuron
 
 A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *loss* and *type*
 
@@ -105,7 +103,7 @@ Functionality of a neuron is relative to its type.
 
 All numerical values inside a neuron are floating point numbers and all the calculations obey to precision that given at start.
 
-#### Sensory and Motor Neurons
+### Sensory and Motor Neurons
 
 Input Layer in classical neural networks renamed as **Sensory Neurons** in Plexus networks, and Target/Output Layer renamed as **Motor Neurons**. This naming convention is necessary cause the built of the relevance of artificial neural networks with biological neural networks and Neuroscience.
 
@@ -113,7 +111,7 @@ The difference of sensory neurons from the cognitive neurons (that neither senso
 
 The difference of motor neurons form the other neurons is, they are only responsible to the network. They act as the fuse of the learning and calculation of the loss. The network dictates a desired potential on each motor neuron. The motor neuron calculates its potential, compares it with desired potential, calculates the loss then tries to update its weights randomly many times and if it fails, it blames its subscriptions. So just like the network, motor neurons are also able to dictate a desired potential on the other non-motor neurons. This is why any neuron holds an additional potential variable called **desired_potential**.
 
-#### Partially Subscribe
+### Partially Subscribe
 
 On the second phase of the network initiation, any non-sensory neurons are forced to subscribe to some non-motor neurons which are selected by random sampling. Length of this sample is also selected by a random sampling (*rounds to nearest integer*) is done from a normal distribution. Such a normal distribution that, the average number of subscriptions is the mean, and square root of the mean is the standard deviation. (*e.g. if neurons on average has 100 subscriptions then the mean is 100 and the standard deviation is 10*)
 
@@ -121,6 +119,54 @@ On the second phase of the network initiation, any non-sensory neurons are force
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/normal_distribution.png" alt="Normal distribution"/>
 </p>
 <!-- LaTeX of above image:  P(x) = \frac{1}{{ \sqrt {2\pi c } }} \ e^{ - \frac{( x - c )^2}{2c}}  -->
+
+## Algorithm
+
+Even so the Python implementation of Plexus Network is easy to understand, it will be helpful to explain the algorithm in pseudocode.
+
+### Initiation
+
+```
+algorithm initiate the network is
+    connectivity ← size * connectivity_rate
+    connectivity_sqrt ← sqrt(connectivity)
+    connectivity_sqrt_sqrt ← sqrt(connectivity_sqrt)
+    for each item in size, do
+        create neuron
+    pick sensory neurons randomly
+    pick motor neurons randomly
+    determine non-sensory neurons
+    determine non-motor neurons
+    initiate subscriptions
+    initiate instance variables
+    ignite the network
+```
+
+Initiation is nothing more than a "make the assignments for once" phase until the ignition. The final step (ignition) never stops but can be paused.
+
+### Initiate Subscriptions
+
+```
+algorithm initiate subscriptions is
+    for each neuron in neurons, do
+        if neuron is not a sensory neuron, then
+            call neuron.partially_subscribe()
+    return True
+```
+
+### Partially Subscribe
+
+```
+algorithm partially subscribe is
+    sample ← randomly sample approximately "connectivity" units of a neuron from within all non-motor neurons
+    for each neuron in sample, do
+        if neuron is not self, then
+            establish a subscription    // weight is randomly assigned
+            establish a publication
+    return True
+```
+
+The time complexity of the algorithm "initiate subscriptions" is O(n<sup>2</sup>) so it can take a while if the size of the network and connectivity is big.
 
 ### Installation
 
