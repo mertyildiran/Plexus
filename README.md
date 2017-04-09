@@ -264,7 +264,7 @@ procedure fire is
             end
 
             if (still) not improved, then
-                either create new subscriptions;
+                either create some new subscriptions;
                 or break some of the subscriptions;
                 return True;
             end
@@ -279,23 +279,52 @@ If `desired_potential` is not assigned to a value, then it just calculates the p
 
 If `desired_potential` is assigned to a value, then first it calculates the **loss**. If loss is equal to zero, then the current state of the neuron is perfectly well and there is nothing to learn.
 
-If blame_lock is not empty, then pass this function **connectivity times** with this control statement: `if blame_lock is not empty, then`.
+If `blame_lock` is not empty, then it will pass this function **connectivity times** with this control statement: `if blame_lock is not empty, then`.
 
-Try to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If its improved break.
+It tries to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If its improved, then break.
 
-Try to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If its improved break.
+It tries to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If its improved, then break.
 
-If it still does not improved, then either create new subscriptions or break some of the subscriptions and hope it will lead the neuron to new improvements in the future.
+If it still is not improved, then it either creates some new subscriptions or breaks some of the subscriptions it currently has and hopes it will lead the neuron to new improvements in the future.
 
 On the first wave, the **fire** function is only meaningful for motor neurons but after the first wave `desired_potential` dictation will spread throughout the cognitive neurons.
 
-### Installation
+### Load
+
+```pascal
+procedure load (input, output) is
+    if output is None, then
+        for neuron in motor neurons, do
+            neuron.desired_potential ← None;
+        end
+    end
+    if (number of sensory neurons is not equal to input length), then
+        raise an error but do not interrupt the network;
+    else
+        for neuron in sensory neurons, do
+            neuron.potential ← load from the input;
+        end
+    end
+    if (number of motor neurons is not equal to output length), then
+        raise an error but do not interrupt the network;
+    else
+        for neuron in motor neurons, do
+            neuron.desired_potential ← load from the output;
+        end
+    end
+```
+
+Procedure **load** is the only method that you can feed your data to the network. You should call that function and load your data in real time. Also you should do it periodically and continuously, like every 3 seconds. If you leave second parameter empty then this procedure will automatically assume that you are testing the network, so it will replace `desired_potential` values of motor neurons with `None`. Otherwise, it means you are training the network so it will load the input data to sensory neurons and it will load the output data to `desired_potential`s of motor neurons.
+
+## Application
+
+### Installation of the Python Package
 
 ```Shell
 sudo pip install plexus
 ```
 
-## Details & Usage
+### Examples
 
 Install Plexus with:
 
