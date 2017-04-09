@@ -213,7 +213,7 @@ procedure ignite subscriptions is
     end
 ```
 
-Procedure "ignite" regulates the firing order of neurons and creates an effect very similar to flow of electric current, network wide. It continuously runs until the network frozen, nothing else can stop it. It fires the neurons step by step through adding them to a queue.
+Procedure **ignite** regulates the firing order of neurons and creates an effect very similar to flow of electric current, network wide. It continuously runs until the network frozen, nothing else can stop it. It fires the neurons step by step through adding them to a queue.
 
 It generates its first queue from the publications of sensory neurons. Time complexity of `if next_queue is empty, then` block is **O(n<sup>2</sup>)** but it can be ignored (unless there are too many sensory neurons) because it runs once per wave.
 
@@ -226,6 +226,68 @@ Each execution from first sensory neuron to last motor neuron symbolizes one wav
 `ban_counter` and `connectivity_sqrt_sqrt` comparison creates execution loops inside cognitive neurons and these loops act like **memory units** which is a pretty important concept. Because loops create the relation between currently fed data and previously learned data. Without these loops the network fails on both classification and regression problems.
 
 Because `neuron.fire()` has a time complexity of **O(n<sup>2</sup>)**, each turn inside `while network is not frozen, do` block, has a time complexity of **O(n<sup>4</sup>)**. But don't worry because it will approximate to **O(n<sup>3</sup>)** because of the probabilistic nature of fire function and the network will fire more than a million of neurons per minute. By the way, `while network is not frozen, do` block is ignored because it's an endless loop under normal conditions.
+
+### Fire
+
+```pascal
+procedure fire is
+    if self is not a sensory neuron, then
+        potential ← calculate potential;
+        increase fire counter;
+        if desired_potential is not None, then
+
+            loss ← calculate loss;
+            if loss = 0, then
+                desired_potential ← None;
+                return True;
+            end
+            if blame_lock is not empty, then
+                if (wave_counter - blame_lock) < connectivity, then
+                    return True;
+                else
+                    blame_lock ← None;
+            end
+
+            try connectivity times:
+                generate new weights randomly;
+                calculate new potential and new loss according to these weights;
+                if loss_new < loss_current, then return True;
+            end
+
+            try sqrt(connectivity) times:
+                generate hypothetical potentials for neurons in subscriptions randomly;
+                calculate new potential and new loss according to these hypothetical potentials;
+                if loss_new < loss_current, then
+                    apply these hypothetical potentials as "desired_potential"s;
+                    return True;
+                end
+            end
+
+            if (still) not improved, then
+                either create new subscriptions;
+                or break some of the subscriptions;
+                return True;
+            end
+
+        end
+    end
+```
+
+Procedure **fire** handles all feedforwarding, backpropagation and learning process by itself. **fire** function is an instance method of Neuron class. This procedure is by far the most important one in the Plexus Network. It's basically the core function and CPU spends most of its time to execute fire functions again and again.
+
+If `desired_potential` is not assigned to a value, then it just calculates the potential and finishes.
+
+If `desired_potential` is assigned to a value, then first it calculates the **loss**. If loss is equal to zero, then the current state of the neuron is perfectly well and there is nothing to learn.
+
+If blame_lock is not empty, then pass this function **connectivity times** with this control statement: `if blame_lock is not empty, then`.
+
+Try to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If its improved break.
+
+Try to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If its improved break.
+
+If it still does not improved, then either create new subscriptions or break some of the subscriptions and hope it will lead the neuron to new improvements in the future.
+
+On the first wave, the **fire** function is only meaningful for motor neurons but after the first wave `desired_potential` dictation will spread throughout the cognitive neurons.
 
 ### Installation
 
