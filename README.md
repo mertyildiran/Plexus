@@ -66,7 +66,12 @@ After the network has been successfully created. It will ignite itself automatic
 
 ### Anatomy of a Single Neuron
 
-A single neuron in a Plexus Network holds these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *loss* and *type*
+A single neuron in a Plexus Network, takes the network as the only parameter and stores these seven very important information (in it's instance variables): *subscriptions*, *publications*, *potential*, *desired_potential*, *loss* and *type*
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/neuron_init.png" alt="Neuron init function"/>
+</p>
+<!-- LaTeX of above image:  \Xi ( \Theta )  -->
 
 There are eventually there types of neurons:
 
@@ -281,6 +286,11 @@ If `desired_potential` is assigned to a value, then first it calculates the **lo
 
 If `blame_lock` is not empty, then it will pass this function **connectivity times** with this control statement: `if blame_lock is not empty, then`.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/improved.png" alt="Neuron improved"/>
+</p>
+<!-- LaTeX of above image:  if \ \ l' - l < 0 \ \ \ \  then \ \   \Xi ' >  \Xi \ \ \ \ \checkmark  -->
+
 It tries to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If its improved, then break.
 
 It tries to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If its improved, then break.
@@ -314,7 +324,7 @@ procedure load (input, output) is
     end
 ```
 
-Procedure **load** is the only method that you can feed your data to the network. You should call that function and load your data in real time. Also you should do it periodically and continuously, like every 3 seconds. If you leave second parameter empty then this procedure will automatically assume that you are testing the network, so it will replace `desired_potential` values of motor neurons with `None`. Otherwise, it means you are training the network so it will load the input data to sensory neurons and it will load the output data to `desired_potential`s of motor neurons.
+Procedure **load** is the only method that you can feed your data to the network. You should call that function and load your data in real time. Also you should do it periodically and continuously, like every 3 seconds. If you leave second parameter empty then this procedure will automatically assume that you are testing the network, so it will replace `desired_potential` values of motor neurons with `None`. Otherwise, it means you are training the network so it will load the input data to sensory neurons and it will load the output data to `desired_potential` values of motor neurons.
 
 ## Application
 
