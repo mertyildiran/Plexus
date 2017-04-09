@@ -39,6 +39,8 @@ Implementation of this algorithm in Python programming language is publicly acce
 
 Reading this paper requires basic knowledge of Computer Science and Neuroscience.
 
+You can directly skip to [Application](https://github.com/mertyildiran/Plexus#application) part if you are not willing to understand the mathematical and algorithmic background.
+
 ## Basics
 
 Plexus Network has only two classes; **Network** and **Neuron**. In a Plexus Network, there are many instances of Neuron class but there is only one instance of Network class.
@@ -291,9 +293,9 @@ If `blame_lock` is not empty, then it will pass this function **connectivity tim
 </p>
 <!-- LaTeX of above image:  if \ \ l' - l < 0 \ \ \ \  then \ \   \Xi ' >  \Xi \ \ \ \ \checkmark  -->
 
-It tries to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If its improved, then break.
+It tries to improve the current state of the neuron by **updating its weights randomly**, *connectivity times*. If it's improved, then break.
 
-It tries to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If its improved, then break.
+It tries to improve the current state of the neuron by **dictating randomly generated hypothetical potentials over the subscriptions**, *square root of connectivity times*. If it's improved, then break.
 
 If it still is not improved, then it either creates some new subscriptions or breaks some of the subscriptions it currently has and hopes it will lead the neuron to new improvements in the future.
 
@@ -334,164 +336,69 @@ Procedure **load** is the only method that you can feed your data to the network
 sudo pip install plexus
 ```
 
-### Examples
-
-Install Plexus with:
+If you want to install Plexus on development mode:
 
 ```Shell
+git clone https://github.com/mertyildiran/Plexus.git
+cd Plexus/
 pip install -e .
 ```
 
-Create a new network:
-
-```Shell
->>> import plexus
->>> net = plexus.Network(10000)
-
-Precision of the network will be 0.01
-Each individual neuron will subscribe to 100 different neurons
-
-
-10000 neurons created
-Initiated: 10000 neurons
-
-0 neuron picked as sensory neuron
-0 neuron picked as motor neuron
-
-
-Network has been ignited
-
-```
-
-Network will automatically ignite itself when it is created. To freeze the network, call:
-
-```Shell
->>> net.freeze()
-Network is now frozen.
-```
-
-To reignite the network, call:
-
-```Shell
->>> net.ignite()
-Network has been ignited.
-```
-
-### Basics
-
-Each neuron will be referenced inside `net.neurons` array. Try to use `len` built-in function of Python to see how many neurons does your network have:
-
-```Shell
->>> len(net.neurons)
-10000
-```
-
-Now please freeze the network for a moment and take a look at the subscriptions of this first neuron:
-
-```Shell
->>> net.neurons[0].subscriptions
-{<plexus.plexus.Neuron instance at 0x7f27fa600050>: 0.94, <plexus.plexus.Neuron instance at 0x7f27fa8de098>: 0.96, <plexus.plexus.Neuron instance at 0x7f27fafea0e0>: 0.89, <plexus.plexus.Neuron instance at 0x7f27fa76c1b8>: 0.81, <plexus.plexus.Neuron instance at 0x7f27fac5a2d8>: 0.13, <plexus.plexus.Neuron instance at 0x7f27faf54248>: 0.3, <plexus.plexus.Neuron instance at 0x7f27fad3a290>: 0.54, <plexus.plexus.Neuron instance at 0x7f27fa6242d8>: 0.87, <plexus.plexus.Neuron instance at 0x7f27fad14320>: 0.47, <plexus.plexus.Neuron instance at 0x7f27fa6fc7a0>: 0.39, <plexus.plexus.Neuron instance at 0x7f27fa722098>: 0.51, <plexus.plexus.Neuron instance at 0x7f27fa9a1b48>: 0.58, <plexus.plexus.Neuron instance at 0x7f27fad845f0>: 0.54, <plexus.plexus.Neuron instance at 0x7f27faa663f8>: 0.53, <plexus.plexus.Neuron instance at 0x7f27faf130e0>: 0.77, <plexus.plexus.Neuron instance at 0x7f27fadaa440>: 0.75, <plexus.plexus.Neuron instance at 0x7f27fac92488>: 0.46, <plexus.plexus.Neuron instance at 0x7f27fae6d638>: 0.19, <plexus.plexus.Neuron instance at 0x7f27fa8820e0>: 0.23, <plexus.plexus.Neuron instance at 0x7f27fa505bd8>: 0.84, <plexus.plexus.Neuron instance at 0x7f27fa8005a8>: 0.87, <plexus.plexus.Neuron instance at 0x7f27fb0585f0>: 0.29, <plexus.plexus.Neuron instance at 0x7f27fab32638>: 0.47, <plexus.plexus.Neuron instance at 0x7f27faac2680>: 0.28, <plexus.plexus.Neuron instance at 0x7f27fad4c6c8>: 0.54, <plexus.plexus.Neuron instance at 0x7f27fa933128>: 0.63, <plexus.plexus.Neuron instance at 0x7f27fab8ebd8>: 0.24, <plexus.plexus.Neuron instance at 0x7f27fa558758>: 0.54, <plexus.plexus.Neuron instance at 0x7f27fa9be7a0>: 0.57, <plexus.plexus.Neuron instance at 0x7f27fadc56c8>: 0.81, <plexus.plexus.Neuron instance at 0x7f27faeae8c0>: 0.99, <plexus.plexus.Neuron instance at 0x7f27fa5a2908>: 0.93, <plexus.plexus.Neuron instance at 0x7f27fababc68>: 0.91, <plexus.plexus.Neuron instance at 0x7f27fa6fc998>: 0.96, <plexus.plexus.Neuron instance at 0x7f27faee69e0>: 0.89, <plexus.plexus.Neuron instance at 0x7f27fac511b8>: 0.66, <plexus.plexus.Neuron instance at 0x7f27fad1dc68>: 0.52, <plexus.plexus.Neuron instance at 0x7f27fa517710>: 0.28, <plexus.plexus.Neuron instance at 0x7f27fb06cbd8>: 0.99, <plexus.plexus.Neuron instance at 0x7f27fa904c68>: 0.83, <plexus.plexus.Neuron instance at 0x7f27fae88cb0>: 0.7, <plexus.plexus.Neuron instance at 0x7f27fab1e320>: 0.72, <plexus.plexus.Neuron instance at 0x7f27fa600d88>: 0.68, <plexus.plexus.Neuron instance at 0x7f27fac9b248>: 0.39, <plexus.plexus.Neuron instance at 0x7f27fb0c8dd0>: 0.23, <plexus.plexus.Neuron instance at 0x7f27fab0ce60>: 0.31, <plexus.plexus.Neuron instance at 0x7f27fa668ef0>: 0.31, <plexus.plexus.Neuron instance at 0x7f27fac80f38>: 0.38, <plexus.plexus.Neuron instance at 0x7f27fadc57e8>: 0.64, <plexus.plexus.Neuron instance at 0x7f27faf1cf80>: 0.26, <plexus.plexus.Neuron instance at 0x7f27fa88b6c8>: 0.46, <plexus.plexus.Neuron instance at 0x7f27fa5050e0>: 0.2, <plexus.plexus.Neuron instance at 0x7f27faa372d8>: 0.61, <plexus.plexus.Neuron instance at 0x7f27fa599128>: 0.68, <plexus.plexus.Neuron instance at 0x7f27faf13830>: 0.34, <plexus.plexus.Neuron instance at 0x7f27fa6df1b8>: 0.2, <plexus.plexus.Neuron instance at 0x7f27fa517200>: 0.17, <plexus.plexus.Neuron instance at 0x7f27fa82f248>: 0.25, <plexus.plexus.Neuron instance at 0x7f27fa6cd2d8>: 0.67, <plexus.plexus.Neuron instance at 0x7f27fac24dd0>: 0.49, <plexus.plexus.Neuron instance at 0x7f27fab3b3b0>: 0.67, <plexus.plexus.Neuron instance at 0x7f27facd33f8>: 0.75, <plexus.plexus.Neuron instance at 0x7f27fa90dbd8>: 0.51, <plexus.plexus.Neuron instance at 0x7f27faa37440>: 0.65, <plexus.plexus.Neuron instance at 0x7f27fafa9488>: 0.98, <plexus.plexus.Neuron instance at 0x7f27fb0c88c0>: 0.83, <plexus.plexus.Neuron instance at 0x7f27fb527518>: 0.76, <plexus.plexus.Neuron instance at 0x7f27fa683560>: 0.35, <plexus.plexus.Neuron instance at 0x7f27fae7f5a8>: 0.62, <plexus.plexus.Neuron instance at 0x7f27fa695638>: 0.83, <plexus.plexus.Neuron instance at 0x7f27faff3680>: 0.62, <plexus.plexus.Neuron instance at 0x7f27fa90d6c8>: 0.47, <plexus.plexus.Neuron instance at 0x7f27fab4d710>: 0.82, <plexus.plexus.Neuron instance at 0x7f27faa81758>: 0.6, <plexus.plexus.Neuron instance at 0x7f27fa9ff7a0>: 0.55, <plexus.plexus.Neuron instance at 0x7f27fab4d3f8>: 0.27, <plexus.plexus.Neuron instance at 0x7f27fa8537e8>: 0.52, <plexus.plexus.Neuron instance at 0x7f27fa7e5830>: 0.55, <plexus.plexus.Neuron instance at 0x7f27fac19908>: 0.37, <plexus.plexus.Neuron instance at 0x7f27fa5d1950>: 0.28, <plexus.plexus.Neuron instance at 0x7f27fa76c998>: 0.75, <plexus.plexus.Neuron instance at 0x7f27facca440>: 0.98, <plexus.plexus.Neuron instance at 0x7f27fadb39e0>: 0.87, <plexus.plexus.Neuron instance at 0x7f27facd3a70>: 0.48, <plexus.plexus.Neuron instance at 0x7f27fa7d1b48>: 0.94, <plexus.plexus.Neuron instance at 0x7f27fa9579e0>: 0.52, <plexus.plexus.Neuron instance at 0x7f27fbea16c8>: 0.99, <plexus.plexus.Neuron instance at 0x7f27faac20e0>: 0.29, <plexus.plexus.Neuron instance at 0x7f27faeefbd8>: 0.34, <plexus.plexus.Neuron instance at 0x7f27faf13c20>: 0.24, <plexus.plexus.Neuron instance at 0x7f27fa9c7c68>: 0.57, <plexus.plexus.Neuron instance at 0x7f27fa879cf8>: 0.72, <plexus.plexus.Neuron instance at 0x7f27fac07f80>: 0.9, <plexus.plexus.Neuron instance at 0x7f27fa6a9d40>: 0.41, <plexus.plexus.Neuron instance at 0x7f27fa695710>: 0.36, <plexus.plexus.Neuron instance at 0x7f27fa609518>: 0.86, <plexus.plexus.Neuron instance at 0x7f27fb005ea8>: 0.47, <plexus.plexus.Neuron instance at 0x7f27fa85ca70>: 0.78, <plexus.plexus.Neuron instance at 0x7f27fa945ef0>: 0.29, <plexus.plexus.Neuron instance at 0x7f27fa867f80>: 0.57}
-```
-
-The above output tells us how the neuron gets its feed. Each individual key-value pair stores a reference to the subscribed neuron as the key and the weight of that subscription as the value. Learning process in a Plexus network is nothing more than updating those weights and/or adding neurons to this list or dropping neurons from the list.
-
-Each individual neuron holds a floating point number called **potential** which is the only meaningful value except weight. If you want to investigate this word choice, please take a look to its biological counterpart [Action potential](https://en.wikipedia.org/wiki/Action_potential). To read this value:
-
-```Shell
->>> net.neurons[0].potential
-0.91
-```
-
-#### How an individual neuron is fired?
-
-Currently, an individual neuron in a Plexus network is fired randomly by a single-core threaded process. The process picks a neuron from the network randomly and fires it. Firing a neuron literally means calling an instance method named **fire()** and nothing more.
-
-Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
-
-
-
-
-
-### Let's Start
+### Examples
 
 #### Basic Example
 
 <sup>*(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)*</sup>
 
-If you have internalized the concept and the terminology which is unique to the Plexus network, at this point, we can actually start to use it in a simple real life example. Now let's start with creating a relatively small network:
+Suppose you need to train the network to figure out that the elements of given arrays are bigger than 0.5 or not (like `[0.9, 0.6, 1.0, 0.8]` or `[0.1, 0.3, 0.0, 0.4]`) and suppose it's a 4-element array. So let's create a network according to our needs:
 
-```Shell
->>> import plexus
->>> net = plexus.Network(22,4,2,1,1)
-
-Precision of the network will be 0.1
-Each individual neuron will subscribe to 22 different neurons
-
-
-22 neurons created
-Initiated: 22 neurons
-
-4 neuron picked as sensory neuron
-2 neuron picked as motor neuron
-
-
-Network has been ignited
-
+```python
+net = plexus.Network(256,4,2,0.5,1)
 ```
 
-Here is a simple dataset aiming to classify numbers bigger and smaller than 0.5 for this network:
+Because our network is automatically initiated and ignited, now all we have to do is training the network. So let's train our network with 80 samples:
 
-```no-highlight
-Input: [0.6, 0.7, 0.8, 0.9] - Output: [1.0, 0.0]
-Input: [0.4, 0.3, 0.2, 0.1] - Output: [0.0, 1.0]
+```python
+for i in range(1,80):
+    if (i % 2) == 0:
+        net.load(get_a_bigger(), [1.0, 0.0])
+    else:
+        net.load(get_a_smaller(), [0.0, 1.0])
+    time.sleep(3)
 ```
 
-Now let's load the first data:
+You should load your data one by one from each kind, respectively. Because it will prevent over fitting to one specific kind. You must wait a short time like 3 seconds (which is a reasonable duration in such a case), after each load.
 
-```Shell
->>> net.load([0.6, 0.7, 0.8, 0.9], [1.0, 0.0])
-Data was successfully loaded
+`output[0]` will converge to detect **bigger than 0.5** inputs.
+
+`output[1]` will converge to detect **smaller than 0.5** inputs.
+
+Before the testing you should define a criteria called `DOMINANCE_THRESHOLD` so you can catch the decision making. Now let's test the network:
+
+```python
+net.load([0.6, 0.9, 0.7, 1.0])
+expected = [1.0, 0.0]
+
+wave_zero = net.wave_counter
+while True:
+    wave_current = net.wave_counter
+    if wave_current > wave_zero:
+        wave_zero = wave_current
+        output = net.output
+        if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
+            error += abs(expected[0] - output[0])
+            error += abs(expected[1] - output[1])
+            error_divisor += 2
+            break
+    time.sleep(0.001)
 ```
 
-The network will automatically start learning because it's already ignited. Now examine the potential of first motor neuron with entering `net.motor_neurons[0].potential` command through the Python Interactive Shell repeatedly. You should mostly see that the value is either 1.0 or is a very close number to 1.0 like 0.9, 0.8, etc. This is the very simple proof that the Plexus network is learning the data that you have just loaded and echoing the effect through the whole network.
+With the `while` loop given above, you will be able to check the output each time when a wave finished and if one element of the output dominated over the other, you will get that output as your ultimate result.
 
-*Note that, later on a Freeze Lock added to the load process to prevent corruption.*
+When you run the example, you will get a slightly better result than flipping a coin. You will most probably get an **Overall error** between 0.35 - 0.45 which is the proof that the network is able to learning.
 
-Now make sure you have waited at least a few seconds and then plug in the second data:
+By the way, don't forget that; Plexus Network does not iterate over the dataset and runs in real-time. Also there are 10(n<sup>4</sup>) different input options available and you have trained the network just for 4-5 minutes.
 
-```Shell
->>> net.load([0.4, 0.3, 0.2, 0.1], [0.0, 1.0])
-Data was successfully loaded
-```
+#### Note
 
-Just like the previous data, you should experience the similar effect when you examine the value of `net.motor_neurons[0].potential` using the Python Interactive Shell.
-
-You will continue to observe similar trends in the network even if you just plug in only the input arrays like below. Which is the true confirmation that our network successfully learned the dataset.
-
-```Shell
->>> net.load([0.6, 0.7, 0.8, 0.9])
-Data was successfully loaded
->>> net.motor_neurons[0].potential
-0.9
->>> net.load([0.4, 0.3, 0.2, 0.1])
-Data was successfully loaded
->>> net.motor_neurons[0].potential
-0.2
-```
-
-As you can see, maybe the one of the most unique features of Plexus network is, learning process is non-blocking, real-time and interactive.
-
-#### Destroying The Network
-
-Lastly, don't forget to call garbage collector when you want to stop and delete the network:
-
-```Shell
->>> net.freeze()
-Network is now frozen.
->>> net.breakit()
-All the subscriptions are now broken.
->>> del net
->>> import gc
->>> gc.collect()
-340000
-```
+Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
