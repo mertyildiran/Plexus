@@ -122,7 +122,7 @@ On the second phase of the network initiation, any non-sensory neurons are force
 
 ## Algorithm
 
-Even so the Python implementation of Plexus Network is easy to understand, it will be helpful to explain the algorithm in pseudocode.
+Even so the Python implementation of Plexus Network is easy to understand, it will be helpful for readers to explain the algorithm in pseudocode.
 
 ### Initiation
 
@@ -143,7 +143,7 @@ procedure initiate the network is
     ignite the network;
 ```
 
-Initiation is nothing more than a "make the assignments for once" phase until the ignition. The final step (ignition) never stops but can be paused (if user wants).
+Initiation is nothing more than a **make the assignments for once** phase until the ignition. The final step (ignition) never stops but can be paused (if user wants).
 
 ### Initiate Subscriptions
 
@@ -171,7 +171,7 @@ procedure partially subscribe is
     return True;
 ```
 
-The time complexity of the procedure "initiate subscriptions" is O(n<sup>2</sup>), so it can take a while if the size of the network and connectivity is big.
+The time complexity of the procedure **initiate subscriptions** is **O(n<sup>2</sup>)**, so this may take a while if the size of the network and connectivity is big.
 
 ### Ignite
 
@@ -215,17 +215,17 @@ procedure ignite subscriptions is
 
 Procedure "ignite" regulates the firing order of neurons and creates an effect very similar to flow of electric current, network wide. It continuously runs until the network frozen, nothing else can stop it. It fires the neurons step by step through adding them to a queue.
 
-It generates its first queue from the publications of sensory neurons. Time complexity of `if next_queue is empty, then` block is O(n<sup>2</sup>) but it can be ignored because it runs once per wave.
+It generates its first queue from the publications of sensory neurons. Time complexity of `if next_queue is empty, then` block is **O(n<sup>2</sup>)** but it can be ignored (unless there are too many sensory neurons) because it runs once per wave.
 
-It eliminates banned neurons with `for neuron in ban_list, do` block. Function of `ban_counter` is giving neurons `connectivity_sqrt_sqrt` amount of chance after they added to `ban_list`. Then it fires the neurons inside current_queue one by one choosing them randomly.
+It eliminates banned neurons with `for neuron in ban_list, do` block. Function of `ban_counter` is giving neurons `connectivity_sqrt_sqrt` amount of chance after they added to `ban_list`. Then it fires the neurons inside current_queue, one by one, choosing them randomly.
 
 After a neuron fired, it adds the fired neuron to `ban_list` and lastly copies the publications of that neuron to `next_queue` so execution(firing process) can follow the path through the connections.
 
 Each execution from first sensory neuron to last motor neuron symbolizes one wave. Every time a wave finished, procedure falls into `if next_queue is empty, then` block so wave starts over from the sensory neurons.
 
-`ban_counter` and `connectivity_sqrt_sqrt` comparison creates execution loops inside cognitive neurons and these loops act like **memory units** which is a pretty important concept. Because loops creates the relation between currently fed data and previously learned data. Without these loops the network fails on both classification and regression problems.
+`ban_counter` and `connectivity_sqrt_sqrt` comparison creates execution loops inside cognitive neurons and these loops act like **memory units** which is a pretty important concept. Because loops create the relation between currently fed data and previously learned data. Without these loops the network fails on both classification and regression problems.
 
-Because `neuron.fire()` has a time complexity of O(n<sup>2</sup>), each turn inside `while network is not frozen, do` block, has a time complexity of O(n<sup>4</sup>). `while network is not frozen, do` block is ignored because it's an endless loop under normal conditions.
+Because `neuron.fire()` has a time complexity of **O(n<sup>2</sup>)**, each turn inside `while network is not frozen, do` block, has a time complexity of **O(n<sup>4</sup>)**. But don't worry because it will approximate to **O(n<sup>3</sup>)** because of the probabilistic nature of fire function and the network will fire more than a million of neurons per minute. By the way, `while network is not frozen, do` block is ignored because it's an endless loop under normal conditions.
 
 ### Installation
 
