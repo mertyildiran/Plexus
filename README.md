@@ -350,7 +350,7 @@ pip install -e .
 
 <sup>*(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)*</sup>
 
-Suppose you need to train the network to figure out that the elements of given arrays are bigger than 0.5 or not (like `[0.9, 0.6, 1.0, 0.8]` or `[0.1, 0.3, 0.0, 0.4]`) and suppose it's a 4-element array. So let's create a network according to our needs:
+Suppose you need to train the network to figure out that the elements of given arrays are bigger than 0.5 or not (like `[0.9, 0.6, 1.0, 0.8]` or `[0.1, 0.3, 0.0, 0.4]`) and suppose it's a 4-element array. So let's create a network according to your needs:
 
 ```python
 net = plexus.Network(256,4,2,0.5,1)
@@ -395,9 +395,42 @@ while True:
 
 With the `while` loop given above, you will be able to check the output each time when a wave finished and if one element of the output dominated over the other, you will get that output as your ultimate result.
 
-When you run the example, you will get a slightly better result than flipping a coin. You will most probably get an **Overall error** between 0.35 - 0.45 which is the proof that the network is able to learning.
+#### CatDog Example
 
-By the way, don't forget that; Plexus Network does not iterate over the dataset and runs in real-time. Also there are 10(n<sup>4</sup>) different input options available and you have trained the network just for 4-5 minutes.
+<sup>*(you can alternatively run this example with `python examples/catdog.py` command using a pre-written script version of below commands)*</sup>
+
+Suppose you need to train the network to figure out that the given image (32x32 RGB) is an image of a cat or a dog and map them to blue and red respectively. So let's create a network according to your needs:
+
+```python
+net = plexus.Network( (32 * 32 * 3 + 3 + 256), (32 * 32 * 3), 3, 0.05, 3 )
+```
+
+We will plug in 32x32 RGB to the network so we need 3072 sensory neurons. 3 motor neurons for see how RGB our result is and 256 cognitive neurons to train. We need 3 digits precision because we need to store 255 different values between 0.0 and 1.0 range.
+
+Explaining the answer of *How to load CIFAR-10 dataset and use it* is out of the scope of this paper but you can easily understand it by reading the code: `python examples/catdog.py` Once you get the numpy array of CIFAR-10 (or any other image data) just normalize it and load:
+
+```python
+for i in range(1,80):
+    if (i % 2) == 0:
+        cat = random.sample(cats, 1)[0]
+        cat_normalized = np.true_divide(cat, 255).flatten()
+        blue_normalized = np.true_divide(blue, 255).flatten()
+        cv2.imshow("Input", cat)
+        net.load(cat_normalized,blue_normalized)
+    else:
+        dog = random.sample(dogs, 1)[0]
+        dog_normalized = np.true_divide(dog, 255).flatten()
+        red_normalized = np.true_divide(red, 255).flatten()
+        cv2.imshow("Input", dog)
+        net.load(dog_normalized,red_normalized)
+    show_output(net)
+```
+
+Catching the decision making is pretty much same with Basic Example. You will get an **Overall error** as the result very similar to Basic Example although this time the input length was 768 times bigger. This is because Plexus Network amalgamates the problems from all levels of difficulty on a single medium. It makes easy problems relatively hard, and hard problems relatively easy.
+
+When you run this example, you will get a slightly better result when compared to flipping a coin. You will most likely get an **Overall error** between 0.35 - 0.45 which is the proof that the network is able to learn something.
+
+By the way, don't forget that; Plexus Network does not iterate over the dataset and furthermore it runs in real-time. Also you have trained the network just for 4-5 minutes. Now let's see what happens if we train our network for a long period of time:
 
 #### Note
 
