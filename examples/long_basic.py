@@ -36,10 +36,10 @@ minutes = []
 start = time.time()
 print "\n___ PLEXUS NETWORK BASIC EXAMPLE ___\n"
 
-for j in repeat(None, 60):
+print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
 
-    print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-    net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
+for j in repeat(None, 10):
 
     print "\n*** LEARNING ***"
 
@@ -89,7 +89,6 @@ for j in repeat(None, 60):
 
 
     print "\n"
-    net.freeze()
 
     #print ""
     #for neuron in net.neurons:
@@ -105,6 +104,9 @@ for j in repeat(None, 60):
 
     errors.append(error)
     minutes.append( (time.time() - start) / 60 )
+
+
+net.freeze()
 
 print "\nDraw the Graph"
 
