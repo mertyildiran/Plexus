@@ -9,7 +9,7 @@ OUTPUT_SIZE = 2
 CONNECTIVITY = 0.5
 PRECISION = 1
 
-TRAINING_DURATION = 3
+TRAINING_DURATION = 0.01
 DOMINANCE_THRESHOLD = 0.7
 
 RANDOMLY_FIRE = False
@@ -67,18 +67,13 @@ for i in repeat(None, TESTING_SAMPLE_SIZE):
         expected = [0.0, 1.0]
 
     net.load(generated_list)
-    wave_zero = net.wave_counter
-    while True:
-        wave_current = net.wave_counter
-        if wave_current > wave_zero:
-            wave_zero = wave_current
-            output = net.output
-            if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
-                error += abs(expected[0] - output[0])
-                error += abs(expected[1] - output[1])
-                error_divisor += 2
-                break
-        time.sleep(0.001)
+    time.sleep(0.1)
+
+    output = net.output
+    error += abs(expected[0] - output[0])
+    error += abs(expected[1] - output[1])
+    error_divisor += 2
+
     print "Load Input: " + str(generated_list) + "\tRESULT: " + str(output) + "\tExpected: " + str(expected)
 
 

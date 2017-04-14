@@ -23,7 +23,7 @@ class Neuron():
 		self.network = network
 		self.subscriptions = {}
 		self.publications = {}
-		self.potential = round(random.uniform(0.1, 1.0), self.network.precision)
+		self.potential = round(random.uniform(0.0, 1.0), self.network.precision)
 		self.desired_potential = None
 		self.loss = None
 		self.type = 0
@@ -35,7 +35,7 @@ class Neuron():
 	def fully_subscribe(self):
 		for neuron in self.network.neurons[len(self.subscriptions):]:
 			if id(neuron) != id(self):
-				self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+				self.subscriptions[neuron] = round(random.uniform(-1.0, 1.0), self.network.precision)
 
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
@@ -43,7 +43,7 @@ class Neuron():
 			elected = random.sample(self.network.nonmotor_neurons, int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt)))
 			for neuron in elected:
 				if id(neuron) != id(self):
-					self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+					self.subscriptions[neuron] = round(random.uniform(-1.0, 1.0), self.network.precision)
 					neuron.publications[self] = 0
 			self.network.initiated_neurons += 1
 
@@ -68,7 +68,7 @@ class Neuron():
 		return round(self.activation_function(total), self.network.precision)
 
 	def activation_function(self,value):
-		return abs(math.sin( (value**2) / self.network.connectivity_sqrt ))
+		return 1 / (1 + math.exp(-value))
 
 	def calculate_loss(self):
 		try:
@@ -120,7 +120,7 @@ class Neuron():
 				if not improved:
 					for i in repeat(None, self.network.connectivity):
 						for neuron, weight in self.subscriptions.iteritems():
-							self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+							self.subscriptions[neuron] = round(random.uniform(-1.0, 1.0), self.network.precision)
 						self.potential = self.calculate_potential()
 						self.loss = self.calculate_loss()
 						if self.loss < loss_zero:
@@ -134,7 +134,7 @@ class Neuron():
 					for i in repeat(None, self.network.connectivity_sqrt):
 						subscriptions_hypothetical = self.subscriptions.copy()
 						for neuron, weight in subscriptions_hypothetical.iteritems():
-							subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.1, 1.0), self.network.precision)]
+							subscriptions_hypothetical[neuron] = [weight, round(random.uniform(0.0, 1.0), self.network.precision)]
 						potential_hypothetical = self.calculate_potential_hypothetical(subscriptions_hypothetical)
 						loss_hypothetical = self.calculate_loss_hypothetical(potential_hypothetical)
 						if loss_hypothetical == None:
@@ -154,7 +154,7 @@ class Neuron():
 					if binary_random == 0:
 						for i in repeat(None, quantity):
 							neuron = random.sample(self.network.nonmotor_neurons,1)[0]
-							self.subscriptions[neuron] = round(random.uniform(0.1, 1.0), self.network.precision)
+							self.subscriptions[neuron] = round(random.uniform(-1.0, 1.0), self.network.precision)
 							neuron.publications[self] = 0
 					else:
 						for i in repeat(None, quantity):
