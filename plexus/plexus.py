@@ -275,10 +275,6 @@ class Network():
 					neuron = random.choice(current_queue.keys())
 					current_queue.pop(neuron, None)
 					if neuron.ban_counter <= self.connectivity_sqrt_sqrt:
-						if neuron.type == 2:
-							if 1 != random.randint(1,self.motor_randomly_fire_rate):
-								continue
-							neuron.ban_counter = self.connectivity_sqrt_sqrt
 						neuron.fire()
 						ban_list.append(neuron)
 						neuron.ban_counter += 1
