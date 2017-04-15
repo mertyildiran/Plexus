@@ -40,7 +40,10 @@ class Neuron():
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
 			#neuron_count = len(self.network.neurons)
-			elected = random.sample(self.network.nonmotor_neurons, int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt)))
+			sample_length = int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt))
+			if sample_length > len(self.network.nonmotor_neurons):
+				sample_length = len(self.network.nonmotor_neurons)
+			elected = random.sample(self.network.nonmotor_neurons, sample_length)
 			for neuron in elected:
 				if id(neuron) != id(self):
 					self.subscriptions[neuron] = round(random.uniform(-1.0, 1.0), self.network.precision)
@@ -148,7 +151,7 @@ class Neuron():
 							self.blame_lock = self.network.wave_counter
 							break
 
-				if not improved:
+				if False:
 					binary_random = random.randint(0,1)
 					quantity = random.randint(1,self.network.connectivity_sqrt)
 					if binary_random == 0:
@@ -252,6 +255,8 @@ class Network():
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
 					#t0 = time.time()
+					for neuron in self.motor_neurons:
+						neuron.fire()
 					for neuron in ban_list:
 						neuron.ban_counter = 0
 					ban_list = []
@@ -269,12 +274,14 @@ class Network():
 				current_queue = self.next_queue.copy()
 				self.next_queue = {}
 				for neuron in ban_list:
-					if neuron.ban_counter > self.connectivity_sqrt_sqrt:
+					if neuron.ban_counter > self.connectivity_sqrt:
 						current_queue.pop(neuron, None)
 				while current_queue:
 					neuron = random.choice(current_queue.keys())
 					current_queue.pop(neuron, None)
-					if neuron.ban_counter <= self.connectivity_sqrt_sqrt:
+					if neuron.ban_counter <= self.connectivity_sqrt:
+						if neuron.type == 2:
+							continue
 						neuron.fire()
 						ban_list.append(neuron)
 						neuron.ban_counter += 1
@@ -329,7 +336,7 @@ class Network():
 				step += 1
 		if output_arr is None:
 			step = 0
-			for neuron in self.motor_neurons:
+			for neuron in self.neurons:
 				neuron.desired_potential = None
 				step += 1
 		else:

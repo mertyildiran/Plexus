@@ -4,16 +4,16 @@ from itertools import repeat
 import random
 import matplotlib.pyplot as plt
 
-SIZE = 256
+SIZE = 64
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
 CONNECTIVITY = 0.5
 PRECISION = 1
 
-TRAINING_DURATION = 0.01
+TRAINING_DURATION = 0.1
 DOMINANCE_THRESHOLD = 0.7
 
-RANDOMLY_FIRE = False
+RANDOMLY_FIRE = True
 DYNAMIC_OUTPUT = True
 
 TRAINING_SAMPLE_SIZE = 80
@@ -72,7 +72,7 @@ for j in repeat(None, 60):
             expected = [0.0, 1.0]
 
         net.load(generated_list)
-        time.sleep(0.1)
+        time.sleep(TRAINING_DURATION)
 
         output = net.output
         error += abs(expected[0] - output[0])
