@@ -193,6 +193,9 @@ class Network():
 		self.randomly_fire = randomly_fire
 		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
 
+		self.reasoning_length = int(math.sqrt(self.input_dim))
+		self.mini_batch = []
+
 		self.dynamic_output = dynamic_output
 
 		self.initiated_neurons = 0
@@ -266,6 +269,17 @@ class Network():
 					self.output = self.get_output()
 					self.wave_counter += 1
 
+					if self.mini_batch:
+						[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
+						step = 0
+						for neuron in self.sensory_neurons:
+							neuron.potential = input_arr[step]
+							step += 1
+						step = 0
+						for neuron in self.motor_neurons:
+							neuron.desired_potential = output_arr[step]
+							step += 1
+
 					if not self.first_queue:
 						for neuron in self.sensory_neurons:
 							self.first_queue.update(neuron.publications)
@@ -335,6 +349,7 @@ class Network():
 				neuron.potential = input_arr[step]
 				step += 1
 		if output_arr is None:
+			self.mini_batch = []
 			step = 0
 			for neuron in self.neurons:
 				neuron.desired_potential = None
@@ -349,6 +364,9 @@ class Network():
 				for neuron in self.motor_neurons:
 					neuron.desired_potential = output_arr[step]
 					step += 1
+				self.mini_batch.append([input_arr,output_arr])
+				if len(self.mini_batch) > self.reasoning_length:
+					self.mini_batch.pop(0)
 
 	def get_output(self):
 		output = []
