@@ -3,7 +3,7 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 128
+SIZE = 7
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
 CONNECTIVITY = 0.5
@@ -15,7 +15,7 @@ DOMINANCE_THRESHOLD = 0.7
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
 
-TRAINING_SAMPLE_SIZE = 4
+TRAINING_SAMPLE_SIZE = 20
 TESTING_SAMPLE_SIZE = 20
 
 def generate_list_bigger():
