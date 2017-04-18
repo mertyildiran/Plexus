@@ -63,7 +63,7 @@ class Neuron():
 			if self.desired_potential != None:
 
 				if self.blame_lock:
-					if (self.network.wave_counter - self.blame_lock) < self.network.connectivity:
+					if (self.network.wave_counter - self.blame_lock) < (self.network.connectivity * len(self.network.nonsensory_neurons))**3:
 						return True
 					else:
 						self.blame_lock = None
@@ -77,12 +77,12 @@ class Neuron():
 					self.desired_potential = None
 					return True
 
-				alteration_value = (self.loss ** 2) / (len(self.subscriptions) + 1)
+				alteration_value = (self.loss ** 4) / (len(self.subscriptions) + 1)
 
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (alteration_value * alteration_sign)
 					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign)
-					self.blame_lock = self.network.wave_counter
+					#self.blame_lock = self.network.wave_counter
 
 
 class Network():
@@ -127,6 +127,7 @@ class Network():
 		self.next_queue = {}
 		self.output = []
 		self.wave_counter = 0
+		self.batch_lock = 1
 
 		print "\n"
 
@@ -176,16 +177,18 @@ class Network():
 					self.wave_counter += 1
 					motor_fire_counter = 0
 
-					if self.mini_batch:
-						[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
-						step = 0
-						for neuron in self.sensory_neurons:
-							neuron.potential = input_arr[step]
-							step += 1
-						step = 0
-						for neuron in self.motor_neurons:
-							neuron.desired_potential = output_arr[step]
-							step += 1
+					if (self.wave_counter - self.batch_lock) > len(self.nonmotor_neurons):
+						if self.mini_batch:
+							[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
+							step = 0
+							for neuron in self.sensory_neurons:
+								neuron.potential = input_arr[step]
+								step += 1
+							step = 0
+							for neuron in self.motor_neurons:
+								neuron.desired_potential = output_arr[step]
+								step += 1
+							self.batch_lock = self.wave_counter
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
@@ -201,16 +204,18 @@ class Network():
 					self.output = self.get_output()
 					self.wave_counter += 1
 
-					if self.mini_batch:
-						[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
-						step = 0
-						for neuron in self.sensory_neurons:
-							neuron.potential = input_arr[step]
-							step += 1
-						step = 0
-						for neuron in self.motor_neurons:
-							neuron.desired_potential = output_arr[step]
-							step += 1
+					if (self.wave_counter - self.batch_lock) > len(self.nonmotor_neurons):
+						if self.mini_batch:
+							[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
+							step = 0
+							for neuron in self.sensory_neurons:
+								neuron.potential = input_arr[step]
+								step += 1
+							step = 0
+							for neuron in self.motor_neurons:
+								neuron.desired_potential = output_arr[step]
+								step += 1
+							self.batch_lock = self.wave_counter
 
 					if not self.first_queue:
 						for neuron in self.sensory_neurons:
