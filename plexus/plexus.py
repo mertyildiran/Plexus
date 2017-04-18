@@ -11,12 +11,6 @@ import threading
 import gc
 from itertools import repeat
 
-POTENTIAL_RANGE = 110000 # Resting potential: -70 mV Membrane potential range: +40 mV to -70 mV --- Difference: 110 mV = 110000 microVolt --- https://en.wikipedia.org/wiki/Membrane_potential
-ACTION_POTENTIAL = 15000 # Resting potential: -70 mV Action potential: -55 mV --- Difference: 15mV = 15000 microVolt --- https://faculty.washington.edu/chudler/ap.html
-AVERAGE_SYNAPSES_PER_NEURON = 8200 # The average number of synapses per neuron: 8,200 --- http://www.ncbi.nlm.nih.gov/pubmed/2778101
-
-# https://en.wikipedia.org/wiki/Neuron
-
 class Neuron():
 
 	def __init__(self,network):
@@ -32,14 +26,8 @@ class Neuron():
 		self.blame_lock = None
 		self.ban_counter = 0
 
-	def fully_subscribe(self):
-		for neuron in self.network.neurons[len(self.subscriptions):]:
-			if id(neuron) != id(self):
-				self.subscriptions[neuron] = random.uniform(-1.0, 1.0)
-
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
-			#neuron_count = len(self.network.neurons)
 			sample_length = int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt))
 			if sample_length > len(self.network.nonmotor_neurons):
 				sample_length = len(self.network.nonmotor_neurons)
@@ -50,24 +38,10 @@ class Neuron():
 					neuron.publications[self] = 0
 			self.network.initiated_neurons += 1
 
-	def get_neuron_by_id(self,neuron_id):
-		#return ctypes.cast(neuron_id, ctypes.py_object)
-		for neuron in self.network.neurons:
-			if id(neuron) == neuron_id:
-				return neuron
-		raise Exception("Not found")
-
 	def calculate_potential(self):
 		total = 0
 		for neuron, weight in self.subscriptions.iteritems():
 			total += neuron.potential * weight
-		return self.activation_function(total)
-
-	def calculate_potential_hypothetical(self,subscriptions_hypothetical):
-		total = 0
-		for neuron, weight_potential_pair in subscriptions_hypothetical.iteritems():
-			total += weight_potential_pair[1] * weight_potential_pair[0]
-			pass
 		return self.activation_function(total)
 
 	def activation_function(self,value):
@@ -79,23 +53,7 @@ class Neuron():
 		except:
 			return None
 
-	def calculate_loss_hypothetical(self,potential_hypothetical):
-		try:
-			return self.desired_potential - potential_hypothetical
-		except:
-			return None
-
-	def calculate_neurons_with_desired_potential(self):
-		counter = 0
-		for neuron in self.network.neurons:
-			if neuron.desired_potential != None:
-				counter += 1
-		return counter
-
 	def fire(self):
-		#time.sleep(0.001)
-		#print "Neuron fired: " + str(self.network.fire_counter) + "\r",
-		#sys.stdout.flush()
 		if self.type != 1:
 
 			self.potential = self.calculate_potential()
