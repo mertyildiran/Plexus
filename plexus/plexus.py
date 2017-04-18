@@ -104,6 +104,12 @@ class Neuron():
 
 			if self.desired_potential != None:
 
+				if self.blame_lock:
+					if (self.network.wave_counter - self.blame_lock) < self.network.connectivity:
+						return True
+					else:
+						self.blame_lock = None
+
 				self.loss = self.calculate_loss()
 				if self.loss > 0:
 					alteration_sign = 1
@@ -113,17 +119,12 @@ class Neuron():
 					self.desired_potential = None
 					return True
 
-				if self.blame_lock:
-					if (self.network.wave_counter - self.blame_lock) < self.network.connectivity:
-						return True
-					else:
-						self.blame_lock = None
-
 				alteration_value = (self.loss ** 2) / (len(self.subscriptions) + 1)
 
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (alteration_value * alteration_sign)
 					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign)
+					self.blame_lock = self.network.wave_counter
 
 
 class Network():
@@ -216,6 +217,17 @@ class Network():
 					self.output = self.get_output()
 					self.wave_counter += 1
 					motor_fire_counter = 0
+
+					if self.mini_batch:
+						[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
+						step = 0
+						for neuron in self.sensory_neurons:
+							neuron.potential = input_arr[step]
+							step += 1
+						step = 0
+						for neuron in self.motor_neurons:
+							neuron.desired_potential = output_arr[step]
+							step += 1
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
