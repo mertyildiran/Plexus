@@ -1,15 +1,8 @@
 import random
-import itertools
-import time
-import signal
-from multiprocessing import Pool
-import multiprocessing
 import sys
-import ctypes
 import math
 import threading
-import gc
-from itertools import repeat
+#import time
 
 class Neuron():
 

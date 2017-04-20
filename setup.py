@@ -23,9 +23,9 @@ setup(
 	# Versions should comply with PEP440.  For a discussion on single-sourcing
 	# the version across setup.py and the project code, see
 	# https://packaging.python.org/en/latest/single_source_version.html
-	version='0.0.3',
+	version='0.0.4',
 
-	description='Plexus Network is the first object-oriented neural network, moreover, it\'s accelerated with multithreading.',
+	description='Plexus is exceptionally bio-inspired, a revolutionary approach to the artificial neural networks',
 	long_description=long_description,
 
 	# The project's main homepage.
