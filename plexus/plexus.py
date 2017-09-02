@@ -19,6 +19,7 @@ class Neuron():
 		self.blame_lock = None
 		self.ban_counter = 0
 		self.position = (None, None)
+		self.index = None
 
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
@@ -313,18 +314,26 @@ class Network():
 		print "Visualization initiated"
 
 	def _visualize(self):
-		from pyqtgraph.Qt import QtGui, QtCore
 		import pyqtgraph as pg
+		from pyqtgraph.Qt import QtCore, QtGui
+		import numpy as np
 
-		app = QtGui.QApplication([])
-		win = pg.GraphicsWindow(title="Visualization of the Network")
-		win.resize(1000,600)
-
+		# Enable antialiasing for prettier plots
 		pg.setConfigOptions(antialias=True)
 
-		plot = win.addPlot(title="the Network in the Form of a Scatter Plot")
-		#plot.addLegend()
+		w = pg.GraphicsWindow()
+		w.setWindowTitle('Visualization of the Network')
+		v = w.addViewBox()
+		v.setAspectLocked()
 
+		g = pg.GraphItem()
+		v.addItem(g)
+
+		positions = []
+		connections = []
+		lines = []
+		symbols = []
+		symbol_brushes = []
 		x = 0
 		y = 0
 
@@ -332,20 +341,42 @@ class Network():
 		for neuron in self.sensory_neurons:
 			y += 1
 			neuron.position = (x, y)
-			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(250,194,5), symbolPen='w', symbol='t1', symbolSize=14, name="sensory neuron")
+			#plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(250,194,5), symbolPen='w', symbol='t1', symbolSize=14, name="sensory neuron")
+			positions.append(neuron.position)
+			symbols.append('t1')
+			symbol_brushes.append((250,194,5))
+			neuron.index = len(positions) - 1
 
 		x += 1
 		y = 0
 		for neuron in self.interneurons:
 			neuron.position = (random.uniform(x, round(math.sqrt(len(self.interneurons)))+1), random.uniform(y+1, round(math.sqrt(len(self.interneurons)))+1))
-			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
+			#plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
+			positions.append(neuron.position)
+			symbols.append('h')
+			symbol_brushes.append((195,46,212))
+			neuron.index = len(positions) - 1
 
 		x = round(math.sqrt(len(self.interneurons)))+2
 		y = 0
 		for neuron in self.motor_neurons:
 			y += 1
 			neuron.position = (x, y)
-			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(19,234,201), symbolPen='w', symbol='s', symbolSize=14, name="motor neuron")
+			#plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(19,234,201), symbolPen='w', symbol='s', symbolSize=14, name="motor neuron")
+			positions.append(neuron.position)
+			symbols.append('s')
+			symbol_brushes.append((19,234,201))
+			neuron.index = len(positions) - 1
+
+
+		for neuron2 in self.neurons:
+			for neuron1 in neuron2.subscriptions:
+				connections.append((neuron1.index, neuron2.index))
+
+
+		positions = np.asarray(positions)
+		connections = np.asarray(connections)
+		g.setData(pos=positions, adj=connections, pen=(55,55,55), size=0.12, symbolBrush=symbol_brushes, symbol=symbols, pxMode=False) # Update the graph
 
 
 		#plot.plot(x=[2,3], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
