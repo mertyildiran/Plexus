@@ -18,6 +18,7 @@ class Neuron():
 		self.fire_counter = 0
 		self.blame_lock = None
 		self.ban_counter = 0
+		self.position = (None, None)
 
 	def partially_subscribe(self):
 		if len(self.subscriptions) == 0:
@@ -104,6 +105,7 @@ class Network():
 
 		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
 		self.nonmotor_neurons = [x for x in self.neurons if x not in self.motor_neurons]
+		self.interneurons = [x for x in self.neurons if x.type is 0]
 		self.randomly_fire = randomly_fire
 		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
 
@@ -323,15 +325,34 @@ class Network():
 		plot = win.addPlot(title="the Network in the Form of a Scatter Plot")
 		#plot.addLegend()
 
-		plot.plot(x=[1], y=[1,2,3,4], pen=None, symbolBrush=(250,194,5), symbolPen='w', symbol='t1', symbolSize=14, name="sensory neuron")
-		plot.plot(x=[2], y=[1,2,3,4,5,6,7,8], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
-		plot.plot(x=[3], y=[1,2,3,4,5,6,7,8], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
-		plot.plot(x=[4], y=[1,2], pen=None, symbolBrush=(19,234,201), symbolPen='w', symbol='s', symbolSize=14, name="motor neuron")
+		x = 0
+		y = 0
 
-		plot.plot(x=[2,3], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
-		plot.plot(x=[2,2], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
+		x += 1
+		for neuron in self.sensory_neurons:
+			y += 1
+			neuron.position = (x, y)
+			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(250,194,5), symbolPen='w', symbol='t1', symbolSize=14, name="sensory neuron")
 
-		plot.setXRange(0, 4)
+		x += 1
+		y = 0
+		for neuron in self.interneurons:
+			neuron.position = (random.uniform(x, round(math.sqrt(len(self.interneurons)))+1), random.uniform(y+1, round(math.sqrt(len(self.interneurons)))+1))
+			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
+
+		x = round(math.sqrt(len(self.interneurons)))+2
+		y = 0
+		for neuron in self.motor_neurons:
+			y += 1
+			neuron.position = (x, y)
+			plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(19,234,201), symbolPen='w', symbol='s', symbolSize=14, name="motor neuron")
+
+
+		#plot.plot(x=[2,3], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
+		#plot.plot(x=[2,2], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
+
+		#plot.setXRange(0, round(math.sqrt(len(self.interneurons)))+3)
+		#plot.setYRange(0, round(math.sqrt(len(self.interneurons)))+2)
 
 		import sys
 		if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
