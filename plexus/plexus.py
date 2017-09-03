@@ -73,6 +73,7 @@ class Neuron():
 					return True
 
 				alteration_value = math.sqrt(abs(self.loss)) / (len(self.subscriptions) + 1)
+				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
 
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (alteration_value * alteration_sign)
@@ -114,6 +115,8 @@ class Network():
 		self.mini_batch = []
 
 		self.dynamic_output = dynamic_output
+
+		self.decay_factor = 0.99
 
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
