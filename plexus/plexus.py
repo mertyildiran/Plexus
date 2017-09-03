@@ -112,9 +112,6 @@ class Network():
 		self.randomly_fire = randomly_fire
 		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
 
-		self.reasoning_length = int(math.sqrt(self.input_dim))
-		self.mini_batch = []
-
 		self.dynamic_output = dynamic_output
 
 		self.decay_factor = 0.99
@@ -127,7 +124,6 @@ class Network():
 		self.next_queue = {}
 		self.output = []
 		self.wave_counter = 0
-		self.batch_lock = 1
 
 		print "\n"
 
@@ -181,18 +177,6 @@ class Network():
 					self.wave_counter += 1
 					motor_fire_counter = 0
 
-					if (self.wave_counter - self.batch_lock) > len(self.nonmotor_neurons):
-						if self.mini_batch:
-							[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
-							step = 0
-							for neuron in self.sensory_neurons:
-								neuron.potential = input_arr[step]
-								step += 1
-							step = 0
-							for neuron in self.motor_neurons:
-								neuron.desired_potential = output_arr[step]
-								step += 1
-							self.batch_lock = self.wave_counter
 			else:
 				if not self.next_queue:
 					#print "Delta time: " + str(time.time() - t0)
@@ -207,19 +191,6 @@ class Network():
 						sys.stdout.flush()
 					self.output = self.get_output()
 					self.wave_counter += 1
-
-					if (self.wave_counter - self.batch_lock) > len(self.nonmotor_neurons):
-						if self.mini_batch:
-							[input_arr, output_arr] = random.sample(self.mini_batch,1)[0]
-							step = 0
-							for neuron in self.sensory_neurons:
-								neuron.potential = input_arr[step]
-								step += 1
-							step = 0
-							for neuron in self.motor_neurons:
-								neuron.desired_potential = output_arr[step]
-								step += 1
-							self.batch_lock = self.wave_counter
 
 					if not self.first_queue:
 						for neuron in self.sensory_neurons:
@@ -292,7 +263,6 @@ class Network():
 				neuron.potential = input_arr[step]
 				step += 1
 		if output_arr is None:
-			self.mini_batch = []
 			step = 0
 			for neuron in self.motor_neurons:
 				neuron.desired_potential = None
@@ -307,9 +277,6 @@ class Network():
 				for neuron in self.motor_neurons:
 					neuron.desired_potential = output_arr[step]
 					step += 1
-				self.mini_batch.append([input_arr,output_arr])
-				if len(self.mini_batch) > self.reasoning_length:
-					self.mini_batch.pop(0)
 
 	def get_output(self):
 		output = []
@@ -393,4 +360,4 @@ class Network():
 			pg.QtGui.QApplication.processEvents()
 			if self.thread_kill_signal:
 				break
-			time.sleep(0.03)
+			time.sleep(0.01666)
