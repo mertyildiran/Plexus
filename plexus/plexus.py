@@ -44,7 +44,7 @@ class Neuron():
 
 	def calculate_loss(self):
 		try:
-			return self.desired_potential - self.potential
+			return self.potential - self.desired_potential
 		except:
 			return None
 
@@ -65,14 +65,14 @@ class Neuron():
 
 				self.loss = self.calculate_loss()
 				if self.loss > 0:
-					alteration_sign = 1
-				elif self.loss < 0:
 					alteration_sign = -1
+				elif self.loss < 0:
+					alteration_sign = 1
 				else:
 					self.desired_potential = None
 					return True
 
-				alteration_value = (self.loss ** 4) / (len(self.subscriptions) + 1)
+				alteration_value = math.sqrt(abs(self.loss)) / (len(self.subscriptions) + 1)
 
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (alteration_value * alteration_sign)
@@ -104,8 +104,8 @@ class Network():
 		self.output_dim = output_dim
 		self.pick_motor_neurons(self.output_dim)
 
-		self.nonsensory_neurons = [x for x in self.neurons if x not in self.sensory_neurons]
-		self.nonmotor_neurons = [x for x in self.neurons if x not in self.motor_neurons]
+		self.nonsensory_neurons = [x for x in self.neurons if x.type is not 1]
+		self.nonmotor_neurons = [x for x in self.neurons if x.type is not 2]
 		self.interneurons = [x for x in self.neurons if x.type is 0]
 		self.randomly_fire = randomly_fire
 		self.motor_randomly_fire_rate = int(math.sqrt( len(self.nonsensory_neurons)/len(self.motor_neurons) ))
@@ -290,7 +290,7 @@ class Network():
 		if output_arr is None:
 			self.mini_batch = []
 			step = 0
-			for neuron in self.neurons:
+			for neuron in self.motor_neurons:
 				neuron.desired_potential = None
 				step += 1
 		else:
