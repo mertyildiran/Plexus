@@ -3,7 +3,7 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 7
+SIZE = 14
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
 CONNECTIVITY = 1
@@ -14,8 +14,9 @@ DOMINANCE_THRESHOLD = 0.7
 
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
+VISUALIZATION = True
 
-TRAINING_SAMPLE_SIZE = 20
+TRAINING_SAMPLE_SIZE = 40
 TESTING_SAMPLE_SIZE = 20
 
 def generate_list_bigger():
@@ -34,7 +35,7 @@ def generate_list_smaller():
 print "\n___ PLEXUS NETWORK BASIC EXAMPLE ___\n"
 
 print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT,VISUALIZATION)
 
 print "\n*** LEARNING ***"
 

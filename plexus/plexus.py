@@ -2,7 +2,7 @@ import random
 import sys
 import math
 import threading
-#import time
+import time
 
 class Neuron():
 
@@ -82,7 +82,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False):
+	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False,visualization=False):
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
@@ -128,8 +128,11 @@ class Network():
 		print "\n"
 
 		self.freezer = False
-		self.thread = None
-		self.visualize()
+		self.thread1 = None
+		self.thread2 = None
+		self.thread_kill_signal = False
+		if visualization:
+			self.visualize()
 		self.ignite()
 
 		print ""
@@ -237,14 +240,16 @@ class Network():
 
 	def ignite(self):
 		self.freezer = False
-		if not self.thread:
-			self.thread = threading.Thread(target=self._ignite)
-			self.thread.start()
+		if not self.thread1:
+			self.thread1 = threading.Thread(target=self._ignite)
+			self.thread1.start()
 		print "Network has been ignited"
 
 	def freeze(self):
 		self.freezer = True
-		self.thread = None
+		self.thread1 = None
+		self.thread2 = None
+		self.thread_kill_signal = True
 		print "Network is now frozen"
 
 	def breakit(self):
@@ -309,8 +314,8 @@ class Network():
 		return output
 
 	def visualize(self):
-		thread = threading.Thread(target=self._visualize)
-		thread.start()
+		self.thread2 = threading.Thread(target=self._visualize)
+		self.thread2.start()
 		print "Visualization initiated"
 
 	def _visualize(self):
@@ -330,8 +335,6 @@ class Network():
 		v.addItem(g)
 
 		positions = []
-		connections = []
-		lines = []
 		symbols = []
 		symbol_brushes = []
 		x = 0
@@ -343,7 +346,7 @@ class Network():
 			neuron.position = (x, y)
 			#plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(250,194,5), symbolPen='w', symbol='t1', symbolSize=14, name="sensory neuron")
 			positions.append(neuron.position)
-			symbols.append('t1')
+			symbols.append('t')
 			symbol_brushes.append((250,194,5))
 			neuron.index = len(positions) - 1
 
@@ -369,22 +372,21 @@ class Network():
 			neuron.index = len(positions) - 1
 
 
-		for neuron2 in self.neurons:
-			for neuron1 in neuron2.subscriptions:
-				connections.append((neuron1.index, neuron2.index))
+		while True:
+			connections = []
+			lines = []
+			for neuron2 in self.neurons:
+				for neuron1, weight in neuron2.subscriptions.iteritems():
+					connections.append((neuron1.index, neuron2.index))
+					lines.append((55,55,55,((weight+1)/2)*255,(weight+1)))
 
 
-		positions = np.asarray(positions)
-		connections = np.asarray(connections)
-		g.setData(pos=positions, adj=connections, pen=(55,55,55), size=0.12, symbolBrush=symbol_brushes, symbol=symbols, pxMode=False) # Update the graph
+			positions = np.asarray(positions)
+			connections = np.asarray(connections)
+			lines = np.asarray(lines, dtype=[('red',np.ubyte),('green',np.ubyte),('blue',np.ubyte),('alpha',np.ubyte),('width',float)])
+			g.setData(pos=positions, adj=connections, pen=lines, size=0.1, symbolBrush=symbol_brushes, symbol=symbols, pxMode=False) # Update the graph
 
-
-		#plot.plot(x=[2,3], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
-		#plot.plot(x=[2,2], y=[4,6], pen=(195,46,212), symbolBrush=None, symbolPen='w', symbol='h', symbolSize=14, name="connection")
-
-		#plot.setXRange(0, round(math.sqrt(len(self.interneurons)))+3)
-		#plot.setYRange(0, round(math.sqrt(len(self.interneurons)))+2)
-
-		import sys
-		if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-			QtGui.QApplication.instance().exec_()
+			pg.QtGui.QApplication.processEvents()
+			if self.thread_kill_signal:
+				break
+			time.sleep(0.03)
