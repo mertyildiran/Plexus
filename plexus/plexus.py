@@ -26,6 +26,7 @@ class Neuron():
 			sample_length = int(random.normalvariate(self.network.connectivity, self.network.connectivity_sqrt))
 			if sample_length > len(self.network.nonmotor_neurons):
 				sample_length = len(self.network.nonmotor_neurons)
+			if sample_length <= 0: sample_length = 0
 			elected = random.sample(self.network.nonmotor_neurons, sample_length)
 			for neuron in elected:
 				if id(neuron) != id(self):
