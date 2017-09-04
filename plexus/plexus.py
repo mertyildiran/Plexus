@@ -40,8 +40,11 @@ class Neuron():
 			total += neuron.potential * weight
 		return self.activation_function(total)
 
-	def activation_function(self,value):
-		return 1 / (1 + math.exp(-value))
+	def activation_function(self,x):
+		return 1 / (1 + math.exp(-x))
+
+	def derivative(self,x):
+		return x*(1-x)
 
 	def calculate_loss(self):
 		try:
@@ -73,9 +76,12 @@ class Neuron():
 					self.desired_potential = None
 					return True
 
-				blame_value = (abs(self.loss) ** (1/3)) / (len(self.subscriptions) + 1)
-				alteration_value = (abs(self.loss) ** 3) / (len(self.subscriptions) + 1)
+				blame_value = (abs(self.loss) ** (1/2)) / (len(self.subscriptions) + 1)
+				alteration_value = (abs(self.loss) ** 2) / (len(self.subscriptions) + 1)
 				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
+
+				blame_value = self.derivative(blame_value)
+				alteration_value = self.derivative(alteration_value)
 
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (blame_value * alteration_sign)
