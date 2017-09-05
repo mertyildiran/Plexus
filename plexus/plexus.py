@@ -80,12 +80,10 @@ class Neuron():
 				alteration_value = (abs(self.loss) ** 2) / (len(self.subscriptions) + 1)
 				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
 
-				blame_value = self.derivative(blame_value)
-				alteration_value = self.derivative(alteration_value)
 
 				for neuron, weight in self.subscriptions.iteritems():
-					neuron.desired_potential = neuron.potential + (blame_value * alteration_sign)
-					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign)
+					neuron.desired_potential = neuron.potential + (blame_value * alteration_sign) * self.derivative(neuron.potential)
+					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign) * self.derivative(neuron.potential)
 					#self.blame_lock = self.network.wave_counter
 
 
