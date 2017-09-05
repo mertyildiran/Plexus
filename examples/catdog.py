@@ -11,12 +11,13 @@ import time
 SIZE = 32 * 32 * 3 + 3 + 256
 INPUT_SIZE = 32 * 32 * 3
 OUTPUT_SIZE = 3
-CONNECTIVITY = 0.05
+CONNECTIVITY = 0.005
 PRECISION = 3
 
 TRAINING_DURATION = 3
 RANDOMLY_FIRE = False
-DYNAMIC_OUTPUT = False
+DYNAMIC_OUTPUT = True
+VISUALIZATION = False
 
 TRAINING_SAMPLE_SIZE = 20
 TESTING_SAMPLE_SIZE = 20
@@ -41,14 +42,15 @@ def show_output(net,testing=False):
     global error_divisor
 
     if testing:
+        time.sleep(TRAINING_DURATION/2)
         output = net.get_output()
         output_init = output # Only different line
         output = [round(x*255) for x in output]
-        print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
-        sys.stdout.flush()
+        #print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
+        #sys.stdout.flush()
         output = np.full((32, 32, 3), output, dtype='uint8')
         cv2.imshow("Output", output)
-        cv2.waitKey(100)
+        cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
 
         error += abs(testing[2] - output_init[2])
         error += abs(testing[0] - output_init[0])
@@ -57,8 +59,8 @@ def show_output(net,testing=False):
         time.sleep(TRAINING_DURATION/2)
         output = net.get_output()
         output = [round(x*255) for x in output]
-        print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
-        sys.stdout.flush()
+        #print "Red: " + str(output[2]) + "\t" + "Green: " + str(output[1]) + "\t" + "Blue: " + str(output[0]) + "\r",
+        #sys.stdout.flush()
         output = np.full((32, 32, 3), output, dtype='uint8')
         cv2.imshow("Output", output)
         cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
@@ -123,7 +125,7 @@ blue_normalized = np.true_divide(blue, 255)
 red_normalized = np.true_divide(red, 255)
 
 print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
-net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT)
+net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT,VISUALIZATION)
 
 print "\n*** LEARNING ***"
 
