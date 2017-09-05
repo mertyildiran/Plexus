@@ -77,7 +77,7 @@ class Neuron():
 					return True
 
 				blame_value = (abs(self.loss) ** (1/2))
-				alteration_value = (abs(self.loss) ** 2) / (len(self.subscriptions) + 1)
+				alteration_value = (abs(self.loss) ** 2)
 				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
 
 
