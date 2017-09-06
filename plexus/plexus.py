@@ -16,7 +16,6 @@ class Neuron():
 		self.type = 0
 		self.network.neurons.append(self)
 		self.fire_counter = 0
-		self.blame_lock = None
 		self.ban_counter = 0
 		self.position = (None, None)
 		self.index = None
@@ -61,12 +60,6 @@ class Neuron():
 
 			if self.desired_potential != None:
 
-				if self.blame_lock:
-					if (self.network.wave_counter - self.blame_lock) < (self.network.connectivity * len(self.network.nonsensory_neurons))**3:
-						return True
-					else:
-						self.blame_lock = None
-
 				self.loss = self.calculate_loss()
 				if self.loss > 0:
 					alteration_sign = -1
@@ -84,7 +77,6 @@ class Neuron():
 				for neuron, weight in self.subscriptions.iteritems():
 					neuron.desired_potential = neuron.potential + (blame_value * alteration_sign) * self.derivative(neuron.potential)
 					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign) * self.derivative(neuron.potential)
-					#self.blame_lock = self.network.wave_counter
 
 
 class Network():
