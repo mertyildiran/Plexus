@@ -151,7 +151,6 @@ class Network():
 		self.initiate_subscriptions()
 
 	def _ignite(self):
-		#t0 = time.time()
 		motor_fire_counter = 0
 		ban_list = []
 		while not self.freezer:
@@ -173,18 +172,16 @@ class Network():
 
 			else:
 				if not self.next_queue:
-					#print "Delta time: " + str(time.time() - t0)
-					#t0 = time.time()
 					for neuron in self.motor_neurons:
 						neuron.fire()
 					for neuron in ban_list:
 						neuron.ban_counter = 0
 					ban_list = []
-					if self.dynamic_output:
-						print "Output: " + str(self.get_output()) + "\r",
-						sys.stdout.flush()
 					self.output = self.get_output()
 					self.wave_counter += 1
+					if self.dynamic_output:
+						print "Output: " + str(self.output) + "\r",
+						sys.stdout.flush()
 
 					if not self.first_queue:
 						for neuron in self.sensory_neurons:
@@ -356,4 +353,4 @@ class Network():
 			pg.QtGui.QApplication.processEvents()
 			if self.thread_kill_signal:
 				break
-			time.sleep(0.01666)
+			time.sleep(0.0333)
