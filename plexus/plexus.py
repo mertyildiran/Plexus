@@ -258,9 +258,11 @@ class Network():
 				step += 1
 		if output_arr is None:
 			step = 0
-			for neuron in self.motor_neurons:
+			self.freezer = True
+			for neuron in self.nonsensory_neurons:
 				neuron.desired_potential = None
 				step += 1
+			self.freezer = False
 		else:
 			if len(self.motor_neurons) != len(output_arr):
 				print "Size of the output/target array: " + str(len(output_arr))
