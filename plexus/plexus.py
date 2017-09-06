@@ -86,7 +86,6 @@ class Network():
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
 		self.connectivity_sqrt = int(math.sqrt(self.connectivity))
-		self.connectivity_sqrt_sqrt = int(math.sqrt(self.connectivity_sqrt))
 		print "Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
 
 		self.neurons = []
@@ -134,12 +133,10 @@ class Network():
 
 		print ""
 
-	def initiate_subscriptions(self,only_new_ones=0):
+	def initiate_subscriptions(self):
 		print ""
 		for neuron in self.neurons:
 			if neuron.type == 1:
-				continue
-			if only_new_ones and len(neuron.subscriptions) != 0:
 				continue
 			neuron.partially_subscribe()
 			print "Initiated: " + str(self.initiated_neurons) + " neurons\r",
@@ -151,7 +148,7 @@ class Network():
 			Neuron(self)
 		print "\n"
 		print str(units) + " neurons added"
-		self.initiate_subscriptions(1)
+		self.initiate_subscriptions()
 
 	def _ignite(self):
 		#t0 = time.time()
