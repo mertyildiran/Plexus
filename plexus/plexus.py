@@ -69,13 +69,11 @@ class Neuron():
 					self.desired_potential = None
 					return True
 
-				blame_value = (abs(self.loss) ** (1/2))
 				alteration_value = (abs(self.loss) ** 2)
 				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
 
-
 				for neuron, weight in self.subscriptions.iteritems():
-					neuron.desired_potential = neuron.potential + (blame_value * alteration_sign) * self.derivative(neuron.potential)
+					neuron.desired_potential = neuron.potential + alteration_sign * self.derivative(neuron.potential)
 					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign) * self.derivative(neuron.potential)
 
 
