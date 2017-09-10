@@ -3,8 +3,8 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 32 + 1 + 16
-INPUT_SIZE = 32
+SIZE = 256 + 1 + 32
+INPUT_SIZE = 256
 OUTPUT_SIZE = 1
 CONNECTIVITY = 0.5
 PRECISION = 2

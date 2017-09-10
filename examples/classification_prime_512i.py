@@ -3,13 +3,13 @@ import time
 from itertools import repeat
 import random
 
-SIZE = 32 + 1 + 16
-INPUT_SIZE = 32
+SIZE = 512 + 1 + 32
+INPUT_SIZE = 512
 OUTPUT_SIZE = 1
 CONNECTIVITY = 0.5
 PRECISION = 2
 
-TRAINING_DURATION = 1
+TRAINING_DURATION = 2
 DOMINANCE_THRESHOLD = 0.7
 
 RANDOMLY_FIRE = False
