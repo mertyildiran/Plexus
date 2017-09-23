@@ -79,7 +79,7 @@ class Neuron():
 
 class Network():
 
-	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False,visualization=False):
+	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False,visualization=False,decay_factor=1.0):
 		self.precision = precision
 		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
 		self.connectivity = int(size * connectivity)
@@ -108,7 +108,7 @@ class Network():
 
 		self.dynamic_output = dynamic_output
 
-		self.decay_factor = 0.99
+		self.decay_factor = decay_factor
 
 		self.initiated_neurons = 0
 		self.initiate_subscriptions()
