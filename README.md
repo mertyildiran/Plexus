@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/full.gif" alt="Plexus"/>
+  <img src="https://s2.gifyu.com/images/smaller.gif" alt="Plexus"/>
 </p>
 
 ## Core Principles
