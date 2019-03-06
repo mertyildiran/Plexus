@@ -1,12 +1,43 @@
 #include <Python.h>
 #include <iostream>
+#include <cstdlib>
+#include <unordered_map>
+#include <tuple>
+
+#include "random.hpp"
+using Random = effolkronium::random_static;
+
 
 int glob_argc;
 char **glob_argv;
 
+class Neuron
+{
+    std::unordered_map<double, double> subscriptions;
+    std::unordered_map<double, double> publications;
+    double potential = Random::get(0.0, 1.0);
+    double desired_potential;
+    double loss;
+    int type = 0;
+    int fire_counter = 0;
+    int ban_counter = 0;
+    std::tuple<int, int> position;
+    unsigned int index;
+
+public:
+
+    void print()
+    {
+        std::cout << this->potential << '\n';
+    }
+};
+
 static PyObject* hello_world(PyObject* self)
 {
     std::cout << "Hello World!" << std::endl;
+
+    Neuron neuron;
+    neuron.print();
 
     Py_RETURN_NONE;
 }

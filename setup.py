@@ -97,6 +97,10 @@ setup(
 	# pip to create the appropriate form of executable for the target platform.
 	entry_points={},
 	ext_modules=[
-        Extension('cplexus', ['plexus/plexus.cpp'])
+        Extension(
+			'cplexus',
+			['plexus/plexus.cpp'],
+        	language="c++",
+		)
     ]
 )
