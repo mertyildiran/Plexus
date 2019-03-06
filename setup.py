@@ -6,7 +6,7 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 # To use a consistent encoding
 from codecs import open
 from os import path
@@ -96,4 +96,7 @@ setup(
 	# "scripts" keyword. Entry points provide cross-platform support and allow
 	# pip to create the appropriate form of executable for the target platform.
 	entry_points={},
+	ext_modules=[
+        Extension('cplexus', ['plexus/plexus.cpp'])
+    ]
 )
