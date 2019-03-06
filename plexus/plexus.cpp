@@ -7,30 +7,17 @@
 #include "random.hpp"
 using Random = effolkronium::random_static;
 
+#include "neuron.h"
+#include "network.h"
 
 int glob_argc;
 char **glob_argv;
 
-class Neuron
+
+void Neuron::print()
 {
-    std::unordered_map<double, double> subscriptions;
-    std::unordered_map<double, double> publications;
-    double potential = Random::get(0.0, 1.0);
-    double desired_potential;
-    double loss;
-    int type = 0;
-    int fire_counter = 0;
-    int ban_counter = 0;
-    std::tuple<int, int> position;
-    unsigned int index;
-
-public:
-
-    void print()
-    {
-        std::cout << this->potential << '\n';
-    }
-};
+    std::cout << this->potential << '\n';
+}
 
 static PyObject* hello_world(PyObject* self)
 {
