@@ -12,7 +12,7 @@ class Network
     int connectivity_sqrt;
 
     //std::vector<Neuron> neurons;
-    std::vector<Neuron> sensory_neurons;
+    std::vector<Neuron*> sensory_neurons;
     int input_dim;
     std::vector<Neuron> motor_neurons;
     int output_dim;
@@ -38,6 +38,7 @@ class Network
     bool thread_kill_signal;
 
 public:
-    std::vector<Neuron> neurons;
+    std::vector<Neuron*> neurons;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
+    void pick_sensory_neurons(int input_dim);
 };

@@ -20,10 +20,10 @@ double Neuron::get_potential()
     return this->potential;
 }
 
-Neuron::Neuron(Network network)
+Neuron::Neuron(Network& network)
 {
     this->network = &network;
-    this->network->neurons.push_back(*this);
+    this->network->neurons.push_back(&(*this));
 }
 
 Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
@@ -36,12 +36,13 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
 
     this->neurons.reserve(size);
     for (int i = 0; i < size; i++) {
-        Neuron neuron(*this);
+        Neuron* neuron = new Neuron(*this);
     }
     std::cout << size << " neurons created" << '\n';
 
     this->input_dim = input_dim;
-    this->sensory_neurons.reserve(input_dim);
+    this->sensory_neurons.reserve(this->input_dim);
+    this->pick_sensory_neurons(this->input_dim);
 
     this->output_dim = output_dim;
     this->motor_neurons.reserve(output_dim);
@@ -62,9 +63,29 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->thread_kill_signal = false;
 }
 
+void Network::pick_sensory_neurons(int input_dim)
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type == 0) {
+            available_neurons.push_back((*neuron));
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
+    for (int j = 0; j < input_dim; j++) {
+        available_neurons[j]->type = 1;
+        this->sensory_neurons.push_back(available_neurons[j]);
+    }
+    std::cout << input_dim << " neuron picked as sensory neuron" << '\n';
+}
+
 static PyObject* test(PyObject* self)
 {
-    Network network(373);
+    Network* network = new Network(14, 4);
 
     Py_RETURN_NONE;
 }
