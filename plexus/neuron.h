@@ -10,8 +10,8 @@ class Network;
 
 class Neuron
 {
-    //std::unordered_map<Neuron, double> subscriptions;
-    //std::unordered_map<Neuron, double> publications;
+    std::unordered_map<Neuron*, double> subscriptions;
+    std::unordered_map<Neuron*, double> publications;
     double potential = Random::get(0.0, 1.0);
     double desired_potential;
     double loss;
@@ -25,4 +25,5 @@ public:
     int type = 0;
     Neuron(Network &network);
     double get_potential();
+    void partially_subscribe();
 };

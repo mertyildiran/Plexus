@@ -17,7 +17,6 @@ class Network
     int output_dim;
 
     std::vector<Neuron*> nonsensory_neurons;
-    std::vector<Neuron*> nonmotor_neurons;
     std::vector<Neuron*> interneurons;
     bool randomly_fire;
     int motor_randomly_fire_rate;
@@ -38,10 +37,15 @@ class Network
 
 public:
     std::vector<Neuron*> neurons;
+    std::vector<Neuron*> nonmotor_neurons;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
+    void initiate_subscriptions();
     void pick_sensory_neurons(int input_dim);
     void pick_motor_neurons(int output_dim);
     void get_nonsensory_neurons();
     void get_nonmotor_neurons();
     void get_interneurons();
+    int get_connectivity();
+    int get_connectivity_sqrt();
+    void increase_initiated_neurons();
 };

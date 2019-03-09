@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <tuple>
 #include <math.h>
+#include <utility>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -26,12 +27,30 @@ Neuron::Neuron(Network& network)
     this->network->neurons.push_back(&(*this));
 }
 
+void Neuron::partially_subscribe()
+{
+    if (this->subscriptions.size() == 0) {
+        unsigned int sample_length = Random::get(this->network->get_connectivity(), this->network->get_connectivity_sqrt());
+        if (sample_length > this->network->nonmotor_neurons.size())
+            sample_length = this->network->nonmotor_neurons.size();
+        if (sample_length <= 0)
+            sample_length = 0;
+        this->subscriptions.reserve(sample_length);
+        for (unsigned int i = 0; i < sample_length; i++) {
+            Neuron* target_neuron = this->network->nonmotor_neurons[i];
+            this->subscriptions.insert( std::pair<Neuron*, double>(target_neuron, Random::get(-1.0, 1.0)) );
+            target_neuron->publications.insert( std::pair<Neuron*, double>(&(*this), 0.0) );
+        }
+        this->network->increase_initiated_neurons();
+    }
+}
+
 Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
 {
     this->precision = precision;
     std::cout << "\nPrecision of the network will be " << 1.0 / pow(10, precision) << '\n';
-    this->connectivity = size * connectivity;
-    this->connectivity_sqrt = sqrt(connectivity);
+    this->connectivity = std::ceil(size * connectivity);
+    this->connectivity_sqrt = std::ceil(sqrt(connectivity));
     std::cout << "Each individual non-sensory neuron will subscribe to " << this->connectivity << " different neurons" << '\n';
 
     this->neurons.reserve(size);
@@ -59,6 +78,7 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->decay_factor = decay_factor;
 
     this->initiated_neurons = 0;
+    this->initiate_subscriptions();
 
     this->fire_counter = 0;
     this->output.reserve(this->output_dim);
@@ -68,11 +88,27 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->thread_kill_signal = false;
 }
 
+void Network::initiate_subscriptions()
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    unsigned int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type != 1) {
+            (*neuron)->partially_subscribe();
+            std::cout << "Initiated: " << this->initiated_neurons << " neuron(s)\r" << std::flush;
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
+}
+
 void Network::pick_sensory_neurons(int input_dim)
 {
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
-    int i = 0;
+    unsigned int i = 0;
     for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
         if ((*neuron)->type == 0) {
             available_neurons.push_back((*neuron));
@@ -92,7 +128,7 @@ void Network::pick_motor_neurons(int input_dim)
 {
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
-    int i = 0;
+    unsigned int i = 0;
     for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
         if ((*neuron)->type == 0) {
             available_neurons.push_back((*neuron));
@@ -112,7 +148,7 @@ void Network::get_nonsensory_neurons()
 {
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
-    int i = 0;
+    unsigned int i = 0;
     for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
         if ((*neuron)->type != 1) {
             this->nonsensory_neurons.push_back((*neuron));
@@ -127,7 +163,7 @@ void Network::get_nonmotor_neurons()
 {
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
-    int i = 0;
+    unsigned int i = 0;
     for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
         if ((*neuron)->type != 2) {
             this->nonmotor_neurons.push_back((*neuron));
@@ -142,7 +178,7 @@ void Network::get_interneurons()
 {
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
-    int i = 0;
+    unsigned int i = 0;
     for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
         if ((*neuron)->type == 0) {
             this->interneurons.push_back((*neuron));
@@ -151,6 +187,21 @@ void Network::get_interneurons()
             break;
         }
     }
+}
+
+int Network::get_connectivity()
+{
+    return this->connectivity;
+}
+
+int Network::get_connectivity_sqrt()
+{
+    return this->connectivity_sqrt;
+}
+
+void Network::increase_initiated_neurons()
+{
+    this->initiated_neurons += 1;
 }
 
 static PyObject* test(PyObject* self)
