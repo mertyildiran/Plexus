@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "neuron.h"
+class Neuron;
 
 class Network
 {
@@ -11,7 +11,7 @@ class Network
     int connectivity;
     int connectivity_sqrt;
 
-    std::vector<Neuron> neurons;
+    //std::vector<Neuron> neurons;
     std::vector<Neuron> sensory_neurons;
     int input_dim;
     std::vector<Neuron> motor_neurons;
@@ -24,7 +24,7 @@ class Network
     int motor_randomly_fire_rate;
 
     bool dynamic_output;
-    float decay_factor;
+    double decay_factor;
 
     int initiated_neurons;
 
@@ -36,4 +36,8 @@ class Network
 
     bool freezer;
     bool thread_kill_signal;
+
+public:
+    std::vector<Neuron> neurons;
+    Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
 };

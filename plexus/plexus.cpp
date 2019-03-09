@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <unordered_map>
 #include <tuple>
+#include <math.h>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -14,23 +15,70 @@ int glob_argc;
 char **glob_argv;
 
 
-void Neuron::print()
+double Neuron::get_potential()
 {
-    std::cout << this->potential << '\n';
+    return this->potential;
+}
+
+Neuron::Neuron(Network network)
+{
+    this->network = &network;
+    this->network->neurons.push_back(*this);
+}
+
+Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
+{
+    this->precision = precision;
+    std::cout << "\nPrecision of the network will be " << 1.0 / pow(10, precision) << '\n';
+    this->connectivity = size * connectivity;
+    this->connectivity_sqrt = sqrt(connectivity);
+    std::cout << "Each individual non-sensory neuron will subscribe to " << this->connectivity << " different neurons" << '\n';
+
+    this->neurons.reserve(size);
+    for (int i = 0; i < size; i++) {
+        Neuron neuron(*this);
+    }
+    std::cout << size << " neurons created" << '\n';
+
+    this->input_dim = input_dim;
+    this->sensory_neurons.reserve(input_dim);
+
+    this->output_dim = output_dim;
+    this->motor_neurons.reserve(output_dim);
+
+    this->randomly_fire = randomly_fire;
+
+    this->dynamic_output = dynamic_output;
+
+    this->decay_factor = decay_factor;
+
+    this->initiated_neurons = 0;
+
+    this->fire_counter = 0;
+    this->output.reserve(this->output_dim);
+    this->wave_counter = 0;
+
+    this->freezer = false;
+    this->thread_kill_signal = false;
+}
+
+static PyObject* test(PyObject* self)
+{
+    Network network(373);
+
+    Py_RETURN_NONE;
 }
 
 static PyObject* hello_world(PyObject* self)
 {
     std::cout << "Hello World!" << std::endl;
 
-    Neuron neuron;
-    neuron.print();
-
     Py_RETURN_NONE;
 }
 
 static PyMethodDef cplexus_funcs[] = {
     {"hello_world", (PyCFunction)hello_world, METH_VARARGS, NULL},
+    {"test", (PyCFunction)test, METH_VARARGS, NULL},
     {NULL}
 };
 
