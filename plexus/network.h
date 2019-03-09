@@ -14,7 +14,7 @@ class Network
     //std::vector<Neuron> neurons;
     std::vector<Neuron*> sensory_neurons;
     int input_dim;
-    std::vector<Neuron> motor_neurons;
+    std::vector<Neuron*> motor_neurons;
     int output_dim;
 
     std::vector<Neuron> nonsensory_neurons;
@@ -41,4 +41,5 @@ public:
     std::vector<Neuron*> neurons;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
     void pick_sensory_neurons(int input_dim);
+    void pick_motor_neurons(int output_dim);
 };

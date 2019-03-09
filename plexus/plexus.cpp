@@ -45,7 +45,8 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->pick_sensory_neurons(this->input_dim);
 
     this->output_dim = output_dim;
-    this->motor_neurons.reserve(output_dim);
+    this->motor_neurons.reserve(this->output_dim);
+    this->pick_motor_neurons(this->output_dim);
 
     this->randomly_fire = randomly_fire;
 
@@ -83,9 +84,29 @@ void Network::pick_sensory_neurons(int input_dim)
     std::cout << input_dim << " neuron picked as sensory neuron" << '\n';
 }
 
+void Network::pick_motor_neurons(int input_dim)
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type == 0) {
+            available_neurons.push_back((*neuron));
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
+    for (int j = 0; j < input_dim; j++) {
+        available_neurons[j]->type = 2;
+        this->motor_neurons.push_back(available_neurons[j]);
+    }
+    std::cout << input_dim << " neuron picked as motor neuron" << '\n';
+}
+
 static PyObject* test(PyObject* self)
 {
-    Network* network = new Network(14, 4);
+    Network* network = new Network(14, 4, 2);
 
     Py_RETURN_NONE;
 }
