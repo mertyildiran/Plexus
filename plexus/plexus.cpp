@@ -48,7 +48,11 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->motor_neurons.reserve(this->output_dim);
     this->pick_motor_neurons(this->output_dim);
 
+    this->get_nonsensory_neurons();
+    this->get_nonmotor_neurons();
+    this->get_interneurons();
     this->randomly_fire = randomly_fire;
+    this->motor_randomly_fire_rate = sqrt( this->nonsensory_neurons.size() / this->motor_neurons.size() );
 
     this->dynamic_output = dynamic_output;
 
@@ -102,6 +106,51 @@ void Network::pick_motor_neurons(int input_dim)
         this->motor_neurons.push_back(available_neurons[j]);
     }
     std::cout << input_dim << " neuron picked as motor neuron" << '\n';
+}
+
+void Network::get_nonsensory_neurons()
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type != 1) {
+            this->nonsensory_neurons.push_back((*neuron));
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
+}
+
+void Network::get_nonmotor_neurons()
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type != 2) {
+            this->nonmotor_neurons.push_back((*neuron));
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
+}
+
+void Network::get_interneurons()
+{
+    std::vector<Neuron*> available_neurons;
+    std::vector<Neuron*>::iterator neuron;
+    int i = 0;
+    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+        if ((*neuron)->type == 0) {
+            this->interneurons.push_back((*neuron));
+        }
+        if (i == this->neurons.size()) {
+            break;
+        }
+    }
 }
 
 static PyObject* test(PyObject* self)
