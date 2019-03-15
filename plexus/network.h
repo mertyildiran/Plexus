@@ -5,6 +5,15 @@
 
 class Neuron;
 
+enum NeuronType
+{
+    SENSORY_NEURON,
+    MOTOR_NEURON,
+    INTER_NEURON,
+    NON_MOTOR_NEURON,
+    NON_SENSORY_NEURON
+};
+
 class Network
 {
     int precision;
@@ -45,6 +54,7 @@ public:
     void get_nonsensory_neurons();
     void get_nonmotor_neurons();
     void get_interneurons();
+    void get_neurons_by_type(NeuronType neuron_type);
     int get_connectivity();
     int get_connectivity_sqrt();
     void increase_initiated_neurons();
