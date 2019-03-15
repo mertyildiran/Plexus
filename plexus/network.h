@@ -7,9 +7,9 @@ class Neuron;
 
 enum NeuronType
 {
+    INTER_NEURON,
     SENSORY_NEURON,
     MOTOR_NEURON,
-    INTER_NEURON,
     NON_MOTOR_NEURON,
     NON_SENSORY_NEURON
 };
@@ -49,11 +49,7 @@ public:
     std::vector<Neuron*> nonmotor_neurons;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
     void initiate_subscriptions();
-    void pick_sensory_neurons(int input_dim);
-    void pick_motor_neurons(int output_dim);
-    void get_nonsensory_neurons();
-    void get_nonmotor_neurons();
-    void get_interneurons();
+    void pick_neurons_by_type(int output_dim, NeuronType neuron_type);
     void get_neurons_by_type(NeuronType neuron_type);
     int get_connectivity();
     int get_connectivity_sqrt();
