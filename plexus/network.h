@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <thread>
 
 class Neuron;
 
@@ -42,15 +43,20 @@ class Network
     int wave_counter;
 
     bool freezer;
+    std::thread thread1;
+    std::thread thread2;
     bool thread_kill_signal;
+
+    void initiate_subscriptions();
+    void pick_neurons_by_type(int output_dim, NeuronType neuron_type);
+    void get_neurons_by_type(NeuronType neuron_type);
+    static void _ignite();
+    void ignite();
 
 public:
     std::vector<Neuron*> neurons;
     std::vector<Neuron*> nonmotor_neurons;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
-    void initiate_subscriptions();
-    void pick_neurons_by_type(int output_dim, NeuronType neuron_type);
-    void get_neurons_by_type(NeuronType neuron_type);
     int get_connectivity();
     int get_connectivity_sqrt();
     void increase_initiated_neurons();

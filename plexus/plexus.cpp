@@ -5,6 +5,7 @@
 #include <tuple>
 #include <math.h>
 #include <utility>
+#include <thread>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -86,6 +87,7 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
 
     this->freezer = false;
     this->thread_kill_signal = false;
+    this->ignite();
 }
 
 void Network::initiate_subscriptions()
@@ -102,6 +104,20 @@ void Network::initiate_subscriptions()
             break;
         }
     }
+}
+
+void Network::_ignite()
+{
+    std::cout << "Inside _ignite" << '\n';
+}
+
+void Network::ignite()
+{
+    this->freezer = false;
+    this->thread1 = std::thread{std::ref(this->_ignite)};
+    //this->thread1.detach();
+    this->thread1.join();
+    std::cout << "Network has been ignited" << '\n';
 }
 
 void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
