@@ -75,6 +75,38 @@ double Neuron::calculate_loss()
     }
 }
 
+bool Neuron::fire()
+{
+    if (this->type != 1) {
+
+        this->potential = this->calculate_potential();
+        this->network->fire_counter++;
+
+        if (this->desired_potential != 0) {
+
+            this->loss = this->calculate_loss();
+            int alteration_sign;
+            if (this->loss > 0) {
+                alteration_sign = -1;
+            } else if (this->loss < 0) {
+                alteration_sign = 1;
+            } else {
+                this->desired_potential = 0;
+                return true;
+            }
+
+            double alteration_value = pow(fabs(this->loss), 2);
+            alteration_value = alteration_value * pow(this->network->get_decay_factor(), (this->network->fire_counter/1000));
+
+            for (auto& it: this->subscriptions) {
+                it.first->desired_potential = it.first->potential + alteration_sign * this->derivative(it.first->potential);
+                this->subscriptions[it.first] = it.second + (alteration_value * alteration_sign) * this->derivative(it.first->potential);
+            }
+        }
+    }
+}
+
+
 Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
 {
     this->precision = precision;
@@ -248,6 +280,11 @@ int Network::get_connectivity()
 int Network::get_connectivity_sqrt()
 {
     return this->connectivity_sqrt;
+}
+
+int Network::get_decay_factor()
+{
+    return this->decay_factor;
 }
 
 void Network::increase_initiated_neurons()

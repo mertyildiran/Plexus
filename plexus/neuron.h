@@ -31,4 +31,5 @@ public:
     Neuron(Network &network);
     double get_potential();
     void partially_subscribe();
+    bool fire();
 };

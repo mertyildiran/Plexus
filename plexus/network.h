@@ -36,7 +36,6 @@ class Network
 
     int initiated_neurons;
 
-    int fire_counter;
     std::unordered_map<double, double> first_queue;
     std::unordered_map<double, double> next_queue;
     std::vector<double> output;
@@ -56,9 +55,11 @@ class Network
 public:
     std::vector<Neuron*> neurons;
     std::vector<Neuron*> nonmotor_neurons;
+    int fire_counter;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
     int get_connectivity();
     int get_connectivity_sqrt();
+    int get_decay_factor();
     void increase_initiated_neurons();
 };
 
