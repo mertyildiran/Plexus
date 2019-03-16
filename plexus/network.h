@@ -36,8 +36,8 @@ class Network
 
     int initiated_neurons;
 
-    std::unordered_map<double, double> first_queue;
-    std::unordered_map<double, double> next_queue;
+    std::unordered_map<Neuron*, double> first_queue;
+    std::unordered_map<Neuron*, double> next_queue;
     std::vector<double> output;
     int wave_counter;
 
@@ -51,6 +51,7 @@ class Network
     void get_neurons_by_type(NeuronType neuron_type);
     static void _ignite(Network* network);
     void ignite();
+    std::vector<double> get_output();
 
 public:
     std::vector<Neuron*> neurons;

@@ -7,6 +7,7 @@
 #include <utility>
 #include <thread>
 #include <stdexcept>
+#include <ostream>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -170,21 +171,74 @@ void Network::initiate_subscriptions()
 void Network::_ignite(Network* network)
 {
     std::cout << "Inside _ignite" << '\n';
-    int motor_fire_counter = 0;
-    std::vector<Neuron> ban_list;
+    unsigned int motor_fire_counter = 0;
+    std::vector<Neuron*> ban_list;
     while (network->freezer == false) {
         if (network->randomly_fire) {
             Neuron* neuron = random_unique(network->sensory_neurons.begin(), network->sensory_neurons.end(), 1)[0];
-            if (neuron->type == 2) {
+            if (neuron->type == MOTOR_NEURON) {
                 if (1 != Random::get(1, network->motor_randomly_fire_rate))
                     continue;
                 else
                     motor_fire_counter++;
-
-                // TODO
+            }
+            neuron->fire();
+            if (motor_fire_counter >= network->motor_neurons.size()) {
+                if (network->dynamic_output) {
+                    std::cout << "Output: ";
+                    std::copy(network->get_output().begin(), network->get_output().end(), std::ostream_iterator<int>(std::cout, " "));
+                    std::cout << '\n' << std::flush;
+                }
+                network->output = network->get_output();
+                network->wave_counter++;
+                motor_fire_counter = 0;
             }
         } else {
+            if (network->next_queue.empty()) {
+                for (auto& neuron: network->motor_neurons) {
+                    neuron->fire();
+                }
+                for (auto& neuron: ban_list) {
+                    neuron->ban_counter = 0;
+                }
+                ban_list.clear();
+                if (network->dynamic_output) {
+                    std::cout << "Output: ";
+                    std::copy(network->get_output().begin(), network->get_output().end(), std::ostream_iterator<int>(std::cout, " "));
+                    std::cout << '\n' << std::flush;
+                }
+                network->output = network->get_output();
+                network->wave_counter++;
 
+                if (network->first_queue.empty()) {
+                    for (auto& neuron: network->sensory_neurons) {
+                        network->first_queue.insert(neuron->publications.begin(), neuron->publications.end());
+                    }
+                }
+                network->next_queue = network->first_queue;
+            }
+
+            std::unordered_map<Neuron*, double> current_queue = network->next_queue;
+            network->next_queue.clear();
+            for (auto& neuron: ban_list) {
+                if (neuron->ban_counter > network->get_connectivity_sqrt())
+                    current_queue.erase(neuron);
+            }
+            while (current_queue.size() > 0) {
+                auto it = current_queue.begin();
+                std::advance(it, rand() % current_queue.size());
+                Neuron* neuron = it->first;
+                current_queue.erase(neuron);
+                if (neuron->ban_counter <= network->get_connectivity_sqrt()) {
+                    if (neuron->type == MOTOR_NEURON) {
+                        continue;
+                    }
+                    neuron->fire();
+                    ban_list.push_back(neuron);
+                    neuron->ban_counter++;
+                    network->next_queue.insert(neuron->publications.begin(), neuron->publications.end());
+                }
+            }
         }
         break;
     }
@@ -290,6 +344,16 @@ int Network::get_decay_factor()
 void Network::increase_initiated_neurons()
 {
     this->initiated_neurons += 1;
+}
+
+std::vector<double> Network::get_output()
+{
+    std::vector<double> output;
+    for (auto& neuron: this->motor_neurons) {
+        int decimals = this->precision * 10;
+        output.push_back(roundf(neuron->potential * decimals) / decimals);
+    }
+    return output;
 }
 
 static PyObject* test(PyObject* self)
