@@ -6,6 +6,7 @@
 #include <math.h>
 #include <utility>
 #include <thread>
+#include <stdexcept>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -84,7 +85,7 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
 
     this->neurons.reserve(size);
     for (int i = 0; i < size; i++) {
-        Neuron* neuron = new Neuron(*this);
+        new Neuron(*this);
     }
     std::cout << size << " neurons created" << '\n';
 
@@ -189,6 +190,9 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
                 available_neurons[j]->type = MOTOR_NEURON;
                 this->motor_neurons.push_back(available_neurons[j]);
                 break;
+            default:
+                throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts SENSORY_NEURON or MOTOR_NEURON as the neuron type!");
+                break;
         }
     }
     switch (neuron_type) {
@@ -197,6 +201,9 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
             break;
         case MOTOR_NEURON:
             std::cout << input_dim << " neuron picked as motor neuron" << '\n';
+            break;
+        default:
+            throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts SENSORY_NEURON or MOTOR_NEURON as the neuron type!");
             break;
     }
 }
@@ -222,6 +229,10 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
                 if ((*neuron)->type == INTER_NEURON) {
                     this->interneurons.push_back((*neuron));
                 }
+                break;
+            default:
+                throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts NON_SENSORY_NEURON, NON_MOTOR_NEURON or INTER_NEURON as the neuron type!");
+                break;
         }
         if (i == this->neurons.size()) {
             break;
