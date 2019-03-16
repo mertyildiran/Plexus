@@ -106,15 +106,32 @@ void Network::initiate_subscriptions()
     }
 }
 
-void Network::_ignite()
+void Network::_ignite(Network* network)
 {
     std::cout << "Inside _ignite" << '\n';
+    int motor_fire_counter = 0;
+    std::vector<Neuron> ban_list;
+    while (network->freezer == false) {
+        if (network->randomly_fire) {
+            Neuron* neuron = random_unique(network->sensory_neurons.begin(), network->sensory_neurons.end(), 1)[0];
+            if (neuron->type == 2) {
+                if (1 != Random::get(1, network->motor_randomly_fire_rate))
+                    continue;
+                else
+                    motor_fire_counter++;
+
+            }
+        } else {
+
+        }
+        break;
+    }
 }
 
 void Network::ignite()
 {
     this->freezer = false;
-    this->thread1 = std::thread{std::ref(this->_ignite)};
+    this->thread1 = std::thread{&this->_ignite, this};
     //this->thread1.detach();
     this->thread1.join();
     std::cout << "Network has been ignited" << '\n';

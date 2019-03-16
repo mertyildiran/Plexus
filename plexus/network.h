@@ -50,7 +50,7 @@ class Network
     void initiate_subscriptions();
     void pick_neurons_by_type(int output_dim, NeuronType neuron_type);
     void get_neurons_by_type(NeuronType neuron_type);
-    static void _ignite();
+    static void _ignite(Network* network);
     void ignite();
 
 public:
@@ -61,3 +61,17 @@ public:
     int get_connectivity_sqrt();
     void increase_initiated_neurons();
 };
+
+// Function to get a random sampling from a vector using Fisher-Yates shuffle method
+template<class BidiIter >
+BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
+    size_t left = std::distance(begin, end);
+    while (num_random--) {
+        BidiIter r = begin;
+        std::advance(r, rand()%left);
+        std::swap(*begin, *r);
+        ++begin;
+        --left;
+    }
+    return begin;
+}
