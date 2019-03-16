@@ -46,6 +46,34 @@ void Neuron::partially_subscribe()
     }
 }
 
+double Neuron::calculate_potential()
+{
+    double total = 0;
+    for (auto& it: this->subscriptions) {
+        total += it.first->potential * it.second;
+    }
+    return total;
+}
+
+double Neuron::activation_function(double x)
+{
+    return 1 / (1 + exp(-x));
+}
+
+double Neuron::derivative(double x)
+{
+    return x * (1 - x);
+}
+
+double Neuron::calculate_loss()
+{
+    try {
+        return this->potential - this->desired_potential;
+    } catch (const std::exception& e) {
+        return 0;
+    }
+}
+
 Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
 {
     this->precision = precision;
@@ -120,6 +148,7 @@ void Network::_ignite(Network* network)
                 else
                     motor_fire_counter++;
 
+                // TODO
             }
         } else {
 
@@ -218,6 +247,7 @@ void Network::increase_initiated_neurons()
 static PyObject* test(PyObject* self)
 {
     Network* network = new Network(14, 4, 2);
+    //network->nonsensory_neurons[0]->calculate_potential();
 
     Py_RETURN_NONE;
 }

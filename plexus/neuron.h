@@ -20,6 +20,11 @@ class Neuron
     std::tuple<int, int> position;
     unsigned int index;
 
+    double calculate_potential();
+    double activation_function(double x);
+    double derivative(double x);
+    double calculate_loss();
+
 public:
     Network *network;
     int type = 0;
