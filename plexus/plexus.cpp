@@ -19,11 +19,6 @@ int glob_argc;
 char **glob_argv;
 
 
-double Neuron::get_potential()
-{
-    return this->potential;
-}
-
 Neuron::Neuron(Network& network)
 {
     this->network = &network;
@@ -33,7 +28,8 @@ Neuron::Neuron(Network& network)
 void Neuron::partially_subscribe()
 {
     if (this->subscriptions.size() == 0) {
-        unsigned int sample_length = Random::get(this->network->get_connectivity(), this->network->get_connectivity_sqrt());
+        std::normal_distribution<double> distribution(this->network->get_connectivity(), this->network->get_connectivity_sqrt());
+        unsigned int sample_length = static_cast<unsigned int>(roundf(distribution(this->generator)));
         if (sample_length > this->network->nonmotor_neurons.size())
             sample_length = this->network->nonmotor_neurons.size();
         if (sample_length <= 0)

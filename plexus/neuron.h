@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <random>
 
 #include "random.hpp"
 using Random = effolkronium::random_static;
@@ -15,6 +16,7 @@ class Neuron
     int fire_counter = 0;
     std::tuple<int, int> position;
     unsigned int index;
+    std::default_random_engine generator;
 
     double calculate_potential();
     double activation_function(double x);
@@ -29,7 +31,6 @@ public:
     int type = 0;
     int ban_counter = 0;
     Neuron(Network &network);
-    double get_potential();
     void partially_subscribe();
     bool fire();
 };
