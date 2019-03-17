@@ -62,6 +62,8 @@ public:
     int get_connectivity_sqrt();
     int get_decay_factor();
     void increase_initiated_neurons();
+    void freeze();
+    void breakit();
 };
 
 // Function to get a random sampling from a vector using Fisher-Yates shuffle method

@@ -170,7 +170,6 @@ void Network::initiate_subscriptions()
 
 void Network::_ignite(Network* network)
 {
-    std::cout << "Inside _ignite" << '\n';
     unsigned int motor_fire_counter = 0;
     std::vector<Neuron*> ban_list;
     while (network->freezer == false) {
@@ -240,7 +239,7 @@ void Network::_ignite(Network* network)
                 }
             }
         }
-        break;
+        //break;
     }
 }
 
@@ -249,8 +248,23 @@ void Network::ignite()
     this->freezer = false;
     this->thread1 = std::thread{&this->_ignite, this};
     //this->thread1.detach();
-    this->thread1.join();
+    //this->thread1.join();
     std::cout << "Network has been ignited" << '\n';
+}
+
+void Network::freeze()
+{
+    this->freezer = true;
+    this->thread_kill_signal = true;
+    std::cout << "Network is now frozen" << '\n';
+}
+
+void Network::breakit()
+{
+    for (auto& neuron: this->neurons) {
+        neuron->subscriptions.clear();
+    }
+    std::cout << "All the subscriptions are now broken" << '\n';
 }
 
 void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)

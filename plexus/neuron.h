@@ -10,7 +10,6 @@ class Network;
 
 class Neuron
 {
-    std::unordered_map<Neuron*, double> subscriptions;
     double desired_potential;
     double loss;
     int fire_counter = 0;
@@ -24,6 +23,7 @@ class Neuron
 
 public:
     Network *network;
+    std::unordered_map<Neuron*, double> subscriptions;
     std::unordered_map<Neuron*, double> publications;
     double potential = Random::get(0.0, 1.0);
     int type = 0;
