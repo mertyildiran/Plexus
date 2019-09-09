@@ -1,5 +1,4 @@
 import random
-import sys
 import math
 import threading
 import time
@@ -35,7 +34,7 @@ class Neuron():
 
 	def calculate_potential(self):
 		total = 0
-		for neuron, weight in self.subscriptions.iteritems():
+		for neuron, weight in self.subscriptions.items():
 			total += neuron.potential * weight
 		return self.activation_function(total)
 
@@ -72,7 +71,7 @@ class Neuron():
 				alteration_value = (abs(self.loss) ** 2)
 				alteration_value = alteration_value * (self.network.decay_factor ** (self.network.fire_counter/1000))
 
-				for neuron, weight in self.subscriptions.iteritems():
+				for neuron, weight in self.subscriptions.items():
 					neuron.desired_potential = neuron.potential + alteration_sign * self.derivative(neuron.potential)
 					self.subscriptions[neuron] = weight + (alteration_value * alteration_sign) * self.derivative(neuron.potential)
 
@@ -81,16 +80,16 @@ class Network():
 
 	def __init__(self,size,input_dim=0,output_dim=0,connectivity=0.01,precision=2,randomly_fire=False,dynamic_output=False,visualization=False,decay_factor=1.0):
 		self.precision = precision
-		print "\nPrecision of the network will be " + str( 1.0 / (10**precision) )
+		print("\nPrecision of the network will be " + str( 1.0 / (10**precision) ))
 		self.connectivity = int(size * connectivity)
 		self.connectivity_sqrt = int(math.sqrt(self.connectivity))
-		print "Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons"
+		print("Each individual non-sensory neuron will subscribe to " + str(int(size * connectivity)) + " different neurons")
 
 		self.neurons = []
 		for i in range(size):
 			Neuron(self)
-		print "\n"
-		print str(size) + " neurons created"
+		print("\n")
+		print(str(size) + " neurons created")
 
 		self.sensory_neurons = []
 		self.input_dim = input_dim
@@ -119,7 +118,7 @@ class Network():
 		self.output = []
 		self.wave_counter = 0
 
-		print "\n"
+		print("\n")
 
 		self.freezer = False
 		self.thread1 = None
@@ -129,23 +128,22 @@ class Network():
 			self.visualize()
 		self.ignite()
 
-		print ""
+		print("")
 
 	def initiate_subscriptions(self):
-		print ""
+		print("")
 		for neuron in self.neurons:
 			if neuron.type == 1:
 				continue
 			neuron.partially_subscribe()
-			print "Initiated: " + str(self.initiated_neurons) + " neurons\r",
-			sys.stdout.flush()
-		print "\n"
+			print("Initiated: " + str(self.initiated_neurons) + " neurons\r", sep=' ', end='', flush=True)
+		print("\n")
 
 	def add_neurons(self,units):
 		for i in range(units):
 			Neuron(self)
-		print "\n"
-		print str(units) + " neurons added"
+		print("\n")
+		print(str(units) + " neurons added")
 		self.initiate_subscriptions()
 
 	def _ignite(self):
@@ -162,8 +160,7 @@ class Network():
 				neuron.fire()
 				if motor_fire_counter >= len(self.motor_neurons):
 					if self.dynamic_output:
-						print "Output: " + str(self.get_output()) + "\r",
-						sys.stdout.flush()
+						print("Output: " + str(self.get_output()) + "\r", sep=' ', end='', flush=True)
 					self.output = self.get_output()
 					self.wave_counter += 1
 					motor_fire_counter = 0
@@ -178,8 +175,7 @@ class Network():
 					self.output = self.get_output()
 					self.wave_counter += 1
 					if self.dynamic_output:
-						print "Output: " + str(self.output) + "\r",
-						sys.stdout.flush()
+						print("Output: " + str(self.output) + "\r", sep=' ', end='', flush=True)
 
 					if not self.first_queue:
 						for neuron in self.sensory_neurons:
@@ -192,7 +188,7 @@ class Network():
 					if neuron.ban_counter > self.connectivity_sqrt:
 						current_queue.pop(neuron, None)
 				while current_queue:
-					neuron = random.choice(current_queue.keys())
+					neuron = random.choice(list(current_queue.keys()))
 					current_queue.pop(neuron, None)
 					if neuron.ban_counter <= self.connectivity_sqrt:
 						if neuron.type == 2:
@@ -207,19 +203,19 @@ class Network():
 		if not self.thread1:
 			self.thread1 = threading.Thread(target=self._ignite)
 			self.thread1.start()
-		print "Network has been ignited"
+		print("Network has been ignited")
 
 	def freeze(self):
 		self.freezer = True
 		self.thread1 = None
 		self.thread2 = None
 		self.thread_kill_signal = True
-		print "Network is now frozen"
+		print("Network is now frozen")
 
 	def breakit(self):
 		for neuron in self.neurons:
 			neuron.subscriptions = {}
-		print "All the subscriptions are now broken"
+		print("All the subscriptions are now broken")
 
 	def pick_sensory_neurons(self,input_dim):
 		available_neurons = []
@@ -229,7 +225,7 @@ class Network():
 		for neuron in random.sample(available_neurons,input_dim):
 			neuron.type = 1
 			self.sensory_neurons.append(neuron)
-		print str(input_dim) + " neuron picked as sensory neuron"
+		print(str(input_dim) + " neuron picked as sensory neuron")
 
 	def pick_motor_neurons(self,output_dim):
 		available_neurons = []
@@ -239,13 +235,13 @@ class Network():
 		for neuron in random.sample(available_neurons,output_dim):
 			neuron.type = 2
 			self.motor_neurons.append(neuron)
-		print str(output_dim) + " neuron picked as motor neuron"
+		print(str(output_dim) + " neuron picked as motor neuron")
 
 	def load(self,input_arr,output_arr=None):
 		if len(self.sensory_neurons) != len(input_arr):
-			print "Size of the input array: " + str(len(input_arr))
-			print "Number of the sensory neurons: " + str(len(self.sensory_neurons))
-			print "Size of the input array and number of the sensory neurons are not matching! Please try again"
+			print("Size of the input array: " + str(len(input_arr)))
+			print("Number of the sensory neurons: " + str(len(self.sensory_neurons)))
+			print("Size of the input array and number of the sensory neurons are not matching! Please try again")
 		else:
 			step = 0
 			for neuron in self.sensory_neurons:
@@ -260,9 +256,9 @@ class Network():
 			self.freezer = False
 		else:
 			if len(self.motor_neurons) != len(output_arr):
-				print "Size of the output/target array: " + str(len(output_arr))
-				print "Number of the motor_neurons: " + str(len(self.motor_neurons))
-				print "Size of the output/target array and number of the motor neurons are not matching! Please try again"
+				print("Size of the output/target array: " + str(len(output_arr)))
+				print("Number of the motor_neurons: " + str(len(self.motor_neurons)))
+				print("Size of the output/target array and number of the motor neurons are not matching! Please try again")
 			else:
 				step = 0
 				for neuron in self.motor_neurons:
@@ -278,7 +274,7 @@ class Network():
 	def visualize(self):
 		self.thread2 = threading.Thread(target=self._visualize)
 		self.thread2.start()
-		print "Visualization initiated"
+		print("Visualization initiated")
 
 	def _visualize(self):
 		import pyqtgraph as pg
@@ -338,7 +334,7 @@ class Network():
 			connections = []
 			lines = []
 			for neuron2 in self.neurons:
-				for neuron1, weight in neuron2.subscriptions.iteritems():
+				for neuron1, weight in neuron2.subscriptions.items():
 					connections.append((neuron1.index, neuron2.index))
 					lines.append((55,55,55,((weight+1)/2)*255,(weight+1)))
 

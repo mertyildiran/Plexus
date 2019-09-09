@@ -66,11 +66,11 @@ def show_output(net,testing=False):
         cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
 
 
-print "\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n"
+print("\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n")
 
-print "Load CIFAR-10 dataset"
-print "Pick random " + str(TRAINING_SAMPLE_SIZE) + " cat and " + str(TRAINING_SAMPLE_SIZE) + " dog images from the CIFAR-10 data batch to TRAIN the network"
-print "Pick random " + str(TESTING_SAMPLE_SIZE) + " cat and " + str(TESTING_SAMPLE_SIZE) + " dog images from the CIFAR-10 test batch to TEST the network"
+print("Load CIFAR-10 dataset")
+print("Pick random " + str(TRAINING_SAMPLE_SIZE) + " cat and " + str(TRAINING_SAMPLE_SIZE) + " dog images from the CIFAR-10 data batch to TRAIN the network")
+print("Pick random " + str(TESTING_SAMPLE_SIZE) + " cat and " + str(TESTING_SAMPLE_SIZE) + " dog images from the CIFAR-10 test batch to TEST the network")
 
 # Load CIFAR-10 dataset
 path = './examples/cifar-10-batches-py/'
@@ -124,12 +124,12 @@ red = np.array([0, 0, 255])
 blue_normalized = np.true_divide(blue, 255)
 red_normalized = np.true_divide(red, 255)
 
-print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
+print("Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision")
 net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT,VISUALIZATION)
 
-print "\n*** LEARNING ***"
+print("\n*** LEARNING ***")
 
-print "\nMap " + str(TRAINING_SAMPLE_SIZE/2) + " Different Cat Images to Color Blue & " + str(TRAINING_SAMPLE_SIZE/2) + " Different Dog Images to Color Red - Training Duration: " + str(TRAINING_DURATION * TRAINING_SAMPLE_SIZE) + " seconds (OpenCV latency not included)"
+print("\nMap " + str(TRAINING_SAMPLE_SIZE/2) + " Different Cat Images to Color Blue & " + str(TRAINING_SAMPLE_SIZE/2) + " Different Dog Images to Color Red - Training Duration: " + str(TRAINING_DURATION * TRAINING_SAMPLE_SIZE) + " seconds (OpenCV latency not included)")
 for i in range(1,TRAINING_SAMPLE_SIZE):
     if (i % 2) == 0:
         cat = random.sample(cats, 1)[0]
@@ -146,7 +146,7 @@ for i in range(1,TRAINING_SAMPLE_SIZE):
     show_output(net)
 
 
-print "\nTest " + str(TESTING_SAMPLE_SIZE/2) + " Different Cat Images & " + str(TESTING_SAMPLE_SIZE/2) + " Different Dog Images - Testing Duration: " + str(TRAINING_DURATION * TESTING_SAMPLE_SIZE) + " seconds (OpenCV latency not included)"
+print("\nTest " + str(TESTING_SAMPLE_SIZE/2) + " Different Cat Images & " + str(TESTING_SAMPLE_SIZE/2) + " Different Dog Images - Testing Duration: " + str(TRAINING_DURATION * TESTING_SAMPLE_SIZE) + " seconds (OpenCV latency not included)")
 for i in range(1,TESTING_SAMPLE_SIZE):
     binary_random = random.randint(0,1)
     if binary_random == 0:
@@ -166,10 +166,10 @@ for i in range(1,TESTING_SAMPLE_SIZE):
 net.freeze()
 cv2.destroyAllWindows()
 
-print "\n" + str(net.wave_counter) + " waves are executed throughout the network"
+print("\n" + str(net.wave_counter) + " waves are executed throughout the network")
 
-print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
+print("\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n")
 
-print "\nOverall error: " + str(error/error_divisor) + "\n"
+print("\nOverall error: " + str(error/error_divisor) + "\n")
 
-print "Exit the program"
+print("Exit the program")

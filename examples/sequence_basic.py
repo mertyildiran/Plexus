@@ -37,25 +37,25 @@ def generate_dataset():
 
 
 
-print "\n___ PLEXUS NETWORK BASIC SEQUENCE RECOGNITION EXAMPLE ___\n"
+print("\n___ PLEXUS NETWORK BASIC SEQUENCE RECOGNITION EXAMPLE ___\n")
 
-print "Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision"
+print("Create a Plexus network with " + str(SIZE) + " neurons, " + str(INPUT_SIZE) + " of them sensory, " + str(OUTPUT_SIZE) + " of them motor, " + str(CONNECTIVITY) + " connectivity rate, " + str(PRECISION) + " digit precision")
 net = plexus.Network(SIZE,INPUT_SIZE,OUTPUT_SIZE,CONNECTIVITY,PRECISION,RANDOMLY_FIRE,DYNAMIC_OUTPUT,VISUALIZATION)
 
-print "\n*** LEARNING ***"
+print("\n*** LEARNING ***")
 
-print "\nGenerate The Dataset (" + str(TRAINING_SAMPLE_SIZE) + " Items Long) To Recognize a Sequence & Learn for " + str(TRAINING_DURATION) + " Seconds Each"
+print("\nGenerate The Dataset (" + str(TRAINING_SAMPLE_SIZE) + " Items Long) To Recognize a Sequence & Learn for " + str(TRAINING_DURATION) + " Seconds Each")
 for i in range(1,TRAINING_SAMPLE_SIZE):
     dataset = generate_dataset()
     for data in dataset:
-        print "Load Input: " + str(data) + "\tand wait " + str(TRAINING_DURATION) + " seconds"
+        print("Load Input: " + str(data) + "\tand wait " + str(TRAINING_DURATION) + " seconds")
         net.load(data[0], data[1])
         time.sleep(TRAINING_DURATION)
 
 
-print "\n\n*** TESTING ***"
+print("\n\n*** TESTING ***")
 
-print "\nTest the network with random data (" + str(TESTING_SAMPLE_SIZE) + " times)"
+print("\nTest the network with random data (" + str(TESTING_SAMPLE_SIZE) + " times)")
 error = 0
 error_divisor = 0
 for i in repeat(None, TESTING_SAMPLE_SIZE):
@@ -68,18 +68,18 @@ for i in repeat(None, TESTING_SAMPLE_SIZE):
         error += abs(data[1][0] - output[0])
         error_divisor += 1
 
-        print "Load Input: " + str(data) + "\tRESULT: " + str(output[0])
+        print("Load Input: " + str(data) + "\tRESULT: " + str(output[0]))
 
 
-print "\n"
+print("\n")
 net.freeze()
 
 
-print "\n" + str(net.wave_counter) + " waves are executed throughout the network"
+print("\n" + str(net.wave_counter) + " waves are executed throughout the network")
 
-print "\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n"
+print("\nIn total: " + str(net.fire_counter) + " times a random non-sensory neuron fired\n")
 
 error = error / error_divisor
-print "\nOverall error: " + str(error) + "\n"
+print("\nOverall error: " + str(error) + "\n")
 
-print "Exit the program"
+print("Exit the program")
