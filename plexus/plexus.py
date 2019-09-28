@@ -197,6 +197,7 @@ class Network():
 						ban_list.append(neuron)
 						neuron.ban_counter += 1
 						self.next_queue.update(neuron.publications)
+			time.sleep(0.001)
 
 	def ignite(self):
 		self.freezer = False
@@ -308,18 +309,19 @@ class Network():
 			symbol_brushes.append((250,194,5))
 			neuron.index = len(positions) - 1
 
-		x += 1
-		y = 0
+		x += len(self.sensory_neurons)
+		y = (len(self.sensory_neurons) - len(self.interneurons)) / 2
 		for neuron in self.interneurons:
-			neuron.position = (random.uniform(x, round(math.sqrt(len(self.interneurons)))+1), random.uniform(y+1, round(math.sqrt(len(self.interneurons)))+1))
+			y += 1
+			neuron.position = (random.uniform(x - len(self.sensory_neurons)/1.5, x + len(self.sensory_neurons)/1.5), y)
 			#plot.plot(x=[neuron.position[0]], y=[neuron.position[1]], pen=None, symbolBrush=(195,46,212), symbolPen='w', symbol='h', symbolSize=14, name="interneuron")
 			positions.append(neuron.position)
 			symbols.append('h')
 			symbol_brushes.append((195,46,212))
 			neuron.index = len(positions) - 1
 
-		x = round(math.sqrt(len(self.interneurons)))+2
-		y = 0
+		x += len(self.sensory_neurons)
+		y = (len(self.sensory_neurons) - len(self.motor_neurons)) / 2
 		for neuron in self.motor_neurons:
 			y += 1
 			neuron.position = (x, y)
