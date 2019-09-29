@@ -386,10 +386,25 @@ typedef struct {
     Network * ptrObj;
 } PyNetwork;
 
-static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwds)
+static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
 // initialize PyNetwork Object
 {
-    self->ptrObj=new Network(14, 4, 2);
+    int size;
+    int input_dim = 0;
+    int output_dim = 0;
+    double connectivity = 0.01;
+    int precision = 2;
+    bool randomly_fire = false;
+    bool dynamic_output = false;
+    bool visualization = false;
+    double decay_factor =  1.0;
+
+    static char *kwlist[] = {"size", "input_dim", "output_dim", "connectivity", "precision", "randomly_fire", "dynamic_output", "visualization", "decay_factor", NULL};
+
+    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "i|iidipppd", kwlist, &size, &input_dim, &output_dim, &connectivity, &precision, &randomly_fire, &dynamic_output, &visualization, &decay_factor))
+        return -1;
+
+    self->ptrObj = new Network(size, input_dim, output_dim, connectivity, precision, randomly_fire, dynamic_output, visualization, decay_factor);
 
     return 0;
 }
