@@ -98,9 +98,10 @@ setup(
 	entry_points={},
 	ext_modules=[
         Extension(
-			'cplexus',
-			['plexus/plexus.cpp'],
-        	language="c++",
+			name = 'cplexus',
+			sources = ['plexus/plexus.cpp', 'plexus/wrapper.cpp'],
+        	language = 'c++',
+			extra_compile_args = ['-w'],
 		)
     ]
 )

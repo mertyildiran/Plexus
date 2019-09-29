@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <unordered_map>
+#include <tuple>
 #include <random>
 
 #include "random.hpp"
