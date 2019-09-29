@@ -381,34 +381,79 @@ static PyObject* hello_world(PyObject* self)
     Py_RETURN_NONE;
 }
 
-static PyMethodDef cplexus_funcs[] = {
-    {"hello_world", (PyCFunction)hello_world, METH_VARARGS, NULL},
-    {"test", (PyCFunction)test, METH_VARARGS, NULL},
-    {NULL}
+typedef struct {
+    PyObject_HEAD
+    Network * ptrObj;
+} PyNetwork;
+
+static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwds)
+// initialize PyNetwork Object
+{
+    self->ptrObj=new Network(14, 4, 2);
+
+    return 0;
+}
+
+static void PyNetwork_dealloc(PyNetwork * self)
+// destruct the object
+{
+    delete self->ptrObj;
+    Py_TYPE(self)->tp_free(self);
+}
+
+static PyObject * PyNetwork_initiate_subscriptions(PyNetwork* self, PyObject* args)
+{
+    //(self->ptrObj)->initiate_subscriptions();
+
+    return 0;
+}
+
+static PyMethodDef PyNetwork_methods[] = {
+    { "initiate_subscriptions", (PyCFunction)PyNetwork_initiate_subscriptions,    METH_VARARGS,       "initiate_subscriptions the mem network" },
+    {NULL}  /* Sentinel */
 };
 
-#if PY_MAJOR_VERSION >= 3
+static PyTypeObject PyNetworkType = { PyVarObject_HEAD_INIT(NULL, 0)
+    "plexus.Network"   /* tp_name */
+};
+
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "cplexus",          /* name of module */
     "",                 /* module documentation, may be NULL */
     -1,                 /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
-    cplexus_funcs
+    NULL, NULL, NULL, NULL, NULL
 };
 
-PyMODINIT_FUNC PyInit_cplexus(void) {
-    return PyModule_Create(&moduledef);
+PyMODINIT_FUNC PyInit_cplexus(void)
+// create the module
+{
+    PyObject* m;
+
+    PyNetworkType.tp_new = PyType_GenericNew;
+    PyNetworkType.tp_basicsize=sizeof(PyNetwork);
+    PyNetworkType.tp_dealloc=(destructor) PyNetwork_dealloc;
+    PyNetworkType.tp_flags=Py_TPFLAGS_DEFAULT;
+    PyNetworkType.tp_doc="Network objects";
+    PyNetworkType.tp_methods=PyNetwork_methods;
+    //~ PyNetworkType.tp_members=Noddy_members;
+    PyNetworkType.tp_init=(initproc)PyNetwork_init;
+
+    if (PyType_Ready(&PyNetworkType) < 0)
+        return NULL;
+
+    m = PyModule_Create(&moduledef);
+    if (m == NULL)
+        return NULL;
+
+    Py_INCREF(&PyNetworkType);
+    PyModule_AddObject(m, "Network", (PyObject *)&PyNetworkType); // Add Network object to the module
+    return m;
 }
-#endif
 
 void initcplexus(void)
 {
-    #if PY_MAJOR_VERSION >= 3
     PyInit_cplexus();
-    #else
-    Py_InitModule3("cplexus", cplexus_funcs,
-                   "Extension module example!");
-    #endif
 }
 
 int main(int argc, char *argv[])
