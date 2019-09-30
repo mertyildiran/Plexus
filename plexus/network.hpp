@@ -64,6 +64,7 @@ public:
     void increase_initiated_neurons();
     void freeze();
     void breakit();
+    void load(std::vector<double> input_arr, std::vector<double> output_arr);
 };
 
 // Function to get a random sampling from a vector using Fisher-Yates shuffle method

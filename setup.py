@@ -100,7 +100,7 @@ setup(
         Extension(
 			name = 'cplexus',
 			sources = ['plexus/plexus.cpp', 'plexus/wrapper.cpp'],
-        	language = 'c++',
+			language = 'c++',
 			extra_compile_args = ['-w'],
 		)
     ]

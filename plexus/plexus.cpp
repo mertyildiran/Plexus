@@ -360,3 +360,41 @@ std::vector<double> Network::get_output()
     }
     return output;
 }
+
+void Network::load(std::vector<double> input_arr, std::vector<double> output_arr)
+{
+    std::vector<Neuron*>::iterator neuron;
+    unsigned int i = 0;
+    if (this->sensory_neurons.size() != input_arr.size()) {
+        std::cout << "Size of the input array: " << input_arr.size() << '\n';
+        std::cout << "Number of the sensory neurons: " << this->sensory_neurons.size() << '\n';
+        std::cout << "Size of the input array and number of the sensory neurons are not matching! Please try again" << '\n';
+    } else {
+        int step = 0;
+        for (neuron = this->sensory_neurons.begin(); neuron != this->sensory_neurons.end(); neuron++, i++) {
+            (*neuron)->potential = input_arr[step];
+            step++;
+        }
+    }
+    if (output_arr.empty()) {
+        int step = 0;
+        this->freezer = true;
+        for (neuron = this->nonsensory_neurons.begin(); neuron != this->nonsensory_neurons.end(); neuron++, i++) {
+            (*neuron)->potential = NULL;
+            step++;
+        }
+        this->freezer = false;
+    } else {
+        if (this->motor_neurons.size() != output_arr.size()) {
+            std::cout << "Size of the output/target array: " << output_arr.size() << '\n';
+            std::cout << "Number of the motor neurons: " << this->motor_neurons.size() << '\n';
+            std::cout << "Size of the output/target array and number of the motor neurons are not matching! Please try again" << '\n';
+        } else {
+            int step = 0;
+            for (neuron = this->motor_neurons.begin(); neuron != this->motor_neurons.end(); neuron++, i++) {
+                (*neuron)->potential = output_arr[step];
+                step++;
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 #include <Python.h>
+#include <stdexcept>
 
 #include "neuron.hpp"
 #include "network.hpp"
@@ -20,6 +21,24 @@ static PyObject* hello_world(PyObject* self)
     std::cout << "Hello World!" << std::endl;
 
     Py_RETURN_NONE;
+}
+
+void parse_iterable(std::vector<double> &arr, PyObject *iter)
+{
+    while (true) {
+        PyObject *next = PyIter_Next(iter);
+        if (!next) {
+            // nothing left in the iterator
+            break;
+        }
+
+        if (!PyFloat_Check(next)) {
+            throw std::invalid_argument("One of the arguments contains an illegal value (other than float)");
+        }
+
+        double val = PyFloat_AsDouble(next);
+        arr.push_back(val);
+    }
 }
 
 typedef struct {
@@ -57,15 +76,31 @@ static void PyNetwork_dealloc(PyNetwork * self)
     Py_TYPE(self)->tp_free(self);
 }
 
-static PyObject * PyNetwork_initiate_subscriptions(PyNetwork* self, PyObject* args)
+static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwargs)
 {
-    //(self->ptrObj)->initiate_subscriptions();
+    std::vector<double> input_arr;
+    std::vector<double> output_arr;
+    PyObject *input_obj;
+    PyObject *output_obj;
 
-    return 0;
+    if (! PyArg_ParseTuple(args, "OO", &input_obj, &output_obj))
+        throw std::invalid_argument("Wrong type of argument");
+
+    PyObject *input_iter = PyObject_GetIter(input_obj);
+    PyObject *output_iter = PyObject_GetIter(output_obj);
+    if (!input_iter || !output_iter) {
+        throw std::invalid_argument("One of the arguments is not iterable");
+    }
+
+    parse_iterable(input_arr, input_iter);
+    parse_iterable(output_arr, output_iter);
+
+    (self->ptrObj)->load(input_arr, output_arr);
+    return Py_BuildValue("");
 }
 
 static PyMethodDef PyNetwork_methods[] = {
-    { "initiate_subscriptions", (PyCFunction)PyNetwork_initiate_subscriptions,    METH_VARARGS,       "initiate_subscriptions the mem network" },
+    {"load", (PyCFunction)PyNetwork_load, METH_VARARGS, "Load input and ouput the neural network" },
     {NULL}  /* Sentinel */
 };
 

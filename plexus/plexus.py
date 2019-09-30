@@ -258,7 +258,7 @@ class Network():
 		else:
 			if len(self.motor_neurons) != len(output_arr):
 				print("Size of the output/target array: " + str(len(output_arr)))
-				print("Number of the motor_neurons: " + str(len(self.motor_neurons)))
+				print("Number of the motor neurons: " + str(len(self.motor_neurons)))
 				print("Size of the output/target array and number of the motor neurons are not matching! Please try again")
 			else:
 				step = 0
