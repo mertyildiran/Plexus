@@ -61,7 +61,7 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
 
     static char *kwlist[] = {"size", "input_dim", "output_dim", "connectivity", "precision", "randomly_fire", "dynamic_output", "visualization", "decay_factor", NULL};
 
-    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "i|iiidipppd", kwlist, &size, &input_dim, &output_dim, &connectivity, &precision, &randomly_fire, &dynamic_output, &visualization, &decay_factor))
+    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "i|iidipppd", kwlist, &size, &input_dim, &output_dim, &connectivity, &precision, &randomly_fire, &dynamic_output, &visualization, &decay_factor))
         return -1;
 
     self->ptrObj = new Network(size, input_dim, output_dim, connectivity, precision, randomly_fire, dynamic_output, visualization, decay_factor);

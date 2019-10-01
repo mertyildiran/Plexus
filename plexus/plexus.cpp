@@ -175,9 +175,7 @@ void Network::_ignite(Network* network)
             neuron->fire();
             if (motor_fire_counter >= network->motor_neurons.size()) {
                 if (network->dynamic_output) {
-                    std::cout << "Output: ";
-                    std::copy(network->get_output().begin(), network->get_output().end(), std::ostream_iterator<int>(std::cout, " "));
-                    std::cout << '\n' << std::flush;
+                    network->print_output();
                 }
                 network->output = network->get_output();
                 network->wave_counter++;
@@ -193,9 +191,7 @@ void Network::_ignite(Network* network)
                 }
                 ban_list.clear();
                 if (network->dynamic_output) {
-                    std::cout << "Output: ";
-                    std::copy(network->get_output().begin(), network->get_output().end(), std::ostream_iterator<int>(std::cout, " "));
-                    std::cout << '\n' << std::flush;
+                    network->print_output();
                 }
                 network->output = network->get_output();
                 network->wave_counter++;
@@ -355,10 +351,19 @@ std::vector<double> Network::get_output()
 {
     std::vector<double> output;
     for (auto& neuron: this->motor_neurons) {
-        int decimals = this->precision * 10;
+        int decimals = pow(10, this->precision);
         output.push_back(roundf(neuron->potential * decimals) / decimals);
     }
     return output;
+}
+
+void Network::print_output()
+{
+    std::vector<double> output = this->get_output();
+    std::cout << "\r";
+    std::cout << "Output: ";
+    for (const auto& i: output)
+        std::cout << i << ' ';
 }
 
 void Network::load(std::vector<double> input_arr, std::vector<double> output_arr)

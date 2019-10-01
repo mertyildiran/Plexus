@@ -1,4 +1,5 @@
-import plexus
+import cplexus as plexus
+#import plexus
 import time
 from itertools import repeat
 import random
@@ -6,7 +7,7 @@ import random
 SIZE = 14
 INPUT_SIZE = 4
 OUTPUT_SIZE = 2
-CONNECTIVITY = 1
+CONNECTIVITY = 0.01
 PRECISION = 2
 
 TRAINING_DURATION = 1

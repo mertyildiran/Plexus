@@ -52,6 +52,7 @@ class Network
     static void _ignite(Network* network);
     void ignite();
     std::vector<double> get_output();
+    void print_output();
 
 public:
     std::vector<Neuron*> neurons;
