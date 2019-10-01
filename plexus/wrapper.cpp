@@ -81,26 +81,34 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
     std::vector<double> input_arr;
     std::vector<double> output_arr;
     PyObject *input_obj;
-    PyObject *output_obj;
+    PyObject *output_obj = Py_None;
 
-    if (! PyArg_ParseTuple(args, "OO", &input_obj, &output_obj))
+    static char *kwlist[] = {"input_obj", "output_obj", NULL};
+
+    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &input_obj, &output_obj))
         throw std::invalid_argument("Wrong type of argument");
 
     PyObject *input_iter = PyObject_GetIter(input_obj);
-    PyObject *output_iter = PyObject_GetIter(output_obj);
-    if (!input_iter || !output_iter) {
-        throw std::invalid_argument("One of the arguments is not iterable");
+    if (!input_iter) {
+        throw std::invalid_argument("Input argument is not iterable");
+    }
+    parse_iterable(input_arr, input_iter);
+
+    if (output_obj != Py_None) {
+        PyObject *output_iter = PyObject_GetIter(output_obj);
+        if (!output_iter) {
+            throw std::invalid_argument("Output argument is not iterable");
+        }
+        parse_iterable(output_arr, output_iter);
     }
 
-    parse_iterable(input_arr, input_iter);
-    parse_iterable(output_arr, output_iter);
-
     (self->ptrObj)->load(input_arr, output_arr);
+
     return Py_BuildValue("");
 }
 
 static PyMethodDef PyNetwork_methods[] = {
-    {"load", (PyCFunction)PyNetwork_load, METH_VARARGS, "Load input and ouput the neural network" },
+    {"load", (PyCFunction)PyNetwork_load, METH_VARARGS | METH_KEYWORDS, "Load input and output the neural network" },
     {NULL}  /* Sentinel */
 };
 
