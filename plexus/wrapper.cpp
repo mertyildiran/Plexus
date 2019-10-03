@@ -1,4 +1,6 @@
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include "structmember.h"
 #include <stdexcept>
 
 #include "neuron.hpp"
@@ -136,6 +138,12 @@ static PyMethodDef PyNetwork_methods[] = {
     {NULL}  /* Sentinel */
 };
 
+static PyMemberDef PyNetwork_members[] = {
+    {"wave_counter", T_INT, offsetof(Network, wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
+    {"fire_counter", T_INT, offsetof(Network, fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
+    {NULL}  /* Sentinel */
+};
+
 static PyTypeObject PyNetworkType = { PyVarObject_HEAD_INIT(NULL, 0)
     "plexus.Network"   /* tp_name */
 };
@@ -159,7 +167,7 @@ PyMODINIT_FUNC PyInit_cplexus(void)
     PyNetworkType.tp_flags=Py_TPFLAGS_DEFAULT;
     PyNetworkType.tp_doc="Network objects";
     PyNetworkType.tp_methods=PyNetwork_methods;
-    //~ PyNetworkType.tp_members=PyNetwork_members;
+    PyNetworkType.tp_members=PyNetwork_members;
     PyNetworkType.tp_init=(initproc)PyNetwork_init;
 
     if (PyType_Ready(&PyNetworkType) < 0)

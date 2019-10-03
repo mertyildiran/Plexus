@@ -39,7 +39,6 @@ class Network
     std::unordered_map<Neuron*, double> first_queue;
     std::unordered_map<Neuron*, double> next_queue;
     std::vector<double> output;
-    int wave_counter;
 
     bool freezer;
     std::thread thread1;
@@ -56,6 +55,7 @@ class Network
 public:
     std::vector<Neuron*> neurons;
     std::vector<Neuron*> nonmotor_neurons;
+    int wave_counter;
     int fire_counter;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
     int get_connectivity();
