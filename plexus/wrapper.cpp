@@ -10,21 +10,6 @@ int glob_argc;
 char **glob_argv;
 
 
-static PyObject* test(PyObject* self)
-{
-    //Network* network = new Network(14, 4, 2);
-    //network->nonsensory_neurons[0]->calculate_potential();
-
-    Py_RETURN_NONE;
-}
-
-static PyObject* hello_world(PyObject* self)
-{
-    std::cout << "Hello World!" << std::endl;
-
-    Py_RETURN_NONE;
-}
-
 void parse_iterable(std::vector<double> &arr, PyObject *iter)
 {
     while (true) {
