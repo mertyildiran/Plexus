@@ -71,7 +71,7 @@ for i in repeat(None, TESTING_SAMPLE_SIZE):
     net.load(generated_list)
     time.sleep(TRAINING_DURATION)
 
-    output = net.output
+    output = net.output()
     error += abs(expected[0] - output[0])
     error += abs(expected[1] - output[1])
     error_divisor += 2

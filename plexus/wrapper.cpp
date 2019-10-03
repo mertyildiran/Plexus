@@ -122,9 +122,17 @@ static PyObject * PyNetwork_output(PyNetwork* self)
     return PList;
 }
 
+static PyObject * PyNetwork_freeze(PyNetwork* self)
+{
+    (self->ptrObj)->freeze();
+
+    return Py_BuildValue("");
+}
+
 static PyMethodDef PyNetwork_methods[] = {
     {"load", (PyCFunction)PyNetwork_load, METH_VARARGS | METH_KEYWORDS, "Load input and output into the neural network" },
     {"output", (PyCFunction)PyNetwork_output, METH_NOARGS, "Returns the output of the neural network" },
+    {"freeze", (PyCFunction)PyNetwork_freeze, METH_NOARGS, "Freeze the neural network" },
     {NULL}  /* Sentinel */
 };
 
