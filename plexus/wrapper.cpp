@@ -48,8 +48,12 @@ typedef struct {
     Network * ptrObj;
 } PyNetwork;
 
+typedef struct {
+    PyObject_HEAD
+    Neuron * ptrObj;
+} PyNeuron;
+
 static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
-// initialize PyNetwork Object
 {
     int size;
     int input_dim = 0;
@@ -71,8 +75,25 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
+static int PyNeuron_init(PyNeuron *self, PyObject *args)
+{
+    PyNetwork network;
+
+    if (! PyArg_ParseTuple(args, "O", &network))
+        return -1;
+
+    self->ptrObj = new Neuron(*network.ptrObj);
+
+    return 0;
+}
+
 static void PyNetwork_dealloc(PyNetwork * self)
-// destruct the object
+{
+    delete self->ptrObj;
+    Py_TYPE(self)->tp_free(self);
+}
+
+static void PyNeuron_dealloc(PyNeuron * self)
 {
     delete self->ptrObj;
     Py_TYPE(self)->tp_free(self);
@@ -138,14 +159,26 @@ static PyMethodDef PyNetwork_methods[] = {
     {NULL}  /* Sentinel */
 };
 
+static PyMethodDef PyNeuron_methods[] = {
+    {NULL}  /* Sentinel */
+};
+
 static PyMemberDef PyNetwork_members[] = {
     {"wave_counter", T_INT, offsetof(Network, wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
     {"fire_counter", T_INT, offsetof(Network, fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
     {NULL}  /* Sentinel */
 };
 
+static PyMemberDef PyNeuron_members[] = {
+    {NULL}  /* Sentinel */
+};
+
 static PyTypeObject PyNetworkType = { PyVarObject_HEAD_INIT(NULL, 0)
     "plexus.Network"   /* tp_name */
+};
+
+static PyTypeObject PyNeuronType = { PyVarObject_HEAD_INIT(NULL, 0)
+    "plexus.Neuron"   /* tp_name */
 };
 
 static struct PyModuleDef moduledef = {
@@ -170,7 +203,19 @@ PyMODINIT_FUNC PyInit_cplexus(void)
     PyNetworkType.tp_members=PyNetwork_members;
     PyNetworkType.tp_init=(initproc)PyNetwork_init;
 
+    PyNeuronType.tp_new = PyType_GenericNew;
+    PyNeuronType.tp_basicsize=sizeof(PyNeuron);
+    PyNeuronType.tp_dealloc=(destructor) PyNeuron_dealloc;
+    PyNeuronType.tp_flags=Py_TPFLAGS_DEFAULT;
+    PyNeuronType.tp_doc="Neuron objects";
+    PyNeuronType.tp_methods=PyNeuron_methods;
+    PyNeuronType.tp_members=PyNeuron_members;
+    PyNeuronType.tp_init=(initproc)PyNeuron_init;
+
     if (PyType_Ready(&PyNetworkType) < 0)
+        return NULL;
+
+    if (PyType_Ready(&PyNeuronType) < 0)
         return NULL;
 
     m = PyModule_Create(&moduledef);
@@ -178,7 +223,9 @@ PyMODINIT_FUNC PyInit_cplexus(void)
         return NULL;
 
     Py_INCREF(&PyNetworkType);
+    Py_INCREF(&PyNeuronType);
     PyModule_AddObject(m, "Network", (PyObject *)&PyNetworkType); // Add Network object to the module
+    PyModule_AddObject(m, "Neuron", (PyObject *)&PyNeuronType); // Add Neuron object to the module
     return m;
 }
 
