@@ -51,7 +51,6 @@ class Network
     void get_neurons_by_type(NeuronType neuron_type);
     static void _ignite(Network* network);
     void ignite();
-    std::vector<double> get_output();
     void print_output();
 
 public:
@@ -65,6 +64,7 @@ public:
     void increase_initiated_neurons();
     void freeze();
     void breakit();
+    std::vector<double> get_output();
     void load(std::vector<double> input_arr, std::vector<double> output_arr);
 };
 
