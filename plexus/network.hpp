@@ -55,8 +55,8 @@ class Network
 public:
     std::vector<Neuron*> neurons;
     std::vector<Neuron*> nonmotor_neurons;
-    int wave_counter;
-    int fire_counter;
+    unsigned long long int wave_counter;
+    unsigned long long int fire_counter;
     Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
     int get_connectivity();
     int get_connectivity_sqrt();
