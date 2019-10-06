@@ -141,6 +141,14 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->freezer = false;
     this->thread_kill_signal = false;
     this->ignite();
+
+    std::cout << this->input_dim << '\n';
+    std::cout << this->output_dim << '\n';
+    std::cout << this->connectivity << '\n';
+    std::cout << this->precision << '\n';
+    std::cout << this->randomly_fire << '\n';
+    std::cout << this->dynamic_output << '\n';
+    std::cout << this->decay_factor << '\n';
 }
 
 void Network::initiate_subscriptions()
