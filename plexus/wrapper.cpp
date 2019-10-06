@@ -149,20 +149,20 @@ static PyMethodDef PyNeuron_methods[] = {
 };
 
 static PyMemberDef PyNetwork_members[] = {
-    {"precision", T_INT, offsetof(Network, precision), READONLY, "Precision of the network"},
-    {"connectivity", T_INT, offsetof(Network, connectivity), READONLY, "Connectivity of the network"},
-    {"connectivity_sqrt", T_INT, offsetof(Network, connectivity_sqrt), READONLY, "Square root of the connectivity of the network"},
-    {"input_dim", T_INT, offsetof(Network, input_dim), READONLY, "Input dimension of the network"},
-    {"output_dim", T_INT, offsetof(Network, output_dim), READONLY, "Output dimension of the network"},
-    {"randomly_fire", T_BOOL, offsetof(Network, randomly_fire), READONLY, "Is randomly fire enabled for the network?"},
-    {"motor_randomly_fire_rate", T_INT, offsetof(Network, motor_randomly_fire_rate), READONLY, "Motor neurons' randomly fire rate"},
-    {"dynamic_output", T_BOOL, offsetof(Network, dynamic_output), READONLY, "Is dynamic output enabled for the network?"},
-    {"decay_factor", T_DOUBLE, offsetof(Network, decay_factor), READONLY, "Decay factor of the network"},
-    {"initiated_neurons", T_INT, offsetof(Network, initiated_neurons), READONLY, "Initiated neuron count of the network"},
-    {"freezer", T_BOOL, offsetof(Network, freezer), READONLY, "Is freezing enabled for the network?"},
-    {"thread_kill_signal", T_BOOL, offsetof(Network, thread_kill_signal), READONLY, "Are threads signalled for kill?"},
-    {"wave_counter", T_LONG, offsetof(Network, wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
-    {"fire_counter", T_LONG, offsetof(Network, fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
+    {"precision", T_INT, offsetof(PyNetwork, ptrObj->precision), READONLY, "Precision of the network"},
+    {"connectivity", T_INT, offsetof(PyNetwork, ptrObj->connectivity), READONLY, "Connectivity of the network"},
+    {"connectivity_sqrt", T_INT, offsetof(PyNetwork, ptrObj->connectivity_sqrt), READONLY, "Square root of the connectivity of the network"},
+    {"input_dim", T_INT, offsetof(PyNetwork, ptrObj->input_dim), READONLY, "Input dimension of the network"},
+    {"output_dim", T_INT, offsetof(PyNetwork, ptrObj->output_dim), READONLY, "Output dimension of the network"},
+    {"randomly_fire", T_BOOL, offsetof(PyNetwork, ptrObj->randomly_fire), READONLY, "Is randomly fire enabled for the network?"},
+    {"motor_randomly_fire_rate", T_INT, offsetof(PyNetwork, ptrObj->motor_randomly_fire_rate), READONLY, "Motor neurons' randomly fire rate"},
+    {"dynamic_output", T_BOOL, offsetof(PyNetwork, ptrObj->dynamic_output), READONLY, "Is dynamic output enabled for the network?"},
+    {"decay_factor", T_DOUBLE, offsetof(PyNetwork, ptrObj->decay_factor), READONLY, "Decay factor of the network"},
+    {"initiated_neurons", T_INT, offsetof(PyNetwork, ptrObj->initiated_neurons), READONLY, "Initiated neuron count of the network"},
+    {"freezer", T_BOOL, offsetof(PyNetwork, ptrObj->freezer), READONLY, "Is freezing enabled for the network?"},
+    {"thread_kill_signal", T_BOOL, offsetof(PyNetwork, ptrObj->thread_kill_signal), READONLY, "Are threads signalled for kill?"},
+    {"wave_counter", T_LONG, offsetof(PyNetwork, ptrObj->wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
+    {"fire_counter", T_LONG, offsetof(PyNetwork, ptrObj->fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
     {NULL}  /* Sentinel */
 };
 
