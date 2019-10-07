@@ -31,6 +31,20 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
 typedef struct {
     PyObject_HEAD
     Network * ptrObj;
+    int& precision;
+    int& connectivity;
+    int& connectivity_sqrt;
+    int& input_dim;
+    int& output_dim;
+    bool& randomly_fire;
+    int& motor_randomly_fire_rate;
+    bool& dynamic_output;
+    double& decay_factor;
+    int& initiated_neurons;
+    bool& freezer;
+    bool& thread_kill_signal;
+    unsigned long long int& wave_counter;
+    unsigned long long int& fire_counter;
 } PyNetwork;
 
 typedef struct {
@@ -56,6 +70,37 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
         return -1;
 
     self->ptrObj = new Network(size, input_dim, output_dim, connectivity, precision, randomly_fire, dynamic_output, visualization, decay_factor);
+
+    self->precision = self->ptrObj->precision;
+    self->connectivity = self->ptrObj->connectivity;
+    self->connectivity_sqrt = self->ptrObj->connectivity_sqrt;
+    self->input_dim = self->ptrObj->input_dim;
+    self->output_dim = self->ptrObj->output_dim;
+    self->randomly_fire = self->ptrObj->randomly_fire;
+    self->motor_randomly_fire_rate = self->ptrObj->motor_randomly_fire_rate;
+    self->dynamic_output = self->ptrObj->dynamic_output;
+    self->decay_factor = self->ptrObj->decay_factor;
+    self->initiated_neurons = self->ptrObj->initiated_neurons;
+    self->freezer = self->ptrObj->freezer;
+    self->thread_kill_signal = self->ptrObj->thread_kill_signal;
+    self->wave_counter = self->ptrObj->wave_counter;
+    self->fire_counter = self->ptrObj->fire_counter;
+
+    std::cout << self->input_dim << '\n';
+    std::cout << self->output_dim << '\n';
+    std::cout << self->connectivity << '\n';
+    std::cout << self->precision << '\n';
+    std::cout << self->randomly_fire << '\n';
+    std::cout << self->dynamic_output << '\n';
+    std::cout << self->decay_factor << '\n';
+
+    std::cout << self->ptrObj->input_dim << '\n';
+    std::cout << self->ptrObj->output_dim << '\n';
+    std::cout << self->ptrObj->connectivity << '\n';
+    std::cout << self->ptrObj->precision << '\n';
+    std::cout << self->ptrObj->randomly_fire << '\n';
+    std::cout << self->ptrObj->dynamic_output << '\n';
+    std::cout << self->ptrObj->decay_factor << '\n';
 
     return 0;
 }
@@ -149,20 +194,20 @@ static PyMethodDef PyNeuron_methods[] = {
 };
 
 static PyMemberDef PyNetwork_members[] = {
-    {"precision", T_INT, offsetof(PyNetwork, ptrObj->precision), READONLY, "Precision of the network"},
-    {"connectivity", T_INT, offsetof(PyNetwork, ptrObj->connectivity), READONLY, "Connectivity of the network"},
-    {"connectivity_sqrt", T_INT, offsetof(PyNetwork, ptrObj->connectivity_sqrt), READONLY, "Square root of the connectivity of the network"},
-    {"input_dim", T_INT, offsetof(PyNetwork, ptrObj->input_dim), READONLY, "Input dimension of the network"},
-    {"output_dim", T_INT, offsetof(PyNetwork, ptrObj->output_dim), READONLY, "Output dimension of the network"},
-    {"randomly_fire", T_BOOL, offsetof(PyNetwork, ptrObj->randomly_fire), READONLY, "Is randomly fire enabled for the network?"},
-    {"motor_randomly_fire_rate", T_INT, offsetof(PyNetwork, ptrObj->motor_randomly_fire_rate), READONLY, "Motor neurons' randomly fire rate"},
-    {"dynamic_output", T_BOOL, offsetof(PyNetwork, ptrObj->dynamic_output), READONLY, "Is dynamic output enabled for the network?"},
-    {"decay_factor", T_DOUBLE, offsetof(PyNetwork, ptrObj->decay_factor), READONLY, "Decay factor of the network"},
-    {"initiated_neurons", T_INT, offsetof(PyNetwork, ptrObj->initiated_neurons), READONLY, "Initiated neuron count of the network"},
-    {"freezer", T_BOOL, offsetof(PyNetwork, ptrObj->freezer), READONLY, "Is freezing enabled for the network?"},
-    {"thread_kill_signal", T_BOOL, offsetof(PyNetwork, ptrObj->thread_kill_signal), READONLY, "Are threads signalled for kill?"},
-    {"wave_counter", T_LONG, offsetof(PyNetwork, ptrObj->wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
-    {"fire_counter", T_LONG, offsetof(PyNetwork, ptrObj->fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
+    {"precision", T_INT, offsetof(PyNetwork, precision), READONLY, "Precision of the network"},
+    {"connectivity", T_INT, offsetof(PyNetwork, connectivity), READONLY, "Connectivity of the network"},
+    {"connectivity_sqrt", T_INT, offsetof(PyNetwork, connectivity_sqrt), READONLY, "Square root of the connectivity of the network"},
+    {"input_dim", T_INT, offsetof(PyNetwork, input_dim), READONLY, "Input dimension of the network"},
+    {"output_dim", T_INT, offsetof(PyNetwork, output_dim), READONLY, "Output dimension of the network"},
+    {"randomly_fire", T_BOOL, offsetof(PyNetwork, randomly_fire), READONLY, "Is randomly fire enabled for the network?"},
+    {"motor_randomly_fire_rate", T_INT, offsetof(PyNetwork, motor_randomly_fire_rate), READONLY, "Motor neurons' randomly fire rate"},
+    {"dynamic_output", T_BOOL, offsetof(PyNetwork, dynamic_output), READONLY, "Is dynamic output enabled for the network?"},
+    {"decay_factor", T_DOUBLE, offsetof(PyNetwork, decay_factor), READONLY, "Decay factor of the network"},
+    {"initiated_neurons", T_INT, offsetof(PyNetwork, initiated_neurons), READONLY, "Initiated neuron count of the network"},
+    {"freezer", T_BOOL, offsetof(PyNetwork, freezer), READONLY, "Is freezing enabled for the network?"},
+    {"thread_kill_signal", T_BOOL, offsetof(PyNetwork, thread_kill_signal), READONLY, "Are threads signalled for kill?"},
+    {"wave_counter", T_LONG, offsetof(PyNetwork, wave_counter), READONLY, "Holds the integer value of how many waves executed throughout the network"},
+    {"fire_counter", T_LONG, offsetof(PyNetwork, fire_counter), READONLY, "Holds the integer value of how many neurons fired during the training"},
     {NULL}  /* Sentinel */
 };
 
