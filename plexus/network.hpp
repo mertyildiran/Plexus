@@ -17,6 +17,7 @@ enum NeuronType
 
 class Network
 {
+public:
     int precision;
     int connectivity;
     int connectivity_sqrt;
@@ -52,7 +53,7 @@ class Network
     void ignite();
     void print_output();
 
-public:
+//public:
     std::vector<Neuron*> neurons;
     std::vector<Neuron*> nonmotor_neurons;
     unsigned long long int wave_counter;
