@@ -31,7 +31,6 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
 typedef struct {
     PyObject_HEAD
     Network * ptrObj;
-    int test;
 } PyNetwork;
 
 typedef struct {
@@ -57,7 +56,6 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
         return -1;
 
     self->ptrObj = new Network(size, input_dim, output_dim, connectivity, precision, randomly_fire, dynamic_output, visualization, decay_factor);
-    self->test = 5;
 
     return 0;
 }
@@ -139,26 +137,74 @@ static PyObject * PyNetwork_freeze(PyNetwork* self)
     return Py_BuildValue("");
 }
 
-static int PyNetwork_get_test(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_precision(PyNetwork *self, void *closure)
 {
-    std::cout << "Test get" << '\n';
-    Py_INCREF(self->test);
-    return self->test;
+    return Py_BuildValue("i", self->ptrObj->precision);
 }
 
-static int PyNetwork_set_test(PyNetwork *self, int value, void *closure)
+static PyObject * PyNetwork_get_connectivity(PyNetwork *self, void *closure)
 {
-    std::cout << "Test set" << '\n';
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the test attribute");
-        return -1;
-    }
+    return Py_BuildValue("i", self->ptrObj->connectivity);
+}
 
-    Py_DECREF(self->test);
-    Py_INCREF(value);
-    self->test = value;
+static PyObject * PyNetwork_get_connectivity_sqrt(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->connectivity_sqrt);
+}
 
-    return 0;
+static PyObject * PyNetwork_get_input_dim(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->input_dim);
+}
+
+static PyObject * PyNetwork_get_output_dim(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->output_dim);
+}
+
+static PyObject * PyNetwork_get_randomly_fire(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("b", self->ptrObj->randomly_fire);
+}
+
+static PyObject * PyNetwork_get_motor_randomly_fire_rate(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->motor_randomly_fire_rate);
+}
+
+static PyObject * PyNetwork_get_dynamic_output(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("b", self->ptrObj->dynamic_output);
+}
+
+static PyObject * PyNetwork_get_decay_factor(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("d", self->ptrObj->decay_factor);
+}
+
+static PyObject * PyNetwork_get_initiated_neurons(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->initiated_neurons);
+}
+
+static PyObject * PyNetwork_get_freezer(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("b", self->ptrObj->freezer);
+}
+
+static PyObject * PyNetwork_get_thread_kill_signal(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("b", self->ptrObj->thread_kill_signal);
+}
+
+static PyObject * PyNetwork_get_wave_counter(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("l", self->ptrObj->wave_counter);
+}
+
+static PyObject * PyNetwork_get_fire_counter(PyNetwork *self, void *closure)
+{
+    return Py_BuildValue("l", self->ptrObj->fire_counter);
 }
 
 static PyMethodDef PyNetwork_methods[] = {
@@ -181,7 +227,20 @@ static PyMemberDef PyNeuron_members[] = {
 };
 
 static PyGetSetDef PyNetwork_getseters[] = {
-    {"test", (getter)PyNetwork_get_test, (setter)PyNetwork_set_test, "Precision of the network", NULL},
+    {"precision", (getter)PyNetwork_get_precision, NULL, "Precision of the network", NULL},
+    {"connectivity", (getter)PyNetwork_get_connectivity, NULL, "Connectivity of the network", NULL},
+    {"connectivity_sqrt", (getter)PyNetwork_get_connectivity_sqrt, NULL, "Square root of the connectivity of the network", NULL},
+    {"input_dim", (getter)PyNetwork_get_input_dim, NULL, "Input dimension of the network", NULL},
+    {"output_dim", (getter)PyNetwork_get_output_dim, NULL, "Output dimension of the network", NULL},
+    {"randomly_fire", (getter)PyNetwork_get_randomly_fire, NULL, "Is randomly fire enabled for the network?", NULL},
+    {"motor_randomly_fire_rate", (getter)PyNetwork_get_motor_randomly_fire_rate, NULL, "Motor neurons' randomly fire rate", NULL},
+    {"dynamic_output", (getter)PyNetwork_get_dynamic_output, NULL, "Is dynamic output enabled for the network?", NULL},
+    {"decay_factor", (getter)PyNetwork_get_decay_factor, NULL, "Decay factor of the network", NULL},
+    {"initiated_neurons", (getter)PyNetwork_get_initiated_neurons, NULL, "Initiated neuron count of the network", NULL},
+    {"freezer", (getter)PyNetwork_get_freezer, NULL, "Is freezing enabled for the network?", NULL},
+    {"thread_kill_signal", (getter)PyNetwork_get_thread_kill_signal, NULL, "Are threads signalled for kill?", NULL},
+    {"wave_counter", (getter)PyNetwork_get_wave_counter, NULL, "Holds the integer value of how many waves executed throughout the network", NULL},
+    {"fire_counter", (getter)PyNetwork_get_fire_counter, NULL, "Holds the integer value of how many neurons fired during the training", NULL},
     {NULL}  /* Sentinel */
 };
 
