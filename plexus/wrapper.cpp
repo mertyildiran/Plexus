@@ -62,12 +62,12 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
 
 static int PyNeuron_init(PyNeuron *self, PyObject *args)
 {
-    PyNetwork network;
+    PyNetwork * network;
 
     if (! PyArg_ParseTuple(args, "O", &network))
         return -1;
 
-    self->ptrObj = new Neuron(*network.ptrObj);
+    self->ptrObj = new Neuron(*network->ptrObj);
 
     return 0;
 }
