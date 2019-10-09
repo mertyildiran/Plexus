@@ -28,6 +28,14 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
     }
 }
 
+static PyTypeObject PyNetworkType = { PyVarObject_HEAD_INIT(NULL, 0)
+    "plexus.Network"   /* tp_name */
+};
+
+static PyTypeObject PyNeuronType = { PyVarObject_HEAD_INIT(NULL, 0)
+    "plexus.Neuron"   /* tp_name */
+};
+
 typedef struct {
     PyObject_HEAD
     Network * ptrObj;
@@ -215,8 +223,8 @@ static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
     std::vector<int>::const_iterator it;
 
     for (const auto& i: neurons) {
-        PyNeuron * neuron = new PyNeuron;
-        neuron->ptrObj = i;
+        PyObject * neuron = _PyObject_New(&PyNeuronType);
+        //neuron->ptrObj = i;
         PyList_Append(PList, Py_BuildValue("O", neuron));
     }
     return PList;
@@ -258,14 +266,6 @@ static PyGetSetDef PyNetwork_getseters[] = {
     {"output", (getter)PyNetwork_get_output, NULL, "Shows the output of the neural network", NULL},
     {"neurons", (getter)PyNetwork_get_neurons, NULL, "Holds the neurons in the neural network", NULL},
     {NULL}  /* Sentinel */
-};
-
-static PyTypeObject PyNetworkType = { PyVarObject_HEAD_INIT(NULL, 0)
-    "plexus.Network"   /* tp_name */
-};
-
-static PyTypeObject PyNeuronType = { PyVarObject_HEAD_INIT(NULL, 0)
-    "plexus.Neuron"   /* tp_name */
 };
 
 static struct PyModuleDef moduledef = {
