@@ -207,6 +207,19 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     return PList;
 }
 
+static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->neurons;
+
+    PyObject *PList = PyList_New(0);
+    std::vector<int>::const_iterator it;
+
+    for (const auto& i: neurons)
+        PyList_Append(PList, Py_BuildValue("O", i));
+
+    return PList;
+}
+
 static PyMethodDef PyNetwork_methods[] = {
     {"load", (PyCFunction)PyNetwork_load, METH_VARARGS | METH_KEYWORDS, "Load input and output into the neural network" },
     {"freeze", (PyCFunction)PyNetwork_freeze, METH_NOARGS, "Freeze the neural network" },
@@ -240,7 +253,8 @@ static PyGetSetDef PyNetwork_getseters[] = {
     {"thread_kill_signal", (getter)PyNetwork_get_thread_kill_signal, NULL, "Are threads signalled for kill?", NULL},
     {"wave_counter", (getter)PyNetwork_get_wave_counter, NULL, "Holds the integer value of how many waves executed throughout the network", NULL},
     {"fire_counter", (getter)PyNetwork_get_fire_counter, NULL, "Holds the integer value of how many neurons fired during the training", NULL},
-    {"output", (getter)PyNetwork_get_output, NULL, "Returns the output of the neural network", NULL},
+    {"output", (getter)PyNetwork_get_output, NULL, "Shows the output of the neural network", NULL},
+    {"neurons", (getter)PyNetwork_get_neurons, NULL, "Holds the neurons in the neural network", NULL},
     {NULL}  /* Sentinel */
 };
 
