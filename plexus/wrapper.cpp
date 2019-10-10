@@ -200,6 +200,41 @@ static PyObject * PyNetwork_get_fire_counter(PyNetwork *self, void *closure)
     return Py_BuildValue("l", self->ptrObj->fire_counter);
 }
 
+static PyObject * PyNeuron_get_desired_potential(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("d", self->ptrObj->desired_potential);
+}
+
+static PyObject * PyNeuron_get_loss(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("d", self->ptrObj->loss);
+}
+
+static PyObject * PyNeuron_get_fire_counter(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->fire_counter);
+}
+
+static PyObject * PyNeuron_get_index(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("I", self->ptrObj->index);
+}
+
+static PyObject * PyNeuron_get_potential(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("d", self->ptrObj->potential);
+}
+
+static PyObject * PyNeuron_get_type(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->type);
+}
+
+static PyObject * PyNeuron_get_ban_counter(PyNeuron *self, void *closure)
+{
+    return Py_BuildValue("i", self->ptrObj->ban_counter);
+}
+
 static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 {
     std::vector<double> output;
@@ -307,6 +342,17 @@ static PyGetSetDef PyNetwork_getseters[] = {
     {NULL}  /* Sentinel */
 };
 
+static PyGetSetDef PyNeuron_getseters[] = {
+    {"desired_potential", (getter)PyNeuron_get_desired_potential, NULL, "Desired potential of the neuron", NULL},
+    {"loss", (getter)PyNeuron_get_loss, NULL, "Loss of the neuron", NULL},
+    {"fire_counter", (getter)PyNeuron_get_fire_counter, NULL, "Fire counter of the neuron", NULL},
+    {"index", (getter)PyNeuron_get_index, NULL, "Index of the neuron inside the network", NULL},
+    {"potential", (getter)PyNeuron_get_potential, NULL, "Potential of the neuron", NULL},
+    {"type", (getter)PyNeuron_get_type, NULL, "Type of the neuron", NULL},
+    {"ban_counter", (getter)PyNeuron_get_ban_counter, NULL, "Ban counter of the neuron", NULL},
+    {NULL}  /* Sentinel */
+};
+
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "cplexus",          /* name of module */
@@ -337,6 +383,7 @@ PyMODINIT_FUNC PyInit_cplexus(void)
     PyNeuronType.tp_doc="Neuron objects";
     PyNeuronType.tp_methods=PyNeuron_methods;
     PyNeuronType.tp_members=PyNeuron_members;
+    PyNeuronType.tp_getset=PyNeuron_getseters;
     PyNeuronType.tp_init=(initproc)PyNeuron_init;
 
     if (PyType_Ready(&PyNetworkType) < 0)

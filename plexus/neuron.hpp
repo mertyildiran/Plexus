@@ -13,6 +13,7 @@ class Network;
 
 class Neuron
 {
+public:
     double desired_potential;
     double loss;
     int fire_counter = 0;
@@ -25,7 +26,7 @@ class Neuron
     double derivative(double x);
     double calculate_loss();
 
-public:
+//public:
     Network *network;
     std::unordered_map<Neuron*, double> subscriptions;
     std::unordered_map<Neuron*, double> publications;
