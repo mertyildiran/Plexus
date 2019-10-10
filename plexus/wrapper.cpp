@@ -222,9 +222,9 @@ static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
     PyObject *PList = PyList_New(0);
     std::vector<int>::const_iterator it;
 
-    for (const auto& i: neurons) {
-        PyObject * neuron = _PyObject_New(&PyNeuronType);
-        //neuron->ptrObj = i;
+    for (Neuron* i: neurons) {
+        PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
+        neuron->ptrObj = i;
         PyList_Append(PList, Py_BuildValue("O", neuron));
     }
     return PList;
