@@ -215,10 +215,8 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     return PList;
 }
 
-static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_neuron_PyList_builder(std::vector<Neuron*> neurons)
 {
-    std::vector<Neuron*> neurons = (self->ptrObj)->neurons;
-
     PyObject *PList = PyList_New(0);
     std::vector<int>::const_iterator it;
 
@@ -228,6 +226,42 @@ static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
         PyList_Append(PList, Py_BuildValue("O", neuron));
     }
     return PList;
+}
+
+static PyObject * PyNetwork_get_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->neurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
+}
+
+static PyObject * PyNetwork_get_sensory_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->sensory_neurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
+}
+
+static PyObject * PyNetwork_get_motor_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->motor_neurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
+}
+
+static PyObject * PyNetwork_get_interneurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->interneurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
+}
+
+static PyObject * PyNetwork_get_nonsensory_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->nonsensory_neurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
+}
+
+static PyObject * PyNetwork_get_nonmotor_neurons(PyNetwork *self, void *closure)
+{
+    std::vector<Neuron*> neurons = (self->ptrObj)->nonmotor_neurons;
+    return PyNetwork_neuron_PyList_builder(neurons);
 }
 
 static PyMethodDef PyNetwork_methods[] = {
@@ -264,7 +298,12 @@ static PyGetSetDef PyNetwork_getseters[] = {
     {"wave_counter", (getter)PyNetwork_get_wave_counter, NULL, "Holds the integer value of how many waves executed throughout the network", NULL},
     {"fire_counter", (getter)PyNetwork_get_fire_counter, NULL, "Holds the integer value of how many neurons fired during the training", NULL},
     {"output", (getter)PyNetwork_get_output, NULL, "Shows the output of the neural network", NULL},
-    {"neurons", (getter)PyNetwork_get_neurons, NULL, "Holds the neurons in the neural network", NULL},
+    {"neurons", (getter)PyNetwork_get_neurons, NULL, "Holds the neurons of the neural network", NULL},
+    {"sensory_neurons", (getter)PyNetwork_get_sensory_neurons, NULL, "Holds the sensory neurons of the neural network", NULL},
+    {"motor_neurons", (getter)PyNetwork_get_motor_neurons, NULL, "Holds the motor neurons of the neural network", NULL},
+    {"interneurons", (getter)PyNetwork_get_interneurons, NULL, "Holds the interneurons of the neural network", NULL},
+    {"nonsensory_neurons", (getter)PyNetwork_get_nonsensory_neurons, NULL, "Holds the nonsensory neurons of the neural network", NULL},
+    {"nonmotor_neurons", (getter)PyNetwork_get_nonmotor_neurons, NULL, "Holds the nonmotor neurons of the neural network", NULL},
     {NULL}  /* Sentinel */
 };
 
