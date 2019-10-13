@@ -242,7 +242,6 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     output = (self->ptrObj)->get_output();
 
     PyObject *PList = PyList_New(0);
-    std::vector<int>::const_iterator it;
 
     for (const auto& i: output)
         PyList_Append(PList, Py_BuildValue("d", i));
@@ -253,7 +252,6 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 static PyObject * PyNetwork_neuron_PyList_builder(std::vector<Neuron*> neurons)
 {
     PyObject *PList = PyList_New(0);
-    std::vector<int>::const_iterator it;
 
     for (Neuron* i: neurons) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
