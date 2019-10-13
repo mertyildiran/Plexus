@@ -235,6 +235,40 @@ static PyObject * PyNeuron_get_ban_counter(PyNeuron *self, void *closure)
     return Py_BuildValue("i", self->ptrObj->ban_counter);
 }
 
+static PyObject * PyNeuron_get_position(PyNeuron *self, void *closure)
+{
+    PyObject *PList = PyList_New(0);
+    PyList_Append(PList, Py_BuildValue("i", std::get<0>(self->ptrObj->position)));
+    PyList_Append(PList, Py_BuildValue("i", std::get<1>(self->ptrObj->position)));
+    return PyList_AsTuple(PList);
+}
+
+static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the position attribute");
+        return -1;
+    }
+
+    if (! PyTuple_Check(value)) {
+        PyErr_SetString(PyExc_TypeError, "The position attribute value must be a tuple");
+        return -1;
+    }
+
+    PyObject *x = PyTuple_GetItem(value, 0);
+    PyObject *y = PyTuple_GetItem(value, 1);
+
+    if (! PyFloat_Check(x) || ! PyFloat_Check(y)) {
+        PyErr_SetString(PyExc_TypeError, "The elements of position attribute must be float");
+        return -1;
+    }
+
+    std::get<0>(self->ptrObj->position) = PyFloat_AsDouble(x);
+    std::get<1>(self->ptrObj->position) = PyFloat_AsDouble(y);
+
+    return 0;
+}
+
 static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 {
     std::vector<double> output;
@@ -348,6 +382,7 @@ static PyGetSetDef PyNeuron_getseters[] = {
     {"potential", (getter)PyNeuron_get_potential, NULL, "Potential of the neuron", NULL},
     {"type", (getter)PyNeuron_get_type, NULL, "Type of the neuron", NULL},
     {"ban_counter", (getter)PyNeuron_get_ban_counter, NULL, "Ban counter of the neuron", NULL},
+    {"position", (getter)PyNeuron_get_position, (setter)PyNeuron_set_position, "Position(imaginary) of the neuron", NULL},
     {NULL}  /* Sentinel */
 };
 
