@@ -108,7 +108,7 @@ net = plexus.Network(
 
 print("\n*** LEARNING ***")
 
-print("\nGenerate The Dataset {0} Items Long) To Classify The Numbers Bigger\
+print("\nGenerate The Dataset ({0} Items Long) To Classify The Numbers Bigger\
 & Smaller Than 0.5 & Learn for {1} Seconds Each".format(
     str(TRAINING_SAMPLE_SIZE),
     str(TRAINING_DURATION)
@@ -179,6 +179,8 @@ print("\nIn total: {0} times a random non-sensory neuron fired\n".format(
 ))
 
 error = error / error_divisor
-print("\nOverall error: " + str(error) + "\n")
+print("\nOverall error: {0}\n".format(
+    str(error)
+))
 
 print("Exit the program")
