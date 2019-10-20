@@ -37,6 +37,10 @@ elif args['difficulty'] == 4:
     INPUT_SIZE = 1024
     TRAINING_DURATION = 3
     CONNECTIVITY = 0.25
+else:
+    print('Difficulty level should not exceed 4. \
+The value of you supplied was: {0}'.format(args['difficulty']))
+    exit(0)
 
 
 OUTPUT_SIZE = 1

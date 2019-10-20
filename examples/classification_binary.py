@@ -7,7 +7,7 @@ import random
 ap = argparse.ArgumentParser()
 
 ap.add_argument('difficulty', metavar='difficulty', type=int,
-                help='Difficulty level of the problem. Can be 1, 2, 3, 4 or 5')
+                help='Difficulty level of the problem. Can be 1, 2, 3, 4, 5')
 ap.add_argument('-l', '--language', type=str,
                 help='Implementation language of Plexus. Can be "cpp" or "py"')
 args = vars(ap.parse_args())
@@ -38,7 +38,7 @@ elif args['difficulty'] == 3:
     CONNECTIVITY = 0.5
     VISUALIZATION = True
     TRAINING_DURATION = 1
-elif args['difficulty'] == 3:
+elif args['difficulty'] == 4:
     SIZE = 512 + 2 + 32
     INPUT_SIZE = 512
     OUTPUT_SIZE = 2
@@ -52,6 +52,10 @@ elif args['difficulty'] == 5:
     CONNECTIVITY = 0.25
     VISUALIZATION = False
     TRAINING_DURATION = 3
+else:
+    print('Difficulty level should not exceed 5. \
+The value of you supplied was: {0}'.format(args['difficulty']))
+    exit(0)
 
 
 PRECISION = 2
