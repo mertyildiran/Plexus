@@ -69,10 +69,11 @@ double Neuron::calculate_loss()
 
 bool Neuron::fire()
 {
-    if (this->type != 1) {
+    if (this->type != SENSORY_NEURON) {
 
         this->potential = this->calculate_potential();
         this->network->fire_counter++;
+        this->fire_counter++;
 
         if (this->desired_potential != 0) {
 
