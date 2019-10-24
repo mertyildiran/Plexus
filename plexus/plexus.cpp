@@ -45,7 +45,7 @@ double Neuron::calculate_potential()
     for (auto& it: this->subscriptions) {
         total += it.first->potential * it.second;
     }
-    return total;
+    return this->activation_function(total);
 }
 
 double Neuron::activation_function(double x)

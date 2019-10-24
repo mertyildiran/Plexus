@@ -120,3 +120,6 @@ dmypy.json
 # CIFAR-10 dataset
 examples/cifar-10-batches-py
 examples/cifar-10-python.tar.gz
+
+# Tests inside examples directory
+examples/*_test.py
