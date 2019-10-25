@@ -32,8 +32,10 @@ void Neuron::partially_subscribe()
         this->subscriptions.reserve(sample_length);
         for (unsigned int i = 0; i < sample_length; i++) {
             Neuron* target_neuron = this->network->nonmotor_neurons[i];
-            this->subscriptions.insert( std::pair<Neuron*, double>(target_neuron, Random::get(-1.0, 1.0)) );
-            target_neuron->publications.insert( std::pair<Neuron*, double>(&(*this), 0.0) );
+            if (target_neuron != this) {
+                this->subscriptions.insert( std::pair<Neuron*, double>(target_neuron, Random::get(-1.0, 1.0)) );
+                target_neuron->publications.insert( std::pair<Neuron*, double>(&(*this), 0.0) );
+            }
         }
         this->network->increase_initiated_neurons();
     }
