@@ -220,6 +220,23 @@ static PyObject * PyNeuron_get_index(PyNeuron *self, void *closure)
     return Py_BuildValue("I", self->ptrObj->index);
 }
 
+static int PyNeuron_set_index(PyNeuron *self, PyObject *value, void *closue)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the position attribute");
+        return -1;
+    }
+
+    if (! PyLong_Check(value)) {
+        PyErr_SetString(PyExc_TypeError, "The position attribute value must be an integer");
+        return -1;
+    }
+
+    self->ptrObj->index = PyLong_AsLong(value);
+
+    return 0;
+}
+
 static PyObject * PyNeuron_get_potential(PyNeuron *self, void *closure)
 {
     return Py_BuildValue("d", self->ptrObj->potential);
@@ -378,7 +395,7 @@ static PyGetSetDef PyNeuron_getseters[] = {
     {"desired_potential", (getter)PyNeuron_get_desired_potential, NULL, "Desired potential of the neuron", NULL},
     {"loss", (getter)PyNeuron_get_loss, NULL, "Loss of the neuron", NULL},
     {"fire_counter", (getter)PyNeuron_get_fire_counter, NULL, "Fire counter of the neuron", NULL},
-    {"index", (getter)PyNeuron_get_index, NULL, "Index of the neuron inside the network", NULL},
+    {"index", (getter)PyNeuron_get_index, (setter)PyNeuron_set_index, "Index of the neuron inside the network", NULL},
     {"potential", (getter)PyNeuron_get_potential, NULL, "Potential of the neuron", NULL},
     {"type", (getter)PyNeuron_get_type, NULL, "Type of the neuron", NULL},
     {"ban_counter", (getter)PyNeuron_get_ban_counter, NULL, "Ban counter of the neuron", NULL},

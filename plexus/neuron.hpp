@@ -18,7 +18,7 @@ public:
     double loss;
     int fire_counter = 0;
     std::tuple<int, int> position;
-    unsigned int index;
+    unsigned long index;
     std::default_random_engine generator;
 
     double calculate_potential();
