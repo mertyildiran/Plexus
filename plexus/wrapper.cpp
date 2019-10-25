@@ -286,6 +286,31 @@ static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
     return 0;
 }
 
+static PyObject * PyNeuron_connections_PyDict_build(std::unordered_map<Neuron*, double> connections)
+{
+    PyObject *PDict = PyDict_New();
+
+    for (auto& it: connections) {
+        PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
+        neuron->ptrObj = it.first;
+        PyDict_SetItem(PDict, Py_BuildValue("O", neuron), Py_BuildValue("d", it.second)); 
+    }
+    return PDict;
+}
+
+static PyObject * PyNeuron_get_subscriptions(PyNeuron *self, void *closure)
+{
+    std::unordered_map<Neuron*, double> connections = (self->ptrObj)->subscriptions;
+    return PyNeuron_connections_PyDict_build(connections);
+}
+
+static PyObject * PyNeuron_get_publications(PyNeuron *self, void *closure)
+{
+    std::unordered_map<Neuron*, double> connections = (self->ptrObj)->publications;
+    return PyNeuron_connections_PyDict_build(connections);
+}
+
+
 static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 {
     std::vector<double> output;
@@ -400,6 +425,8 @@ static PyGetSetDef PyNeuron_getseters[] = {
     {"type", (getter)PyNeuron_get_type, NULL, "Type of the neuron", NULL},
     {"ban_counter", (getter)PyNeuron_get_ban_counter, NULL, "Ban counter of the neuron", NULL},
     {"position", (getter)PyNeuron_get_position, (setter)PyNeuron_set_position, "Position(imaginary) of the neuron", NULL},
+    {"subscriptions", (getter)PyNeuron_get_subscriptions, NULL, "Holds the subscriptions of the neuron", NULL},
+    {"publications", (getter)PyNeuron_get_publications, NULL, "Holds the publications of the neuron", NULL},
     {NULL}  /* Sentinel */
 };
 
