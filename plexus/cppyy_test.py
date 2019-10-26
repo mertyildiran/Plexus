@@ -6,6 +6,9 @@ import time
 from itertools import repeat
 
 
+# gcc -g -std=c++17 plexus.cpp -shared -fPIC -o libplexus.dylib
+
+
 ap = argparse.ArgumentParser()
 
 ap.add_argument('difficulty', metavar='difficulty', type=int,
