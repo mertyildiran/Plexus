@@ -108,9 +108,8 @@ def _visualize(self):
     for neuron in self.interneurons:
         y += 1
         neuron.position.first = random.uniform(
-                x - len(self.sensory_neurons)/1.5,
-                x + len(self.sensory_neurons)/1.5
-            )
+            x - len(self.sensory_neurons)/1.5,
+            x + len(self.sensory_neurons)/1.5)
         neuron.position.second = y
         positions.append(neuron.position)
         symbols.append('h')
@@ -131,7 +130,7 @@ def _visualize(self):
         connections = []
         lines = []
         for neuron2 in self.neurons:
-            for neuron1, weight in neuron2.subscriptions.items():
+            for neuron1, weight in neuron2.subscriptions:
                 connections.append((neuron1.index, neuron2.index))
                 lines.append((55, 55, 55, ((weight+1)/2)*255, (weight+1)))
 
@@ -243,10 +242,10 @@ for i in repeat(None, TESTING_SAMPLE_SIZE):
         generated_list = generate_list_smaller()
         expected = [0.0, 1.0]
 
-    net.load(generated_list)
+    net.load(generated_list, [])
     time.sleep(TRAINING_DURATION)
 
-    output = net.output
+    output = list(net.output)
     error += abs(expected[0] - output[0])
     error += abs(expected[1] - output[1])
     error_divisor += 2

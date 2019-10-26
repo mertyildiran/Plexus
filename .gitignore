@@ -123,3 +123,5 @@ examples/cifar-10-python.tar.gz
 
 # Tests inside examples directory
 examples/*_test.py
+
+*.dylib
