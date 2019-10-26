@@ -1,9 +1,8 @@
-#import threading
+import threading
 import argparse
 import time
 from itertools import repeat
 import random
-#import threading
 
 
 ap = argparse.ArgumentParser()
@@ -205,7 +204,8 @@ net = plexus.Network(
     DYNAMIC_OUTPUT,
     VISUALIZATION
 )
-#visualize(net)
+if args['language'] == 'cpp':
+    visualize(net)
 
 print("\n*** LEARNING ***")
 
