@@ -1,7 +1,9 @@
+import threading
 import argparse
 import time
 from itertools import repeat
 import random
+from plexus.visualize import _visualize
 
 
 ap = argparse.ArgumentParser()
@@ -87,6 +89,11 @@ def notify_the_load(generated_list, output, training_duration):
         str(training_duration)
     ))
 
+def visualize(self):
+    thread2 = threading.Thread(target=_visualize, args=(self,))
+    thread2.start()
+    print("Visualization initiated")
+
 
 print("\n___ PLEXUS NETWORK BASIC EXAMPLE ___\n")
 
@@ -109,6 +116,8 @@ net = plexus.Network(
     DYNAMIC_OUTPUT,
     VISUALIZATION
 )
+if args['language'] == 'cpp':
+    visualize(net)
 
 print("\n*** LEARNING ***")
 
