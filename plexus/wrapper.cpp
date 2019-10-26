@@ -20,7 +20,7 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
         }
 
         if (!PyFloat_Check(next)) {
-            throw std::invalid_argument("One of the arguments contains an illegal value (other than float)");
+            PyErr_SetString(PyExc_TypeError, "One of the arguments contains an illegal value (other than float)");
         }
 
         double val = PyFloat_AsDouble(next);
@@ -102,18 +102,18 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
     static char *kwlist[] = {"input_obj", "output_obj", NULL};
 
     if (! PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &input_obj, &output_obj))
-        throw std::invalid_argument("Wrong type of argument");
+        PyErr_SetString(PyExc_TypeError, "Wrong type of argument");
 
     PyObject *input_iter = PyObject_GetIter(input_obj);
     if (!input_iter) {
-        throw std::invalid_argument("Input argument is not iterable");
+        PyErr_SetString(PyExc_TypeError, "Input argument is not iterable");
     }
     parse_iterable(input_arr, input_iter);
 
     if (output_obj != Py_None) {
         PyObject *output_iter = PyObject_GetIter(output_obj);
         if (!output_iter) {
-            throw std::invalid_argument("Output argument is not iterable");
+            PyErr_SetString(PyExc_TypeError, "Output argument is not iterable");
         }
         parse_iterable(output_arr, output_iter);
     }
@@ -293,7 +293,7 @@ static PyObject * PyNeuron_connections_PyDict_build(std::unordered_map<Neuron*, 
     for (auto& it: connections) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
         neuron->ptrObj = it.first;
-        PyDict_SetItem(PDict, Py_BuildValue("O", neuron), Py_BuildValue("d", it.second)); 
+        PyDict_SetItem(PDict, Py_BuildValue("O", neuron), Py_BuildValue("d", it.second));
     }
     return PDict;
 }
