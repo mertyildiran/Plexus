@@ -2,6 +2,11 @@ import argparse
 import time
 from itertools import repeat
 import random
+# Comment out this
+#from plexus.visualize import *
+# or import threading
+import threading
+# to reproduce the problem
 
 
 ap = argparse.ArgumentParser()
@@ -109,6 +114,7 @@ net = plexus.Network(
     DYNAMIC_OUTPUT,
     VISUALIZATION
 )
+#visualize(net)
 
 print("\n*** LEARNING ***")
 
