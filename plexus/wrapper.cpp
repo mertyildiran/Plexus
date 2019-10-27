@@ -18,12 +18,14 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
             // nothing left in the iterator
             break;
         }
+        Py_XINCREF(next);
 
         if (!PyFloat_Check(next)) {
             PyErr_SetString(PyExc_TypeError, "One of the arguments contains an illegal value (other than float)");
         }
 
         double val = PyFloat_AsDouble(next);
+        Py_XDECREF(next);
         arr.push_back(val);
     }
 }
@@ -75,6 +77,8 @@ static int PyNeuron_init(PyNeuron *self, PyObject *args)
     if (! PyArg_ParseTuple(args, "O", &network))
         return -1;
 
+    Py_XINCREF(network);
+
     self->ptrObj = new Neuron(*network->ptrObj);
 
     return 0;
@@ -82,12 +86,14 @@ static int PyNeuron_init(PyNeuron *self, PyObject *args)
 
 static void PyNetwork_dealloc(PyNetwork * self)
 {
+    PyObject_GC_UnTrack(self);
     delete self->ptrObj;
     Py_TYPE(self)->tp_free(self);
 }
 
 static void PyNeuron_dealloc(PyNeuron * self)
 {
+    PyObject_GC_UnTrack(self);
     delete self->ptrObj;
     Py_TYPE(self)->tp_free(self);
 }
@@ -104,6 +110,9 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
     if (! PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &input_obj, &output_obj))
         PyErr_SetString(PyExc_TypeError, "Wrong type of argument");
 
+    Py_XINCREF(input_obj);
+    Py_XINCREF(output_obj);
+
     PyObject *input_iter = PyObject_GetIter(input_obj);
     if (!input_iter) {
         PyErr_SetString(PyExc_TypeError, "Input argument is not iterable");
@@ -117,6 +126,9 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
         }
         parse_iterable(output_arr, output_iter);
     }
+
+    Py_XDECREF(input_obj);
+    Py_XDECREF(output_obj);
 
     (self->ptrObj)->load(input_arr, output_arr);
 
@@ -255,6 +267,7 @@ static PyObject * PyNeuron_get_ban_counter(PyNeuron *self, void *closure)
 static PyObject * PyNeuron_get_position(PyNeuron *self, void *closure)
 {
     PyObject *PList = PyList_New(0);
+    Py_XINCREF(PList);
     PyList_Append(PList, Py_BuildValue("i", std::get<0>(self->ptrObj->position)));
     PyList_Append(PList, Py_BuildValue("i", std::get<1>(self->ptrObj->position)));
     return PyList_AsTuple(PList);
@@ -289,6 +302,7 @@ static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
 static PyObject * PyNeuron_connections_PyDict_build(std::unordered_map<Neuron*, double> connections)
 {
     PyObject *PDict = PyDict_New();
+    Py_XINCREF(PDict);
 
     for (auto& it: connections) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
@@ -318,6 +332,7 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     output = (self->ptrObj)->get_output();
 
     PyObject *PList = PyList_New(0);
+    Py_XINCREF(PList);
 
     for (const auto& i: output)
         PyList_Append(PList, Py_BuildValue("d", i));
@@ -328,6 +343,7 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 static PyObject * PyNetwork_neuron_PyList_builder(std::vector<Neuron*> neurons)
 {
     PyObject *PList = PyList_New(0);
+    Py_XINCREF(PList);
 
     for (Neuron* i: neurons) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
