@@ -21,7 +21,11 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
         Py_XINCREF(next);
 
         if (!PyFloat_Check(next)) {
-            PyErr_SetString(PyExc_TypeError, "One of the arguments contains an illegal value (other than float)");
+            PyErr_SetString(
+                PyExc_TypeError,
+                "One of the arguments contains an illegal "
+                "value (other than float)"
+            );
         }
 
         double val = PyFloat_AsDouble(next);
@@ -60,12 +64,47 @@ static int PyNetwork_init(PyNetwork *self, PyObject *args, PyObject *kwargs)
     int visualization = false;
     double decay_factor =  1.0;
 
-    static char *kwlist[] = {"size", "input_dim", "output_dim", "connectivity", "precision", "randomly_fire", "dynamic_output", "visualization", "decay_factor", NULL};
+    static char *kwlist[] = {
+        "size",
+        "input_dim",
+        "output_dim",
+        "connectivity",
+        "precision",
+        "randomly_fire",
+        "dynamic_output",
+        "visualization",
+        "decay_factor",
+        NULL
+    };
 
-    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "i|iidipppd", kwlist, &size, &input_dim, &output_dim, &connectivity, &precision, &randomly_fire, &dynamic_output, &visualization, &decay_factor))
+    if (! PyArg_ParseTupleAndKeywords(
+        args,
+        kwargs,
+        "i|iidipppd",
+        kwlist,
+        &size,
+        &input_dim,
+        &output_dim,
+        &connectivity,
+        &precision,
+        &randomly_fire,
+        &dynamic_output,
+        &visualization,
+        &decay_factor
+    ))
         return -1;
 
-    self->ptrObj = new Network(size, input_dim, output_dim, connectivity, precision, randomly_fire, dynamic_output, visualization, decay_factor);
+    self->ptrObj = new Network(
+        size,
+        input_dim,
+        output_dim,
+        connectivity,
+        precision,
+        randomly_fire,
+        dynamic_output,
+        visualization,
+        decay_factor
+    );
 
     return 0;
 }
@@ -98,7 +137,11 @@ static void PyNeuron_dealloc(PyNeuron * self)
     Py_TYPE(self)->tp_free(self);
 }
 
-static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwargs)
+static PyObject * PyNetwork_load(
+    PyNetwork* self,
+    PyObject* args,
+    PyObject *kwargs
+)
 {
     std::vector<double> input_arr;
     std::vector<double> output_arr;
@@ -107,7 +150,14 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
 
     static char *kwlist[] = {"input_obj", "output_obj", NULL};
 
-    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &input_obj, &output_obj))
+    if (! PyArg_ParseTupleAndKeywords(
+        args,
+        kwargs,
+        "O|O",
+        kwlist,
+        &input_obj,
+        &output_obj
+    ))
         PyErr_SetString(PyExc_TypeError, "Wrong type of argument");
 
     Py_XINCREF(input_obj);
@@ -122,7 +172,10 @@ static PyObject * PyNetwork_load(PyNetwork* self, PyObject* args, PyObject *kwar
     if (output_obj != Py_None) {
         PyObject *output_iter = PyObject_GetIter(output_obj);
         if (!output_iter) {
-            PyErr_SetString(PyExc_TypeError, "Output argument is not iterable");
+            PyErr_SetString(
+                PyExc_TypeError,
+                "Output argument is not iterable"
+            );
         }
         parse_iterable(output_arr, output_iter);
     }
@@ -152,7 +205,10 @@ static PyObject * PyNetwork_get_connectivity(PyNetwork *self, void *closure)
     return Py_BuildValue("i", self->ptrObj->connectivity);
 }
 
-static PyObject * PyNetwork_get_connectivity_sqrt(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_connectivity_sqrt(
+    PyNetwork *self,
+    void *closure
+)
 {
     return Py_BuildValue("i", self->ptrObj->connectivity_sqrt);
 }
@@ -172,7 +228,10 @@ static PyObject * PyNetwork_get_randomly_fire(PyNetwork *self, void *closure)
     return Py_BuildValue("b", self->ptrObj->randomly_fire);
 }
 
-static PyObject * PyNetwork_get_motor_randomly_fire_rate(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_motor_randomly_fire_rate(
+    PyNetwork *self,
+    void *closure
+)
 {
     return Py_BuildValue("i", self->ptrObj->motor_randomly_fire_rate);
 }
@@ -187,7 +246,10 @@ static PyObject * PyNetwork_get_decay_factor(PyNetwork *self, void *closure)
     return Py_BuildValue("d", self->ptrObj->decay_factor);
 }
 
-static PyObject * PyNetwork_get_initiated_neurons(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_initiated_neurons(
+    PyNetwork *self,
+    void *closure
+)
 {
     return Py_BuildValue("i", self->ptrObj->initiated_neurons);
 }
@@ -197,7 +259,10 @@ static PyObject * PyNetwork_get_freezer(PyNetwork *self, void *closure)
     return Py_BuildValue("b", self->ptrObj->freezer);
 }
 
-static PyObject * PyNetwork_get_thread_kill_signal(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_thread_kill_signal(
+    PyNetwork *self,
+    void *closure
+)
 {
     return Py_BuildValue("b", self->ptrObj->thread_kill_signal);
 }
@@ -235,12 +300,18 @@ static PyObject * PyNeuron_get_index(PyNeuron *self, void *closure)
 static int PyNeuron_set_index(PyNeuron *self, PyObject *value, void *closue)
 {
     if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the position attribute");
+        PyErr_SetString(
+            PyExc_TypeError,
+            "Cannot delete the position attribute"
+        );
         return -1;
     }
 
     if (! PyLong_Check(value)) {
-        PyErr_SetString(PyExc_TypeError, "The position attribute value must be an integer");
+        PyErr_SetString(
+            PyExc_TypeError,
+            "The position attribute value must be an integer"
+        );
         return -1;
     }
 
@@ -268,20 +339,38 @@ static PyObject * PyNeuron_get_position(PyNeuron *self, void *closure)
 {
     PyObject *PList = PyList_New(0);
     Py_XINCREF(PList);
-    PyList_Append(PList, Py_BuildValue("i", std::get<0>(self->ptrObj->position)));
-    PyList_Append(PList, Py_BuildValue("i", std::get<1>(self->ptrObj->position)));
+    PyList_Append(
+        PList,
+        Py_BuildValue(
+            "i",
+            std::get<0>(self->ptrObj->position)
+        )
+    );
+    PyList_Append(
+        PList,
+        Py_BuildValue(
+            "i",
+            std::get<1>(self->ptrObj->position)
+        )
+    );
     return PyList_AsTuple(PList);
 }
 
 static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
 {
     if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the position attribute");
+        PyErr_SetString(
+            PyExc_TypeError,
+            "Cannot delete the position attribute"
+        );
         return -1;
     }
 
     if (! PyTuple_Check(value)) {
-        PyErr_SetString(PyExc_TypeError, "The position attribute value must be a tuple");
+        PyErr_SetString(
+            PyExc_TypeError,
+            "The position attribute value must be a tuple"
+        );
         return -1;
     }
 
@@ -289,7 +378,10 @@ static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
     PyObject *y = PyTuple_GetItem(value, 1);
 
     if (! PyFloat_Check(x) || ! PyFloat_Check(y)) {
-        PyErr_SetString(PyExc_TypeError, "The elements of position attribute must be float");
+        PyErr_SetString(
+            PyExc_TypeError,
+            "The elements of position attribute must be float"
+        );
         return -1;
     }
 
@@ -299,7 +391,10 @@ static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
     return 0;
 }
 
-static PyObject * PyNeuron_connections_PyDict_build(std::unordered_map<Neuron*, double> connections)
+static PyObject * PyNeuron_connections_PyDict_build(
+    std::unordered_map<Neuron*,
+    double> connections
+)
 {
     PyObject *PDict = PyDict_New();
     Py_XINCREF(PDict);
@@ -307,20 +402,26 @@ static PyObject * PyNeuron_connections_PyDict_build(std::unordered_map<Neuron*, 
     for (auto& it: connections) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
         neuron->ptrObj = it.first;
-        PyDict_SetItem(PDict, Py_BuildValue("O", neuron), Py_BuildValue("d", it.second));
+        PyDict_SetItem(
+            PDict,
+            Py_BuildValue("O", neuron),
+            Py_BuildValue("d", it.second)
+        );
     }
     return PDict;
 }
 
 static PyObject * PyNeuron_get_subscriptions(PyNeuron *self, void *closure)
 {
-    std::unordered_map<Neuron*, double> connections = (self->ptrObj)->subscriptions;
+    std::unordered_map<Neuron*, double> connections
+        = (self->ptrObj)->subscriptions;
     return PyNeuron_connections_PyDict_build(connections);
 }
 
 static PyObject * PyNeuron_get_publications(PyNeuron *self, void *closure)
 {
-    std::unordered_map<Neuron*, double> connections = (self->ptrObj)->publications;
+    std::unordered_map<Neuron*, double> connections
+        = (self->ptrObj)->publications;
     return PyNeuron_connections_PyDict_build(connections);
 }
 
@@ -377,21 +478,37 @@ static PyObject * PyNetwork_get_interneurons(PyNetwork *self, void *closure)
     return PyNetwork_neuron_PyList_builder(neurons);
 }
 
-static PyObject * PyNetwork_get_nonsensory_neurons(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_nonsensory_neurons(
+    PyNetwork *self,
+    void *closure
+)
 {
     std::vector<Neuron*> neurons = (self->ptrObj)->nonsensory_neurons;
     return PyNetwork_neuron_PyList_builder(neurons);
 }
 
-static PyObject * PyNetwork_get_nonmotor_neurons(PyNetwork *self, void *closure)
+static PyObject * PyNetwork_get_nonmotor_neurons(
+    PyNetwork *self,
+    void *closure
+)
 {
     std::vector<Neuron*> neurons = (self->ptrObj)->nonmotor_neurons;
     return PyNetwork_neuron_PyList_builder(neurons);
 }
 
 static PyMethodDef PyNetwork_methods[] = {
-    {"load", (PyCFunction)PyNetwork_load, METH_VARARGS | METH_KEYWORDS, "Load input and output into the neural network" },
-    {"freeze", (PyCFunction)PyNetwork_freeze, METH_NOARGS, "Freeze the neural network" },
+    {
+        "load",
+        (PyCFunction)PyNetwork_load,
+        METH_VARARGS | METH_KEYWORDS,
+        "Load input and output into the neural network"
+    },
+    {
+        "freeze",
+        (PyCFunction)PyNetwork_freeze,
+        METH_NOARGS,
+        "Freeze the neural network"
+    },
     {NULL}  /* Sentinel */
 };
 
@@ -408,41 +525,229 @@ static PyMemberDef PyNeuron_members[] = {
 };
 
 static PyGetSetDef PyNetwork_getseters[] = {
-    {"precision", (getter)PyNetwork_get_precision, NULL, "Precision of the network", NULL},
-    {"connectivity", (getter)PyNetwork_get_connectivity, NULL, "Connectivity of the network", NULL},
-    {"connectivity_sqrt", (getter)PyNetwork_get_connectivity_sqrt, NULL, "Square root of the connectivity of the network", NULL},
-    {"input_dim", (getter)PyNetwork_get_input_dim, NULL, "Input dimension of the network", NULL},
-    {"output_dim", (getter)PyNetwork_get_output_dim, NULL, "Output dimension of the network", NULL},
-    {"randomly_fire", (getter)PyNetwork_get_randomly_fire, NULL, "Is randomly fire enabled for the network?", NULL},
-    {"motor_randomly_fire_rate", (getter)PyNetwork_get_motor_randomly_fire_rate, NULL, "Motor neurons' randomly fire rate", NULL},
-    {"dynamic_output", (getter)PyNetwork_get_dynamic_output, NULL, "Is dynamic output enabled for the network?", NULL},
-    {"decay_factor", (getter)PyNetwork_get_decay_factor, NULL, "Decay factor of the network", NULL},
-    {"initiated_neurons", (getter)PyNetwork_get_initiated_neurons, NULL, "Initiated neuron count of the network", NULL},
-    {"freezer", (getter)PyNetwork_get_freezer, NULL, "Is freezing enabled for the network?", NULL},
-    {"thread_kill_signal", (getter)PyNetwork_get_thread_kill_signal, NULL, "Are threads signalled for kill?", NULL},
-    {"wave_counter", (getter)PyNetwork_get_wave_counter, NULL, "Holds the integer value of how many waves executed throughout the network", NULL},
-    {"fire_counter", (getter)PyNetwork_get_fire_counter, NULL, "Holds the integer value of how many neurons fired during the training", NULL},
-    {"output", (getter)PyNetwork_get_output, NULL, "Shows the output of the neural network", NULL},
-    {"neurons", (getter)PyNetwork_get_neurons, NULL, "Holds the neurons of the neural network", NULL},
-    {"sensory_neurons", (getter)PyNetwork_get_sensory_neurons, NULL, "Holds the sensory neurons of the neural network", NULL},
-    {"motor_neurons", (getter)PyNetwork_get_motor_neurons, NULL, "Holds the motor neurons of the neural network", NULL},
-    {"interneurons", (getter)PyNetwork_get_interneurons, NULL, "Holds the interneurons of the neural network", NULL},
-    {"nonsensory_neurons", (getter)PyNetwork_get_nonsensory_neurons, NULL, "Holds the nonsensory neurons of the neural network", NULL},
-    {"nonmotor_neurons", (getter)PyNetwork_get_nonmotor_neurons, NULL, "Holds the nonmotor neurons of the neural network", NULL},
+    {
+        "precision",
+        (getter)PyNetwork_get_precision,
+        NULL,
+        "Precision of the network",
+        NULL
+    },
+    {
+        "connectivity",
+        (getter)PyNetwork_get_connectivity,
+        NULL,
+        "Connectivity of the network",
+        NULL
+    },
+    {
+        "connectivity_sqrt",
+        (getter)PyNetwork_get_connectivity_sqrt,
+        NULL,
+        "Square root of the connectivity of the network",
+        NULL
+    },
+    {
+        "input_dim",
+        (getter)PyNetwork_get_input_dim,
+        NULL,
+        "Input dimension of the network",
+        NULL
+    },
+    {
+        "output_dim",
+        (getter)PyNetwork_get_output_dim,
+        NULL,
+        "Output dimension of the network",
+        NULL
+    },
+    {
+        "randomly_fire",
+        (getter)PyNetwork_get_randomly_fire,
+        NULL,
+        "Is randomly fire enabled for the network?",
+        NULL
+    },
+    {
+        "motor_randomly_fire_rate",
+        (getter)PyNetwork_get_motor_randomly_fire_rate,
+        NULL,
+        "Motor neurons' randomly fire rate",
+        NULL
+    },
+    {
+        "dynamic_output",
+        (getter)PyNetwork_get_dynamic_output,
+        NULL,
+        "Is dynamic output enabled for the network?",
+        NULL
+    },
+    {
+        "decay_factor",
+        (getter)PyNetwork_get_decay_factor,
+        NULL,
+        "Decay factor of the network",
+        NULL
+    },
+    {
+        "initiated_neurons",
+        (getter)PyNetwork_get_initiated_neurons,
+        NULL,
+        "Initiated neuron count of the network",
+        NULL
+    },
+    {
+        "freezer",
+        (getter)PyNetwork_get_freezer,
+        NULL,
+        "Is freezing enabled for the network?",
+        NULL
+    },
+    {
+        "thread_kill_signal",
+        (getter)PyNetwork_get_thread_kill_signal,
+        NULL,
+        "Are threads signalled for kill?",
+        NULL
+    },
+    {
+        "wave_counter",
+        (getter)PyNetwork_get_wave_counter,
+        NULL,
+        "Holds the integer value of how many waves executed "
+        "throughout the network",
+        NULL
+    },
+    {
+        "fire_counter",
+        (getter)PyNetwork_get_fire_counter,
+        NULL,
+        "Holds the integer value of how many "
+        "neurons fired during the training",
+        NULL
+    },
+    {
+        "output",
+        (getter)PyNetwork_get_output,
+        NULL,
+        "Shows the output of the neural network",
+        NULL
+    },
+    {
+        "neurons",
+        (getter)PyNetwork_get_neurons,
+        NULL,
+        "Holds the neurons of the neural network",
+        NULL
+    },
+    {
+        "sensory_neurons",
+        (getter)PyNetwork_get_sensory_neurons,
+        NULL,
+        "Holds the sensory neurons of the neural network",
+        NULL
+    },
+    {
+        "motor_neurons",
+        (getter)PyNetwork_get_motor_neurons,
+        NULL,
+        "Holds the motor neurons of the neural network",
+        NULL
+    },
+    {
+        "interneurons",
+        (getter)PyNetwork_get_interneurons,
+        NULL,
+        "Holds the interneurons of the neural network",
+        NULL
+    },
+    {
+        "nonsensory_neurons",
+        (getter)PyNetwork_get_nonsensory_neurons,
+        NULL,
+        "Holds the nonsensory neurons of the neural network",
+        NULL
+    },
+    {
+        "nonmotor_neurons",
+        (getter)PyNetwork_get_nonmotor_neurons,
+        NULL,
+        "Holds the nonmotor neurons of the neural network",
+        NULL
+    },
     {NULL}  /* Sentinel */
 };
 
 static PyGetSetDef PyNeuron_getseters[] = {
-    {"desired_potential", (getter)PyNeuron_get_desired_potential, NULL, "Desired potential of the neuron", NULL},
-    {"loss", (getter)PyNeuron_get_loss, NULL, "Loss of the neuron", NULL},
-    {"fire_counter", (getter)PyNeuron_get_fire_counter, NULL, "Fire counter of the neuron", NULL},
-    {"index", (getter)PyNeuron_get_index, (setter)PyNeuron_set_index, "Index of the neuron inside the network", NULL},
-    {"potential", (getter)PyNeuron_get_potential, NULL, "Potential of the neuron", NULL},
-    {"type", (getter)PyNeuron_get_type, NULL, "Type of the neuron", NULL},
-    {"ban_counter", (getter)PyNeuron_get_ban_counter, NULL, "Ban counter of the neuron", NULL},
-    {"position", (getter)PyNeuron_get_position, (setter)PyNeuron_set_position, "Position(imaginary) of the neuron", NULL},
-    {"subscriptions", (getter)PyNeuron_get_subscriptions, NULL, "Holds the subscriptions of the neuron", NULL},
-    {"publications", (getter)PyNeuron_get_publications, NULL, "Holds the publications of the neuron", NULL},
+    {
+        "desired_potential",
+        (getter)PyNeuron_get_desired_potential,
+        NULL,
+        "Desired potential of the neuron",
+        NULL
+    },
+    {
+        "loss",
+        (getter)PyNeuron_get_loss,
+        NULL,
+        "Loss of the neuron",
+        NULL
+    },
+    {
+        "fire_counter",
+        (getter)PyNeuron_get_fire_counter,
+        NULL,
+        "Fire counter of the neuron",
+        NULL
+    },
+    {
+        "index",
+        (getter)PyNeuron_get_index,
+        (setter)PyNeuron_set_index,
+        "Index of the neuron inside the network",
+        NULL
+    },
+    {
+        "potential",
+        (getter)PyNeuron_get_potential,
+        NULL,
+        "Potential of the neuron",
+        NULL
+    },
+    {
+        "type",
+        (getter)PyNeuron_get_type,
+        NULL,
+        "Type of the neuron",
+        NULL
+    },
+    {
+        "ban_counter",
+        (getter)PyNeuron_get_ban_counter,
+        NULL,
+        "Ban counter of the neuron",
+        NULL
+    },
+    {
+        "position",
+        (getter)PyNeuron_get_position,
+        (setter)PyNeuron_set_position,
+        "Position(imaginary) of the neuron",
+        NULL
+    },
+    {
+        "subscriptions",
+        (getter)PyNeuron_get_subscriptions,
+        NULL,
+        "Holds the subscriptions of the neuron",
+        NULL
+    },
+    {
+        "publications",
+        (getter)PyNeuron_get_publications,
+        NULL,
+        "Holds the publications of the neuron",
+        NULL
+    },
     {NULL}  /* Sentinel */
 };
 
@@ -450,12 +755,12 @@ static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "cplexus",          /* name of module */
     "",                 /* module documentation, may be NULL */
-    -1,                 /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    -1,                 /* size of per-interpreter state of the module, or
+                           -1 if the module keeps state in global variables. */
     NULL, NULL, NULL, NULL, NULL
 };
 
-PyMODINIT_FUNC PyInit_cplexus(void)
-// create the module
+PyMODINIT_FUNC PyInit_cplexus(void) /* create the module */
 {
     PyObject* m;
 
@@ -491,8 +796,11 @@ PyMODINIT_FUNC PyInit_cplexus(void)
 
     Py_INCREF(&PyNetworkType);
     Py_INCREF(&PyNeuronType);
-    PyModule_AddObject(m, "Network", (PyObject *)&PyNetworkType); // Add Network object to the module
-    PyModule_AddObject(m, "Neuron", (PyObject *)&PyNeuronType); // Add Neuron object to the module
+
+    /* Add Network object to the module */
+    PyModule_AddObject(m, "Network", (PyObject *)&PyNetworkType);
+    /* Add Neuron object to the module */
+    PyModule_AddObject(m, "Neuron", (PyObject *)&PyNeuronType);
     return m;
 }
 
