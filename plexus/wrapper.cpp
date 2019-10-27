@@ -21,11 +21,10 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
         Py_XINCREF(next);
 
         if (!PyFloat_Check(next)) {
-            PyErr_SetString(
-                PyExc_TypeError,
+            throw
                 "One of the arguments contains an illegal "
                 "value (other than float)"
-            );
+            ;
         }
 
         double val = PyFloat_AsDouble(next);
@@ -157,8 +156,10 @@ static PyObject * PyNetwork_load(
         kwlist,
         &input_obj,
         &output_obj
-    ))
+    )) {
         PyErr_SetString(PyExc_TypeError, "Wrong type of argument");
+        return NULL;
+    }
 
     Py_XINCREF(input_obj);
     Py_XINCREF(output_obj);
@@ -166,8 +167,17 @@ static PyObject * PyNetwork_load(
     PyObject *input_iter = PyObject_GetIter(input_obj);
     if (!input_iter) {
         PyErr_SetString(PyExc_TypeError, "Input argument is not iterable");
+        return NULL;
     }
-    parse_iterable(input_arr, input_iter);
+    try {
+        parse_iterable(input_arr, input_iter);
+    } catch (char *msg) {
+        PyErr_SetString(
+            PyExc_TypeError,
+            msg
+        );
+        return NULL;
+    }
 
     if (output_obj != Py_None) {
         PyObject *output_iter = PyObject_GetIter(output_obj);
@@ -176,8 +186,17 @@ static PyObject * PyNetwork_load(
                 PyExc_TypeError,
                 "Output argument is not iterable"
             );
+            return NULL;
         }
-        parse_iterable(output_arr, output_iter);
+        try {
+            parse_iterable(output_arr, output_iter);
+        } catch (char *msg) {
+            PyErr_SetString(
+                PyExc_TypeError,
+                msg
+            );
+            return NULL;
+        }
     }
 
     Py_XDECREF(input_obj);
