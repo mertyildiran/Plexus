@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <thread>
+#include <vector>
+#include <unordered_map>
 
 class Neuron;
 
@@ -58,7 +60,17 @@ public:
     std::vector<Neuron*> nonmotor_neurons;
     unsigned long long int wave_counter;
     unsigned long long int fire_counter;
-    Network(int size, int input_dim, int output_dim, double connectivity, int precision, bool randomly_fire, bool dynamic_output, bool visualization, double decay_factor);
+    Network(
+        int size,
+        int input_dim,
+        int output_dim,
+        double connectivity,
+        int precision,
+        bool randomly_fire,
+        bool dynamic_output,
+        bool visualization,
+        double decay_factor
+    );
     int get_connectivity();
     int get_connectivity_sqrt();
     int get_decay_factor();
@@ -69,7 +81,8 @@ public:
     void load(std::vector<double> input_arr, std::vector<double> output_arr);
 };
 
-// Function to get a random sampling from a vector using Fisher-Yates shuffle method
+// Function to get a random sampling from a vector
+// using Fisher-Yates shuffle method
 template<class BidiIter >
 BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
     size_t left = std::distance(begin, end);

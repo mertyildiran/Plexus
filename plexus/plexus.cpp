@@ -23,8 +23,13 @@ Neuron::Neuron(Network& network)
 void Neuron::partially_subscribe()
 {
     if (this->subscriptions.size() == 0) {
-        std::normal_distribution<double> distribution(this->network->get_connectivity(), this->network->get_connectivity_sqrt());
-        unsigned int sample_length = static_cast<unsigned int>(roundf(distribution(this->generator)));
+        std::normal_distribution<double> distribution(
+            this->network->get_connectivity(),
+            this->network->get_connectivity_sqrt()
+        );
+        unsigned int sample_length = static_cast<unsigned int>(
+            roundf(distribution(this->generator))
+        );
         if (sample_length > this->network->nonmotor_neurons.size())
             sample_length = this->network->nonmotor_neurons.size();
         if (sample_length <= 0)
@@ -33,8 +38,15 @@ void Neuron::partially_subscribe()
         for (unsigned int i = 0; i < sample_length; i++) {
             Neuron* target_neuron = this->network->nonmotor_neurons[i];
             if (target_neuron != this) {
-                this->subscriptions.insert( std::pair<Neuron*, double>(target_neuron, Random::get(-1.0, 1.0)) );
-                target_neuron->publications.insert( std::pair<Neuron*, double>(&(*this), 0.0) );
+                this->subscriptions.insert(
+                    std::pair<Neuron*, double>(
+                        target_neuron,
+                        Random::get(-1.0, 1.0)
+                    )
+                );
+                target_neuron->publications.insert(
+                    std::pair<Neuron*, double>(&(*this), 0.0)
+                );
             }
         }
         this->network->increase_initiated_neurons();
@@ -91,24 +103,43 @@ bool Neuron::fire()
             }
 
             double alteration_value = pow(fabs(this->loss), 2);
-            alteration_value = alteration_value * pow(this->network->get_decay_factor(), (this->network->fire_counter/1000));
+            alteration_value = alteration_value * pow(
+                this->network->get_decay_factor(),
+                (this->network->fire_counter/1000)
+            );
 
             for (auto& it: this->subscriptions) {
-                it.first->desired_potential = it.first->potential + alteration_sign * this->derivative(it.first->potential);
-                this->subscriptions[it.first] = it.second + (alteration_value * alteration_sign) * this->derivative(it.first->potential);
+                it.first->desired_potential = it.first->potential
+                    + alteration_sign
+                    * this->derivative(it.first->potential);
+                this->subscriptions[it.first] = it.second
+                    + (alteration_value * alteration_sign)
+                    * this->derivative(it.first->potential);
             }
         }
     }
 }
 
 
-Network::Network(int size, int input_dim = 0, int output_dim = 0, double connectivity = 0.01, int precision = 2, bool randomly_fire = false, bool dynamic_output = false, bool visualization = false, double decay_factor = 1.0)
+Network::Network(
+    int size,
+    int input_dim = 0,
+    int output_dim = 0,
+    double connectivity = 0.01,
+    int precision = 2,
+    bool randomly_fire = false,
+    bool dynamic_output = false,
+    bool visualization = false,
+    double decay_factor = 1.0
+)
 {
     this->precision = precision;
-    std::cout << "\nPrecision of the network will be " << 1.0 / pow(10, precision) << '\n';
+    std::cout << "\nPrecision of the network will be "
+        << 1.0 / pow(10, precision) << '\n';
     this->connectivity = std::ceil(size * connectivity);
     this->connectivity_sqrt = std::ceil(sqrt(connectivity));
-    std::cout << "Each individual non-sensory neuron will subscribe to " << this->connectivity << " different neurons" << '\n';
+    std::cout << "Each individual non-sensory neuron will subscribe to "
+        << this->connectivity << " different neurons" << '\n';
 
     this->neurons.reserve(size);
     for (int i = 0; i < size; i++) {
@@ -128,7 +159,9 @@ Network::Network(int size, int input_dim = 0, int output_dim = 0, double connect
     this->get_neurons_by_type(NON_MOTOR_NEURON);
     this->get_neurons_by_type(INTER_NEURON);
     this->randomly_fire = randomly_fire;
-    this->motor_randomly_fire_rate = sqrt( this->nonsensory_neurons.size() / this->motor_neurons.size() );
+    this->motor_randomly_fire_rate = sqrt(
+        this->nonsensory_neurons.size() / this->motor_neurons.size()
+    );
 
     this->dynamic_output = dynamic_output;
 
@@ -151,10 +184,16 @@ void Network::initiate_subscriptions()
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
-    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+    for (
+            neuron = this->neurons.begin();
+            neuron != this->neurons.end();
+            ++neuron,
+            i++
+        ) {
         if ((*neuron)->type != SENSORY_NEURON) {
             (*neuron)->partially_subscribe();
-            std::cout << "Initiated: " << this->initiated_neurons << " neuron(s)\r" << std::flush;
+            std::cout << "Initiated: " << this->initiated_neurons
+                << " neuron(s)\r" << std::flush;
         }
         if (i == this->neurons.size()) {
             break;
@@ -168,7 +207,11 @@ void Network::_ignite(Network* network)
     std::vector<Neuron*> ban_list;
     while (network->freezer == false) {
         if (network->randomly_fire) {
-            Neuron* neuron = random_unique(network->sensory_neurons.begin(), network->sensory_neurons.end(), 1)[0];
+            Neuron* neuron = random_unique(
+                network->sensory_neurons.begin(),
+                network->sensory_neurons.end(),
+                1
+            )[0];
             if (neuron->type == MOTOR_NEURON) {
                 if (1 != Random::get(1, network->motor_randomly_fire_rate))
                     continue;
@@ -201,13 +244,17 @@ void Network::_ignite(Network* network)
 
                 if (network->first_queue.empty()) {
                     for (auto& neuron: network->sensory_neurons) {
-                        network->first_queue.insert(neuron->publications.begin(), neuron->publications.end());
+                        network->first_queue.insert(
+                            neuron->publications.begin(),
+                            neuron->publications.end()
+                        );
                     }
                 }
                 network->next_queue = network->first_queue;
             }
 
-            std::unordered_map<Neuron*, double> current_queue = network->next_queue;
+            std::unordered_map<Neuron*, double> current_queue
+                = network->next_queue;
             network->next_queue.clear();
             for (auto& neuron: ban_list) {
                 if (neuron->ban_counter > network->get_connectivity_sqrt())
@@ -225,7 +272,10 @@ void Network::_ignite(Network* network)
                     neuron->fire();
                     ban_list.push_back(neuron);
                     neuron->ban_counter++;
-                    network->next_queue.insert(neuron->publications.begin(), neuron->publications.end());
+                    network->next_queue.insert(
+                        neuron->publications.begin(),
+                        neuron->publications.end()
+                    );
                 }
             }
         }
@@ -262,7 +312,12 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
-    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+    for (
+            neuron = this->neurons.begin();
+            neuron != this->neurons.end();
+            ++neuron,
+            i++
+        ) {
         if ((*neuron)->type == INTER_NEURON) {
             available_neurons.push_back((*neuron));
         }
@@ -281,19 +336,29 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
                 this->motor_neurons.push_back(available_neurons[j]);
                 break;
             default:
-                throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts SENSORY_NEURON or MOTOR_NEURON as the neuron type!");
+                throw std::invalid_argument(
+                    "Network::pick_neurons_by_type(int input_dim, "
+                    "NeuronType neuron_type) function only accepts "
+                    "SENSORY_NEURON or MOTOR_NEURON as the neuron type!"
+                );
                 break;
         }
     }
     switch (neuron_type) {
         case SENSORY_NEURON:
-            std::cout << input_dim << " neuron picked as sensory neuron" << '\n';
+            std::cout << input_dim
+                << " neuron picked as sensory neuron" << '\n';
             break;
         case MOTOR_NEURON:
-            std::cout << input_dim << " neuron picked as motor neuron" << '\n';
+            std::cout << input_dim
+                << " neuron picked as motor neuron" << '\n';
             break;
         default:
-            throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts SENSORY_NEURON or MOTOR_NEURON as the neuron type!");
+            throw std::invalid_argument(
+                "Network::pick_neurons_by_type(int input_dim, "
+                "NeuronType neuron_type) function only accepts "
+                "SENSORY_NEURON or MOTOR_NEURON as the neuron type!"
+            );
             break;
     }
 }
@@ -303,7 +368,12 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
-    for (neuron = this->neurons.begin(); neuron != this->neurons.end(); neuron++, i++) {
+    for (
+            neuron = this->neurons.begin();
+            neuron != this->neurons.end();
+            ++neuron,
+            i++
+        ) {
         switch (neuron_type) {
             case NON_SENSORY_NEURON:
                 if ((*neuron)->type != SENSORY_NEURON) {
@@ -321,7 +391,12 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
                 }
                 break;
             default:
-                throw std::invalid_argument("Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type) function only accepts NON_SENSORY_NEURON, NON_MOTOR_NEURON or INTER_NEURON as the neuron type!");
+                throw std::invalid_argument(
+                    "Network::pick_neurons_by_type(int input_dim, "
+                    "NeuronType neuron_type) function only accepts "
+                    "NON_SENSORY_NEURON, NON_MOTOR_NEURON or "
+                    "INTER_NEURON as the neuron type!"
+                );
                 break;
         }
         if (i == this->neurons.size()) {
@@ -369,37 +444,59 @@ void Network::print_output()
         std::cout << i << ' ';
 }
 
-void Network::load(std::vector<double> input_arr, std::vector<double> output_arr)
+void Network::load(
+    std::vector<double> input_arr,
+    std::vector<double> output_arr
+)
 {
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
     if (this->sensory_neurons.size() != input_arr.size()) {
         std::cout << "Size of the input array: " << input_arr.size() << '\n';
-        std::cout << "Number of the sensory neurons: " << this->sensory_neurons.size() << '\n';
-        std::cout << "Size of the input array and number of the sensory neurons are not matching! Please try again" << '\n';
+        std::cout << "Number of the sensory neurons: "
+            << this->sensory_neurons.size() << '\n';
+        std::cout << "Size of the input array and number of the sensory "
+            "neurons are not matching! Please try again" << '\n';
     } else {
         int step = 0;
-        for (neuron = this->sensory_neurons.begin(); neuron != this->sensory_neurons.end(); neuron++, i++) {
+        for (
+                neuron = this->sensory_neurons.begin();
+                neuron != this->sensory_neurons.end();
+                ++neuron,
+                i++
+            ) {
             (*neuron)->potential = input_arr[step];
             step++;
         }
     }
     if (output_arr.empty()) {
-        int step = 0;
         this->freezer = true;
-        for (neuron = this->nonsensory_neurons.begin(); neuron != this->nonsensory_neurons.end(); neuron++, i++) {
+        for (
+                neuron = this->nonsensory_neurons.begin();
+                neuron != this->nonsensory_neurons.end();
+                ++neuron,
+                i++
+            ) {
             (*neuron)->potential = NULL;
-            step++;
         }
         this->freezer = false;
     } else {
         if (this->motor_neurons.size() != output_arr.size()) {
-            std::cout << "Size of the output/target array: " << output_arr.size() << '\n';
-            std::cout << "Number of the motor neurons: " << this->motor_neurons.size() << '\n';
-            std::cout << "Size of the output/target array and number of the motor neurons are not matching! Please try again" << '\n';
+            std::cout << "Size of the output/target array: "
+                << output_arr.size() << '\n';
+            std::cout << "Number of the motor neurons: "
+                << this->motor_neurons.size() << '\n';
+            std::cout << "Size of the output/target array and number "
+                "of the motor neurons are not matching! "
+                "Please try again" << '\n';
         } else {
             int step = 0;
-            for (neuron = this->motor_neurons.begin(); neuron != this->motor_neurons.end(); neuron++, i++) {
+            for (
+                    neuron = this->motor_neurons.begin();
+                    neuron != this->motor_neurons.end();
+                    ++neuron,
+                    i++
+                ) {
                 (*neuron)->potential = output_arr[step];
                 step++;
             }
