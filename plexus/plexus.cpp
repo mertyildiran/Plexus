@@ -467,7 +467,7 @@ void Network::load(
                 ++neuron,
                 i++
             ) {
-            (*neuron)->potential = NULL;
+            (*neuron)->desired_potential = NULL;
         }
         this->freezer = false;
     } else {
@@ -487,7 +487,7 @@ void Network::load(
                     ++neuron,
                     i++
                 ) {
-                (*neuron)->potential = output_arr[step];
+                (*neuron)->desired_potential = output_arr[step];
                 step++;
             }
         }
