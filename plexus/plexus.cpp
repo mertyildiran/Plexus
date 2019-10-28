@@ -45,7 +45,7 @@ void Neuron::partially_subscribe()
                     )
                 );
                 target_neuron->publications.insert(
-                    std::pair<Neuron*, double>(&(*this), 0.0)
+                    std::pair<Neuron*, double>(this, 0.0)
                 );
             }
         }
