@@ -89,7 +89,7 @@ bool Neuron::fire()
         this->network->fire_counter++;
         this->fire_counter++;
 
-        if (this->desired_potential != 0) {
+        if (this->desired_potential) {
 
             this->loss = this->calculate_loss();
             int alteration_sign;
@@ -98,7 +98,7 @@ bool Neuron::fire()
             } else if (this->loss < 0) {
                 alteration_sign = 1;
             } else {
-                this->desired_potential = 0;
+                this->desired_potential = NULL;
                 return true;
             }
 

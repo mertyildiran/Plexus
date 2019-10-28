@@ -1,7 +1,10 @@
 dev:
 	pip3 install -e .
 
-try:
+py:
+	python3 examples/classification_binary.py 1
+
+cpp:
 	python3 examples/classification_binary.py 1 -l cpp
 
 all:
