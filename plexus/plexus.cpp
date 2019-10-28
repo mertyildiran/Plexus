@@ -53,7 +53,7 @@ void Neuron::partially_subscribe()
     }
 }
 
-double Neuron::calculate_potential()
+double Neuron::calculate_potential() const
 {
     double total = 0;
     for (auto& it: this->subscriptions) {
@@ -62,17 +62,17 @@ double Neuron::calculate_potential()
     return this->activation_function(total);
 }
 
-double Neuron::activation_function(double x)
+double Neuron::activation_function(double x) const
 {
     return 1 / (1 + exp(-x));
 }
 
-double Neuron::derivative(double x)
+double Neuron::derivative(double x) const
 {
     return x * (1 - x);
 }
 
-double Neuron::calculate_loss()
+double Neuron::calculate_loss() const
 {
     try {
         return this->potential - this->desired_potential;
@@ -296,7 +296,7 @@ void Network::freeze()
     std::cout << "Network is now frozen" << '\n';
 }
 
-void Network::breakit()
+void Network::breakit() const
 {
     for (auto& neuron: this->neurons) {
         neuron->subscriptions.clear();
@@ -396,17 +396,17 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
     }
 }
 
-int Network::get_connectivity()
+int Network::get_connectivity() const
 {
     return this->connectivity;
 }
 
-int Network::get_connectivity_sqrt()
+int Network::get_connectivity_sqrt() const
 {
     return this->connectivity_sqrt;
 }
 
-int Network::get_decay_factor()
+int Network::get_decay_factor() const
 {
     return this->decay_factor;
 }
@@ -416,7 +416,7 @@ void Network::increase_initiated_neurons()
     this->initiated_neurons += 1;
 }
 
-std::vector<double> Network::get_output()
+std::vector<double> Network::get_output() const
 {
     std::vector<double> output;
     for (auto& neuron: this->motor_neurons) {
@@ -426,7 +426,7 @@ std::vector<double> Network::get_output()
     return output;
 }
 
-void Network::print_output()
+void Network::print_output() const
 {
     std::vector<double> output = this->get_output();
     std::cout << "\r";

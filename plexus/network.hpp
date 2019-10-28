@@ -53,7 +53,7 @@ public:
     void get_neurons_by_type(NeuronType neuron_type);
     static void _ignite(Network* network);
     void ignite();
-    void print_output();
+    void print_output() const;
 
 //public:
     std::vector<Neuron*> neurons;
@@ -71,13 +71,13 @@ public:
         bool visualization,
         double decay_factor
     );
-    int get_connectivity();
-    int get_connectivity_sqrt();
-    int get_decay_factor();
+    int get_connectivity() const;
+    int get_connectivity_sqrt() const;
+    int get_decay_factor() const;
     void increase_initiated_neurons();
     void freeze();
-    void breakit();
-    std::vector<double> get_output();
+    void breakit() const;
+    std::vector<double> get_output() const;
     void load(std::vector<double> input_arr, std::vector<double> output_arr);
 };
 

@@ -21,10 +21,10 @@ public:
     unsigned long index;
     std::default_random_engine generator;
 
-    double calculate_potential();
-    double activation_function(double x);
-    double derivative(double x);
-    double calculate_loss();
+    double calculate_potential() const;
+    double activation_function(double x) const;
+    double derivative(double x) const;
+    double calculate_loss() const;
 
 //public:
     Network *network;
