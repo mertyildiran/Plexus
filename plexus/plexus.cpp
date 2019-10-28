@@ -204,8 +204,8 @@ void Network::_ignite(Network* network)
     while (network->freezer == false) {
         if (network->randomly_fire) {
             Neuron* neuron = random_unique(
-                network->sensory_neurons.begin(),
-                network->sensory_neurons.end(),
+                network->nonsensory_neurons.begin(),
+                network->nonsensory_neurons.end(),
                 1
             )[0];
             if (neuron->type == MOTOR_NEURON) {
