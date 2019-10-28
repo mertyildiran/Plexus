@@ -195,9 +195,6 @@ void Network::initiate_subscriptions()
             std::cout << "Initiated: " << this->initiated_neurons
                 << " neuron(s)\r" << std::flush;
         }
-        if (i == this->neurons.size()) {
-            break;
-        }
     }
 }
 
@@ -321,9 +318,6 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
         if ((*neuron)->type == INTER_NEURON) {
             available_neurons.push_back((*neuron));
         }
-        if (i == this->neurons.size()) {
-            break;
-        }
     }
     for (int j = 0; j < input_dim; j++) {
         switch (neuron_type) {
@@ -398,9 +392,6 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
                     "INTER_NEURON as the neuron type!"
                 );
                 break;
-        }
-        if (i == this->neurons.size()) {
-            break;
         }
     }
 }
