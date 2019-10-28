@@ -181,7 +181,6 @@ Network::Network(
 
 void Network::initiate_subscriptions()
 {
-    std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
     for (
@@ -283,7 +282,7 @@ void Network::_ignite(Network* network)
 void Network::ignite()
 {
     this->freezer = false;
-    this->thread1 = std::thread{&this->_ignite, this};
+    this->thread1 = std::thread{Network::_ignite, this};
     //this->thread1.detach();
     //this->thread1.join();
     std::cout << "Network has been ignited" << '\n';
