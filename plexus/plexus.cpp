@@ -17,7 +17,7 @@ using Random = effolkronium::random_static;
 Neuron::Neuron(Network& network)
 {
     this->network = &network;
-    this->network->neurons.push_back(&(*this));
+    this->network->neurons.push_back(this);
 }
 
 void Neuron::partially_subscribe()
