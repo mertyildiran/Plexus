@@ -8,7 +8,7 @@
 #include <ostream>
 
 #include "random.hpp"
-using Random = effolkronium::random_static;
+using Random = effolkronium::random_thread_local;
 
 #include "neuron.hpp"
 #include "network.hpp"
