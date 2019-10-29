@@ -27,8 +27,8 @@ void Neuron::partially_subscribe()
             .time_since_epoch().count();
         std::default_random_engine generator (seed);
         std::normal_distribution<double> distribution(
-            this->network->get_connectivity(),
-            this->network->get_connectivity_sqrt()
+            this->network->connectivity,
+            this->network->connectivity_sqrt
         );
         unsigned int sample_length = distribution(generator);
         if (sample_length > this->network->nonmotor_neurons.size())
@@ -107,7 +107,7 @@ bool Neuron::fire()
 
             double alteration_value = pow(fabs(this->loss), 2);
             alteration_value = alteration_value * pow(
-                this->network->get_decay_factor(),
+                this->network->decay_factor,
                 (this->network->fire_counter/1000)
             );
 
@@ -248,7 +248,7 @@ void Network::_ignite(Network* network)
                 = network->next_queue;
             network->next_queue.clear();
             for (auto const& neuron: ban_list) {
-                if (neuron->ban_counter > network->get_connectivity_sqrt())
+                if (neuron->ban_counter > network->connectivity_sqrt)
                     current_queue.erase(neuron);
             }
             while (current_queue.size() > 0) {
@@ -256,7 +256,7 @@ void Network::_ignite(Network* network)
                 std::advance(it, rand() % current_queue.size());
                 Neuron* neuron = it->first;
                 current_queue.erase(neuron);
-                if (neuron->ban_counter <= network->get_connectivity_sqrt()) {
+                if (neuron->ban_counter <= network->connectivity_sqrt) {
                     if (neuron->type == MOTOR_NEURON) {
                         continue;
                     }
@@ -347,7 +347,6 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
 void Network::get_neurons_by_type(NeuronType neuron_type)
 {
     std::vector<Neuron*> available_neurons;
-    std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
     for (auto const& neuron: this->neurons) {
         switch (neuron_type) {
@@ -376,21 +375,6 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
                 break;
         }
     }
-}
-
-int Network::get_connectivity() const
-{
-    return this->connectivity;
-}
-
-int Network::get_connectivity_sqrt() const
-{
-    return this->connectivity_sqrt;
-}
-
-int Network::get_decay_factor() const
-{
-    return this->decay_factor;
 }
 
 void Network::increase_initiated_neurons()
