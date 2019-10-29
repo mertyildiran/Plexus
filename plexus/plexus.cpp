@@ -7,6 +7,7 @@
 #include <thread>
 #include <stdexcept>
 #include <ostream>
+#include <unistd.h>
 
 #include "random.hpp"
 using Random = effolkronium::random_thread_local;
@@ -198,7 +199,11 @@ void Network::_ignite(Network* network)
 {
     unsigned int motor_fire_counter = 0;
     std::vector<Neuron*> ban_list;
-    while (network->freezer == false) {
+    for (;;) {
+        if (network->freezer) {
+            usleep(10);
+            continue;
+        }
         if (network->randomly_fire) {
             Neuron* neuron = random_sample(
                 network->nonsensory_neurons,
@@ -271,7 +276,6 @@ void Network::_ignite(Network* network)
                 }
             }
         }
-        //break;
     }
 }
 

@@ -2,6 +2,7 @@ import random
 import math
 import threading
 import time
+usleep = lambda x: time.sleep(x/1000000.0)
 
 
 class Neuron():
@@ -112,7 +113,7 @@ class Network():
         self.connectivity_sqrt = int(math.sqrt(self.connectivity))
         print("Each individual non-sensory neuron will subscribe to {0} \
 different neurons".format(
-            str(int(size * connectivity)) 
+            str(int(size * connectivity))
         ))
 
         self.neurons = []
@@ -153,6 +154,7 @@ different neurons".format(
         print("\n")
 
         self.freezer = False
+        self.stop = False
         self.thread1 = None
         self.thread2 = None
         self.thread_kill_signal = False
@@ -183,7 +185,12 @@ different neurons".format(
     def _ignite(self):
         motor_fire_counter = 0
         ban_list = []
-        while not self.freezer:
+        while True:
+            if self.stop:
+                break
+            if self.freezer:
+                usleep(10)
+                continue
             if self.randomly_fire:
                 neuron = random.sample(self.nonsensory_neurons, 1)[0]
                 if neuron.type == 2:
@@ -239,6 +246,7 @@ different neurons".format(
 
     def ignite(self):
         self.freezer = False
+        self.stop = False
         if not self.thread1:
             self.thread1 = threading.Thread(target=self._ignite)
             self.thread1.start()
@@ -246,6 +254,7 @@ different neurons".format(
 
     def freeze(self):
         self.freezer = True
+        self.stop = True
         self.thread1 = None
         self.thread2 = None
         self.thread_kill_signal = True
