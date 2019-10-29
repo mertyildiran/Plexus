@@ -5,6 +5,8 @@
 #include <thread>
 #include <vector>
 #include <unordered_map>
+#include <random>
+#include <algorithm>
 
 class Neuron;
 
@@ -81,17 +83,16 @@ public:
     void load(std::vector<double> input_arr, std::vector<double> output_arr);
 };
 
-// Function to get a random sampling from a vector
-// using Fisher-Yates shuffle method
-template<class BidiIter >
-BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
-    size_t left = std::distance(begin, end);
-    while (num_random--) {
-        BidiIter r = begin;
-        std::advance(r, rand()%left);
-        std::swap(*begin, *r);
-        ++begin;
-        --left;
-    }
-    return begin;
+
+// Requires -std=c++17 compilation flag
+template<class RandomSampling>
+RandomSampling random_sample(
+    RandomSampling neurons,
+    unsigned int sample_length
+)
+{
+    RandomSampling sample;
+    std::sample(neurons.begin(), neurons.end(), std::back_inserter(sample),
+        sample_length, std::mt19937{std::random_device{}()});
+    return sample;
 }

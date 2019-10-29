@@ -16,5 +16,6 @@ def Settings(**kwargs):
             '-fPIC',
             '-I/usr/include/python3.6m',
             '-w',
+            '-std=c++17',
         ],
     }

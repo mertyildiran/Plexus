@@ -23,7 +23,8 @@ Neuron::Neuron(Network& network)
 void Neuron::partially_subscribe()
 {
     if (this->subscriptions.size() == 0) {
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        unsigned seed = std::chrono::system_clock::now()
+            .time_since_epoch().count();
         std::default_random_engine generator (seed);
         std::normal_distribution<double> distribution(
             this->network->get_connectivity(),
@@ -34,9 +35,12 @@ void Neuron::partially_subscribe()
             sample_length = this->network->nonmotor_neurons.size();
         if (sample_length <= 0)
             sample_length = 0;
+        std::vector<Neuron*> elected = random_sample(
+            this->network->nonmotor_neurons,
+            sample_length
+        );
         this->subscriptions.reserve(sample_length);
-        for (unsigned int i = 0; i < sample_length; i++) {
-            Neuron* target_neuron = this->network->nonmotor_neurons[i];
+        for (auto target_neuron: elected) {
             if (target_neuron != this) {
                 this->subscriptions.insert(
                     std::pair<Neuron*, double>(
@@ -203,9 +207,8 @@ void Network::_ignite(Network* network)
     std::vector<Neuron*> ban_list;
     while (network->freezer == false) {
         if (network->randomly_fire) {
-            Neuron* neuron = random_unique(
-                network->nonsensory_neurons.begin(),
-                network->nonsensory_neurons.end(),
+            Neuron* neuron = random_sample(
+                network->nonsensory_neurons,
                 1
             )[0];
             if (neuron->type == MOTOR_NEURON) {

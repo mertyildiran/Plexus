@@ -102,7 +102,7 @@ approach to the artificial neural networks',
             name='cplexus',
             sources=['plexus/plexus.cpp', 'plexus/wrapper.cpp'],
             language='c++',
-            extra_compile_args=['-w'],
+            extra_compile_args=['-w', '-std=c++17'],
         )
     ]
 )
