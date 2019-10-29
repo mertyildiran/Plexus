@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <unordered_map>
 #include <math.h>
+#include <cmath>
 #include <utility>
 #include <thread>
 #include <stdexcept>
@@ -92,7 +93,7 @@ bool Neuron::fire()
         this->network->fire_counter++;
         this->fire_counter++;
 
-        if (this->desired_potential) {
+        if (! std::isnan(this->desired_potential)) {
 
             this->loss = this->calculate_loss();
             int alteration_sign;
@@ -101,7 +102,7 @@ bool Neuron::fire()
             } else if (this->loss < 0) {
                 alteration_sign = 1;
             } else {
-                this->desired_potential = NULL;
+                this->desired_potential = std::nan("None");
                 return true;
             }
 
@@ -422,7 +423,7 @@ void Network::load(
     if (output_arr.empty()) {
         this->freezer = true;
         for (auto& neuron: this->nonsensory_neurons) {
-            neuron->desired_potential = NULL;
+            neuron->desired_potential = std::nan("None");
         }
         this->freezer = false;
     } else {
