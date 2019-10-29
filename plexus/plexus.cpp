@@ -23,13 +23,13 @@ Neuron::Neuron(Network& network)
 void Neuron::partially_subscribe()
 {
     if (this->subscriptions.size() == 0) {
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine generator (seed);
         std::normal_distribution<double> distribution(
             this->network->get_connectivity(),
             this->network->get_connectivity_sqrt()
         );
-        unsigned int sample_length = static_cast<unsigned int>(
-            roundf(distribution(this->generator))
-        );
+        unsigned int sample_length = distribution(generator);
         if (sample_length > this->network->nonmotor_neurons.size())
             sample_length = this->network->nonmotor_neurons.size();
         if (sample_length <= 0)
@@ -136,8 +136,8 @@ Network::Network(
     this->precision = precision;
     std::cout << "\nPrecision of the network will be "
         << 1.0 / pow(10, precision) << '\n';
-    this->connectivity = std::ceil(size * connectivity);
-    this->connectivity_sqrt = std::ceil(sqrt(connectivity));
+    this->connectivity = static_cast<int>(size * connectivity);
+    this->connectivity_sqrt = static_cast<int>(sqrt(this->connectivity));
     std::cout << "Each individual non-sensory neuron will subscribe to "
         << this->connectivity << " different neurons" << '\n';
 

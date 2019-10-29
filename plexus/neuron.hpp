@@ -19,7 +19,6 @@ public:
     int fire_counter = 0;
     std::tuple<int, int> position;
     unsigned long index;
-    std::default_random_engine generator;
 
     double calculate_potential() const;
     double activation_function(double x) const;
