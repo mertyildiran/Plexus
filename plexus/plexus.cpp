@@ -40,7 +40,7 @@ void Neuron::partially_subscribe()
             sample_length
         );
         this->subscriptions.reserve(sample_length);
-        for (auto target_neuron: elected) {
+        for (auto& target_neuron: elected) {
             if (target_neuron != this) {
                 this->subscriptions.insert(
                     std::pair<Neuron*, double>(
@@ -185,16 +185,9 @@ Network::Network(
 
 void Network::initiate_subscriptions()
 {
-    std::vector<Neuron*>::iterator neuron;
-    unsigned int i = 0;
-    for (
-            neuron = this->neurons.begin();
-            neuron != this->neurons.end();
-            ++neuron,
-            i++
-        ) {
-        if ((*neuron)->type != SENSORY_NEURON) {
-            (*neuron)->partially_subscribe();
+    for (auto& neuron: this->neurons) {
+        if (neuron->type != SENSORY_NEURON) {
+            neuron->partially_subscribe();
             std::cout << "Initiated: " << this->initiated_neurons
                 << " neuron(s)\r" << std::flush;
         }
@@ -309,16 +302,9 @@ void Network::breakit() const
 void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
 {
     std::vector<Neuron*> available_neurons;
-    std::vector<Neuron*>::iterator neuron;
-    unsigned int i = 0;
-    for (
-            neuron = this->neurons.begin();
-            neuron != this->neurons.end();
-            ++neuron,
-            i++
-        ) {
-        if ((*neuron)->type == INTER_NEURON) {
-            available_neurons.push_back((*neuron));
+    for (auto& neuron: this->neurons) {
+        if (neuron->type == INTER_NEURON) {
+            available_neurons.push_back(neuron);
         }
     }
     for (int j = 0; j < input_dim; j++) {
@@ -442,8 +428,6 @@ void Network::load(
     std::vector<double> output_arr
 )
 {
-    std::vector<Neuron*>::iterator neuron;
-    unsigned int i = 0;
     if (this->sensory_neurons.size() != input_arr.size()) {
         std::cout << "Size of the input array: " << input_arr.size() << '\n';
         std::cout << "Number of the sensory neurons: "
@@ -452,25 +436,15 @@ void Network::load(
             "neurons are not matching! Please try again" << '\n';
     } else {
         int step = 0;
-        for (
-                neuron = this->sensory_neurons.begin();
-                neuron != this->sensory_neurons.end();
-                ++neuron,
-                i++
-            ) {
-            (*neuron)->potential = input_arr[step];
+        for (auto& neuron: this->sensory_neurons) {
+            neuron->potential = input_arr[step];
             step++;
         }
     }
     if (output_arr.empty()) {
         this->freezer = true;
-        for (
-                neuron = this->nonsensory_neurons.begin();
-                neuron != this->nonsensory_neurons.end();
-                ++neuron,
-                i++
-            ) {
-            (*neuron)->desired_potential = NULL;
+        for (auto& neuron: this->nonsensory_neurons) {
+            neuron->desired_potential = NULL;
         }
         this->freezer = false;
     } else {
@@ -484,13 +458,8 @@ void Network::load(
                 "Please try again" << '\n';
         } else {
             int step = 0;
-            for (
-                    neuron = this->motor_neurons.begin();
-                    neuron != this->motor_neurons.end();
-                    ++neuron,
-                    i++
-                ) {
-                (*neuron)->desired_potential = output_arr[step];
+            for (auto& neuron: this->motor_neurons) {
+                neuron->desired_potential = output_arr[step];
                 step++;
             }
         }
