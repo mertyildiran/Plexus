@@ -39,8 +39,7 @@ void Neuron::partially_subscribe()
             this->network->nonmotor_neurons,
             sample_length
         );
-        this->subscriptions.reserve(sample_length);
-        for (auto& target_neuron: elected) {
+        for (auto const& target_neuron: elected) {
             if (target_neuron != this) {
                 this->subscriptions.insert(
                     std::pair<Neuron*, double>(
@@ -60,7 +59,7 @@ void Neuron::partially_subscribe()
 double Neuron::calculate_potential() const
 {
     double total = 0;
-    for (auto& it: this->subscriptions) {
+    for (auto const& it: this->subscriptions) {
         total += it.first->potential * it.second;
     }
     return this->activation_function(total);
@@ -235,7 +234,7 @@ void Network::_ignite(Network* network)
                 network->wave_counter++;
 
                 if (network->first_queue.empty()) {
-                    for (auto& neuron: network->sensory_neurons) {
+                    for (auto const& neuron: network->sensory_neurons) {
                         network->first_queue.insert(
                             neuron->publications.begin(),
                             neuron->publications.end()
@@ -248,7 +247,7 @@ void Network::_ignite(Network* network)
             std::unordered_map<Neuron*, double> current_queue
                 = network->next_queue;
             network->next_queue.clear();
-            for (auto& neuron: ban_list) {
+            for (auto const& neuron: ban_list) {
                 if (neuron->ban_counter > network->get_connectivity_sqrt())
                     current_queue.erase(neuron);
             }
@@ -302,7 +301,7 @@ void Network::breakit() const
 void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
 {
     std::vector<Neuron*> available_neurons;
-    for (auto& neuron: this->neurons) {
+    for (auto const& neuron: this->neurons) {
         if (neuron->type == INTER_NEURON) {
             available_neurons.push_back(neuron);
         }
@@ -350,26 +349,21 @@ void Network::get_neurons_by_type(NeuronType neuron_type)
     std::vector<Neuron*> available_neurons;
     std::vector<Neuron*>::iterator neuron;
     unsigned int i = 0;
-    for (
-            neuron = this->neurons.begin();
-            neuron != this->neurons.end();
-            ++neuron,
-            i++
-        ) {
+    for (auto const& neuron: this->neurons) {
         switch (neuron_type) {
             case NON_SENSORY_NEURON:
-                if ((*neuron)->type != SENSORY_NEURON) {
-                    this->nonsensory_neurons.push_back((*neuron));
+                if (neuron->type != SENSORY_NEURON) {
+                    this->nonsensory_neurons.push_back(neuron);
                 }
                 break;
             case NON_MOTOR_NEURON:
-                if ((*neuron)->type != MOTOR_NEURON) {
-                    this->nonmotor_neurons.push_back((*neuron));
+                if (neuron->type != MOTOR_NEURON) {
+                    this->nonmotor_neurons.push_back(neuron);
                 }
                 break;
             case INTER_NEURON:
-                if ((*neuron)->type == INTER_NEURON) {
-                    this->interneurons.push_back((*neuron));
+                if (neuron->type == INTER_NEURON) {
+                    this->interneurons.push_back(neuron);
                 }
                 break;
             default:
