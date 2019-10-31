@@ -60,10 +60,6 @@ The value of you supplied was: {0}'.format(args['difficulty']))
     exit(0)
 
 
-if args['language'] == 'cpp':
-    TRAINING_DURATION = TRAINING_DURATION / 100
-    VISUALIZATION = False
-
 PRECISION = 2
 DOMINANCE_THRESHOLD = 0.7
 RANDOMLY_FIRE = False

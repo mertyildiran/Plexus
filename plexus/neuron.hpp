@@ -35,4 +35,5 @@ public:
     Neuron(Network &network);
     void partially_subscribe();
     bool fire();
+    static void live(Neuron* neuron);
 };

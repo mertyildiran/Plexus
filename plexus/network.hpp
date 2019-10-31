@@ -46,7 +46,7 @@ public:
     std::vector<double> output;
 
     bool freezer;
-    std::thread thread1;
+    std::thread master_thread;
     std::thread thread2;
     bool thread_kill_signal;
 
@@ -81,6 +81,7 @@ public:
     void breakit() const;
     std::vector<double> get_output() const;
     void load(std::vector<double> input_arr, std::vector<double> output_arr);
+    std::vector<std::thread> threads;
 };
 
 

@@ -125,6 +125,14 @@ bool Neuron::fire()
     }
 }
 
+void Neuron::live(Neuron* neuron)
+{
+    for (;;) {
+        neuron->fire();
+        usleep(10);
+    }
+}
+
 
 Network::Network(
     int size,
@@ -197,94 +205,19 @@ void Network::initiate_subscriptions()
 
 void Network::_ignite(Network* network)
 {
-    unsigned int motor_fire_counter = 0;
-    std::vector<Neuron*> ban_list;
-    for (;;) {
-        if (network->freezer) {
-            usleep(10);
-            continue;
-        }
-        if (network->randomly_fire) {
-            Neuron* neuron = random_sample(
-                network->nonsensory_neurons,
-                1
-            )[0];
-            if (neuron->type == MOTOR_NEURON) {
-                if (1 != Random::get(1, network->motor_randomly_fire_rate))
-                    continue;
-                else
-                    motor_fire_counter++;
-            }
-            neuron->fire();
-            if (motor_fire_counter >= network->motor_neurons.size()) {
-                if (network->dynamic_output) {
-                    network->print_output();
-                }
-                network->output = network->get_output();
-                network->wave_counter++;
-                motor_fire_counter = 0;
-            }
-        } else {
-            if (network->next_queue.empty()) {
-                for (auto& neuron: network->motor_neurons) {
-                    neuron->fire();
-                }
-                for (auto& neuron: ban_list) {
-                    neuron->ban_counter = 0;
-                }
-                ban_list.clear();
-                if (network->dynamic_output) {
-                    network->print_output();
-                }
-                network->output = network->get_output();
-                network->wave_counter++;
+    for (auto& neuron: network->nonsensory_neurons) {
+        network->threads.push_back(std::thread(Neuron::live, neuron));
+    }
 
-                if (network->first_queue.empty()) {
-                    for (auto const& neuron: network->sensory_neurons) {
-                        network->first_queue.insert(
-                            neuron->publications.begin(),
-                            neuron->publications.end()
-                        );
-                    }
-                }
-                network->next_queue = network->first_queue;
-            }
-
-            std::unordered_map<Neuron*, double> current_queue
-                = network->next_queue;
-            network->next_queue.clear();
-            for (auto const& neuron: ban_list) {
-                if (neuron->ban_counter > network->connectivity_sqrt)
-                    current_queue.erase(neuron);
-            }
-            while (current_queue.size() > 0) {
-                auto it = current_queue.begin();
-                std::advance(it, rand() % current_queue.size());
-                Neuron* neuron = it->first;
-                current_queue.erase(neuron);
-                if (neuron->ban_counter <= network->connectivity_sqrt) {
-                    if (neuron->type == MOTOR_NEURON) {
-                        continue;
-                    }
-                    neuron->fire();
-                    ban_list.push_back(neuron);
-                    neuron->ban_counter++;
-                    network->next_queue.insert(
-                        neuron->publications.begin(),
-                        neuron->publications.end()
-                    );
-                }
-            }
-        }
+    for (std::thread& life: network->threads) {
+        life.join();
     }
 }
 
 void Network::ignite()
 {
     this->freezer = false;
-    this->thread1 = std::thread{Network::_ignite, this};
-    //this->thread1.detach();
-    //this->thread1.join();
+    this->master_thread = std::thread(Network::_ignite, this);
     std::cout << "Network has been ignited" << '\n';
 }
 
