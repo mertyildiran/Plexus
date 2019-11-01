@@ -32,7 +32,7 @@ public:
     double potential = Random::get(0.0, 1.0);
     int type = 0;
     int ban_counter = 0;
-    Neuron(Network &network);
+    explicit Neuron(Network &network);
     void partially_subscribe();
     bool fire();
     static void live(Neuron* neuron);

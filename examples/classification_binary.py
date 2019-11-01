@@ -89,9 +89,10 @@ def notify_the_load(generated_list, output, training_duration):
         str(training_duration)
     ))
 
+
 def visualize(self):
-    thread2 = threading.Thread(target=_visualize, args=(self,))
-    thread2.start()
+    visualization_thread = threading.Thread(target=_visualize, args=(self,))
+    visualization_thread.start()
     print("Visualization initiated")
 
 

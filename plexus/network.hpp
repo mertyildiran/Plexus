@@ -47,7 +47,6 @@ public:
 
     bool freezer;
     std::thread master_thread;
-    std::thread thread2;
     bool thread_kill_signal;
 
     void initiate_subscriptions();
