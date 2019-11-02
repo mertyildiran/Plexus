@@ -8,6 +8,10 @@
 #include <stdexcept>
 #include <ostream>
 #include <unistd.h>
+#include <numeric>
+
+#include <mutex>
+std::mutex mtx;
 
 #include "random.hpp"
 using Random = effolkronium::random_thread_local;
@@ -77,6 +81,30 @@ double Neuron::derivative(double x) const
     return x * (1 - x);
 }
 
+void Neuron::median_requests()
+{
+    mtx.lock();
+
+    size_t size = this->requests.size();
+
+    if (size == 0) {
+        this->desired_potential = std::nan("None");
+    } else {
+        sort(this->requests.begin(), this->requests.end());
+        if (size % 2 == 0) {
+            this->desired_potential = (
+                this->requests[size / 2 - 1]
+                + this->requests[size / 2]
+            ) / 2;
+        } else {
+            this->desired_potential = this->requests[size / 2];
+        }
+    }
+
+    this->requests.clear();
+    mtx.unlock();
+}
+
 double Neuron::calculate_loss() const
 {
     try {
@@ -90,6 +118,7 @@ bool Neuron::fire()
 {
     if (this->type != SENSORY_NEURON) {
 
+        this->median_requests();
         this->potential = this->calculate_potential();
         this->network->fire_counter++;
         this->fire_counter++;
@@ -104,6 +133,7 @@ bool Neuron::fire()
                 alteration_sign = 1;
             } else {
                 this->desired_potential = std::nan("None");
+                this->requests.clear();
                 return true;
             }
 
@@ -114,9 +144,11 @@ bool Neuron::fire()
             );
 
             for (auto& it: this->subscriptions) {
-                it.first->desired_potential = it.first->potential
+                mtx.lock();
+                it.first->requests.push_back(it.first->potential
                     + alteration_sign
-                    * this->derivative(it.first->potential);
+                    * this->derivative(it.first->potential));
+                mtx.unlock();
                 this->subscriptions[it.first] = it.second
                     + (alteration_value * alteration_sign)
                     * this->derivative(it.first->potential);
@@ -360,7 +392,9 @@ void Network::load(
     if (output_arr.empty()) {
         this->freezer = true;
         for (auto& neuron: this->nonsensory_neurons) {
-            neuron->desired_potential = std::nan("None");
+            mtx.lock();
+            neuron->requests.clear();
+            mtx.unlock();
         }
         this->freezer = false;
     } else {
@@ -375,7 +409,9 @@ void Network::load(
         } else {
             int step = 0;
             for (auto& neuron: this->motor_neurons) {
-                neuron->desired_potential = output_arr[step];
+                mtx.lock();
+                neuron->requests.assign(1, output_arr[step]);
+                mtx.unlock();
                 step++;
             }
         }

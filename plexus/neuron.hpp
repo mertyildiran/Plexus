@@ -14,12 +14,14 @@ class Network;
 class Neuron
 {
 public:
+    std::vector<double> requests;
     double desired_potential;
     double loss;
     int fire_counter = 0;
     std::tuple<int, int> position;
     unsigned long index;
 
+    void median_requests();
     double calculate_potential() const;
     double activation_function(double x) const;
     double derivative(double x) const;
