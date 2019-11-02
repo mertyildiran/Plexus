@@ -20,40 +20,50 @@ else:
     import plexus
 
 if args['difficulty'] == 1:
-    SIZE = 14
+    SIZE = 4 + 2 + 8
     INPUT_SIZE = 4
     OUTPUT_SIZE = 2
     CONNECTIVITY = 1
     VISUALIZATION = True
-    TRAINING_DURATION = 1
+    TRAINING_DURATION = 0.01
+    TRAINING_SAMPLE_SIZE = 200
+    TESTING_SAMPLE_SIZE = 200
 elif args['difficulty'] == 2:
-    SIZE = 32 + 2 + 16
+    SIZE = 32 + 2 + 8
     INPUT_SIZE = 32
     OUTPUT_SIZE = 2
-    CONNECTIVITY = 0.5
+    CONNECTIVITY = 1
     VISUALIZATION = True
-    TRAINING_DURATION = 1
+    TRAINING_DURATION = 0.01
+    TRAINING_SAMPLE_SIZE = 200
+    TESTING_SAMPLE_SIZE = 200
 elif args['difficulty'] == 3:
-    SIZE = 256 + 2 + 32
+    SIZE = 256 + 2 + 16
     INPUT_SIZE = 256
     OUTPUT_SIZE = 2
-    CONNECTIVITY = 0.5
+    CONNECTIVITY = 1
     VISUALIZATION = True
-    TRAINING_DURATION = 1
+    TRAINING_DURATION = 0.01
+    TRAINING_SAMPLE_SIZE = 1000
+    TESTING_SAMPLE_SIZE = 1000
 elif args['difficulty'] == 4:
-    SIZE = 512 + 2 + 32
+    SIZE = 512 + 2 + 8
     INPUT_SIZE = 512
     OUTPUT_SIZE = 2
-    CONNECTIVITY = 0.5
+    CONNECTIVITY = 1
     VISUALIZATION = False
-    TRAINING_DURATION = 2
+    TRAINING_DURATION = 0.01
+    TRAINING_SAMPLE_SIZE = 200
+    TESTING_SAMPLE_SIZE = 200
 elif args['difficulty'] == 5:
-    SIZE = 1024 + 2 + 64
+    SIZE = 1024 + 2 + 8
     INPUT_SIZE = 1024
     OUTPUT_SIZE = 2
-    CONNECTIVITY = 0.25
+    CONNECTIVITY = 1
     VISUALIZATION = False
-    TRAINING_DURATION = 3
+    TRAINING_DURATION = 0.01
+    TRAINING_SAMPLE_SIZE = 200
+    TESTING_SAMPLE_SIZE = 200
 else:
     print('Difficulty level should not exceed 5. \
 The value of you supplied was: {0}'.format(args['difficulty']))
@@ -64,8 +74,6 @@ PRECISION = 2
 DOMINANCE_THRESHOLD = 0.7
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
-TRAINING_SAMPLE_SIZE = 20
-TESTING_SAMPLE_SIZE = 20
 
 
 def generate_list_bigger():
@@ -117,7 +125,7 @@ net = plexus.Network(
     DYNAMIC_OUTPUT,
     VISUALIZATION
 )
-if args['language'] == 'cpp':
+if args['language'] == 'cpp' and VISUALIZATION:
     visualize(net)
 
 print("\n*** LEARNING ***")

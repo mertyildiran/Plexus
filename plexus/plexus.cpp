@@ -107,7 +107,7 @@ bool Neuron::fire()
                 return true;
             }
 
-            double alteration_value = pow(fabs(this->loss), 2);
+            double alteration_value = pow(this->loss, 2);
             alteration_value = alteration_value * pow(
                 this->network->decay_factor,
                 (this->network->fire_counter/1000)
