@@ -22,7 +22,7 @@ public:
 
     double calculate_potential() const;
     double activation_function(double x) const;
-    double derivative(double x) const;
+    double derivative(double x, int n) const;
     double calculate_loss() const;
 
 //public:

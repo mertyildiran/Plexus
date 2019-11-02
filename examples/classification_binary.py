@@ -4,7 +4,7 @@ import time
 from itertools import repeat
 import random
 from plexus.visualize import _visualize
-
+usleep = lambda x: time.sleep(x/1000000.0)
 
 ap = argparse.ArgumentParser()
 
@@ -25,16 +25,16 @@ if args['difficulty'] == 1:
     OUTPUT_SIZE = 2
     CONNECTIVITY = 1
     VISUALIZATION = True
-    TRAINING_DURATION = 0.01
-    TRAINING_SAMPLE_SIZE = 200
-    TESTING_SAMPLE_SIZE = 200
+    TRAINING_DURATION = 10
+    TRAINING_SAMPLE_SIZE = 100000
+    TESTING_SAMPLE_SIZE = 20
 elif args['difficulty'] == 2:
     SIZE = 32 + 2 + 8
     INPUT_SIZE = 32
     OUTPUT_SIZE = 2
     CONNECTIVITY = 1
     VISUALIZATION = True
-    TRAINING_DURATION = 0.01
+    TRAINING_DURATION = 0.10
     TRAINING_SAMPLE_SIZE = 200
     TESTING_SAMPLE_SIZE = 200
 elif args['difficulty'] == 3:
@@ -147,7 +147,7 @@ for i in range(1, TRAINING_SAMPLE_SIZE):
         generated_list = generate_list_smaller()
         notify_the_load(generated_list, output, TRAINING_DURATION)
         net.load(generated_list, output)
-    time.sleep(TRAINING_DURATION)
+    usleep(random.randint(TRAINING_DURATION, TRAINING_DURATION * 10))
 
 
 print("\n\n*** TESTING ***")
@@ -167,7 +167,7 @@ for i in repeat(None, TESTING_SAMPLE_SIZE):
         expected = [0.0, 1.0]
 
     net.load(generated_list)
-    time.sleep(TRAINING_DURATION)
+    usleep(TRAINING_DURATION * 1000)
 
     output = net.output
     error += abs(expected[0] - output[0])

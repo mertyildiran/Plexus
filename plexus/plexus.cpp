@@ -37,10 +37,17 @@ void Neuron::partially_subscribe()
             sample_length = this->network->nonmotor_neurons.size();
         if (sample_length <= 0)
             sample_length = 0;
+
+        std::vector<Neuron*> neuron_pool = this->network->nonmotor_neurons;
+        if (this->type == MOTOR_NEURON) {
+            neuron_pool = this->network->interneurons;
+        }
+
         std::vector<Neuron*> elected = random_sample(
-            this->network->nonmotor_neurons,
+            neuron_pool,
             sample_length
         );
+
         for (auto const& target_neuron: elected) {
             if (target_neuron != this) {
                 this->subscriptions.insert(
@@ -72,9 +79,15 @@ double Neuron::activation_function(double x) const
     return 1 / (1 + exp(-x));
 }
 
-double Neuron::derivative(double x) const
+double Neuron::derivative(double x, int n = 0) const
 {
-    return x * (1 - x);
+    double y = x * (1 - x);
+    if (n > 0) {
+        n--;
+        return this->derivative(y, n);
+    } else {
+        return y;
+    }
 }
 
 double Neuron::calculate_loss() const
@@ -112,14 +125,14 @@ bool Neuron::fire()
                 this->network->decay_factor,
                 (this->network->fire_counter/1000)
             );
+            alteration_value = alteration_sign
+                * this->derivative(alteration_value);
 
             for (auto& it: this->subscriptions) {
                 it.first->desired_potential = it.first->potential
-                    + alteration_sign
-                    * this->derivative(it.first->potential);
+                    + alteration_value;
                 this->subscriptions[it.first] = it.second
-                    + (alteration_value * alteration_sign)
-                    * this->derivative(it.first->potential);
+                    + alteration_value;
             }
         }
     }
