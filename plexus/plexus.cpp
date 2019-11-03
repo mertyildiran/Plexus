@@ -9,6 +9,9 @@
 #include <ostream>
 #include <unistd.h>
 
+#include <mutex>
+std::mutex mtx;
+
 #include "random.hpp"
 using Random = effolkronium::random_thread_local;
 
@@ -93,6 +96,12 @@ bool Neuron::fire()
         this->potential = this->calculate_potential();
         this->network->fire_counter++;
         this->fire_counter++;
+
+        if (this->type == MOTOR_NEURON) {
+            mtx.lock();
+            this->network->output = this->network->get_output();
+            mtx.unlock();
+        }
 
         if (! std::isnan(this->desired_potential)) {
 

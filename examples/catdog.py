@@ -3,7 +3,7 @@ import numpy as np
 import os
 import cv2
 import random
-import plexus
+import cplexus as plexus
 # import sys
 import time
 import tarfile
@@ -34,19 +34,19 @@ if not os.path.exists(basepath + '/cifar-10-batches-py/'):
     tar.close()
 
 
-SIZE = 32 * 32 * 3 + 3 + 256
+SIZE = 32 * 32 * 3 + 3 + 16
 INPUT_SIZE = 32 * 32 * 3
 OUTPUT_SIZE = 3
-CONNECTIVITY = 0.005
+CONNECTIVITY = 1
 PRECISION = 3
 
-TRAINING_DURATION = 3
+TRAINING_DURATION = 0.01
 RANDOMLY_FIRE = False
 DYNAMIC_OUTPUT = True
 VISUALIZATION = False
 
-TRAINING_SAMPLE_SIZE = 20
-TESTING_SAMPLE_SIZE = 20
+TRAINING_SAMPLE_SIZE = 2000
+TESTING_SAMPLE_SIZE = 200
 
 DOMINANCE_THRESHOLD = 0.7
 error = 0
@@ -69,37 +69,40 @@ def show_output(net, testing=False):
     global error
     global error_divisor
 
-    if testing:
-        time.sleep(TRAINING_DURATION/2)
-        output = net.get_output()
-        output_init = output  # Only different line
-        output = [round(x*255) for x in output]
-        # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
-        #     str(output[2]),
-        #     str(output[1]),
-        #     str(output[0])
-        # ))
-        # sys.stdout.flush()
-        output = np.full((32, 32, 3), output, dtype='uint8')
-        cv2.imshow("Output", output)
-        cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
+    try:
+        if testing:
+            time.sleep(TRAINING_DURATION/2)
+            output = net.output
+            output_init = output  # Only different line
+            output = [round(x*255) for x in output]
+            # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
+            #     str(output[2]),
+            #     str(output[1]),
+            #     str(output[0])
+            # ))
+            # sys.stdout.flush()
+            output = np.full((32, 32, 3), output, dtype='uint8')
+            cv2.imshow("Output", output)
+            cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
 
-        error += abs(testing[2] - output_init[2])
-        error += abs(testing[0] - output_init[0])
-        error_divisor += 2
-    else:
-        time.sleep(TRAINING_DURATION/2)
-        output = net.get_output()
-        output = [round(x*255) for x in output]
-        # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
-        #     str(output[2]),
-        #     str(output[1]),
-        #     str(output[0])
-        # ))
-        # sys.stdout.flush()
-        output = np.full((32, 32, 3), output, dtype='uint8')
-        cv2.imshow("Output", output)
-        cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
+            error += abs(testing[2] - output_init[2])
+            error += abs(testing[0] - output_init[0])
+            error_divisor += 2
+        else:
+            time.sleep(TRAINING_DURATION/2)
+            output = net.output
+            output = [round(x*255) for x in output]
+            # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
+            #     str(output[2]),
+            #     str(output[1]),
+            #     str(output[0])
+            # ))
+            # sys.stdout.flush()
+            output = np.full((32, 32, 3), output, dtype='uint8')
+            cv2.imshow("Output", output)
+            cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
+    except ValueError:
+        pass
 
 
 print("\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n")
