@@ -411,8 +411,7 @@ static int PyNeuron_set_position(PyNeuron *self, PyObject *value, void *closue)
 }
 
 static PyObject * PyNeuron_connections_PyDict_build(
-    std::unordered_map<Neuron*,
-    double> connections
+    std::deque<std::pair<Neuron*, double>> connections
 )
 {
     PyObject *PDict = PyDict_New();
@@ -432,14 +431,14 @@ static PyObject * PyNeuron_connections_PyDict_build(
 
 static PyObject * PyNeuron_get_subscriptions(PyNeuron *self, void *closure)
 {
-    std::unordered_map<Neuron*, double> connections
+    std::deque<std::pair<Neuron*, double>> connections
         = (self->ptrObj)->subscriptions;
     return PyNeuron_connections_PyDict_build(connections);
 }
 
 static PyObject * PyNeuron_get_publications(PyNeuron *self, void *closure)
 {
-    std::unordered_map<Neuron*, double> connections
+    std::deque<std::pair<Neuron*, double>> connections
         = (self->ptrObj)->publications;
     return PyNeuron_connections_PyDict_build(connections);
 }

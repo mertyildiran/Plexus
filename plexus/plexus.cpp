@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdlib>
-#include <unordered_map>
 #include <math.h>
 #include <cmath>
 #include <utility>
@@ -50,13 +49,13 @@ void Neuron::partially_subscribe()
 
         for (auto const& target_neuron: elected) {
             if (target_neuron != this) {
-                this->subscriptions.insert(
+                this->subscriptions.push_back(
                     std::pair<Neuron*, double>(
                         target_neuron,
                         Random::get(-1.0, 1.0)
                     )
                 );
-                target_neuron->publications.insert(
+                target_neuron->publications.push_back(
                     std::pair<Neuron*, double>(this, 0.0)
                 );
             }
@@ -65,38 +64,103 @@ void Neuron::partially_subscribe()
     }
 }
 
+double Neuron::calculate_potential_hypo(std::deque<std::pair<double, double>> candidate)
+{
+    double total = 0;
+    for (auto const& it: candidate) {
+        total += it.first * it.second;
+    }
+    return Neuron::activation_function(total);
+}
+
 double Neuron::calculate_potential() const
 {
     double total = 0;
     for (auto const& it: this->subscriptions) {
         total += it.first->potential * it.second;
     }
-    return this->activation_function(total);
+    return Neuron::activation_function(total);
 }
 
-double Neuron::activation_function(double x) const
+double Neuron::activation_function(double x)
 {
     return 1 / (1 + exp(-x));
 }
 
-double Neuron::derivative(double x, int n = 0) const
+double Neuron::derivative(double x, int n = 0)
 {
     double y = x * (1 - x);
     if (n > 0) {
         n--;
-        return this->derivative(y, n);
+        return Neuron::derivative(y, n);
     } else {
         return y;
     }
 }
 
-double Neuron::calculate_loss() const
+double Neuron::calculate_loss(double potential, double desired_potential)
 {
     try {
-        return this->potential - this->desired_potential;
+        return fabs(potential - desired_potential);
     } catch (const std::exception& e) {
         return 0;
     }
+}
+
+void Neuron::update_requests()
+{
+    this->requests.push_back(this->desired_potential);
+
+    int gap = this->requests.size() - pow(this->network->output_dim, 4);
+
+    if (gap > 0) {
+        this->requests.erase(
+            this->requests.begin(),
+            this->requests.begin() + gap
+        );
+    }
+}
+
+bool Neuron::train()
+{
+    if (this->network->freezer) {
+        return true;
+    }
+    double initial_loss = 0.0;
+    for (double desired_potential: this->requests) {
+        double potential = this->calculate_potential();
+        initial_loss += Neuron::calculate_loss(potential, desired_potential);
+    }
+
+    for (int i = 0; i < pow(subscriptions.size(), 4); ++i) {
+        std::deque<std::pair<double, double>> candidate;
+        for (int j = 0; j < this->subscriptions.size(); ++j) {
+            candidate.push_back(std::pair<double, double>(
+                Random::get(0.0, 1.0),
+                Random::get(-1.0, 1.0)
+            ));
+        }
+        double candidate_loss = 0.0;
+
+        for (double desired_potential: this->requests) {
+            double potential = Neuron::calculate_potential_hypo(candidate);
+            candidate_loss += Neuron::calculate_loss(
+                potential,
+                desired_potential
+            );
+        }
+
+        if (candidate_loss < initial_loss * 999/1000) {
+            for (auto& it: this->subscriptions) {
+                std::pair<double, double> candidate_pair = candidate.front();
+                it.first->desired_potential = candidate_pair.first;
+                it.second = candidate_pair.second;
+                candidate.pop_front();
+            }
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Neuron::fire()
@@ -104,46 +168,23 @@ bool Neuron::fire()
     if (this->type != SENSORY_NEURON) {
 
         this->potential = this->calculate_potential();
-        this->network->fire_counter++;
-        this->fire_counter++;
 
         if (! std::isnan(this->desired_potential)) {
-
-            this->loss = this->calculate_loss();
-            int alteration_sign;
-            if (this->loss > 0) {
-                alteration_sign = -1;
-            } else if (this->loss < 0) {
-                alteration_sign = 1;
-            } else {
-                this->desired_potential = std::nan("None");
-                return true;
-            }
-
-            double alteration_value = pow(this->loss, 2);
-            alteration_value = alteration_value * pow(
-                this->network->decay_factor,
-                (this->network->fire_counter/1000)
-            );
-            alteration_value = alteration_sign
-                * this->derivative(alteration_value);
-
-            for (auto& it: this->subscriptions) {
-                it.first->desired_potential = it.first->potential
-                    + alteration_value;
-                this->subscriptions[it.first] = it.second
-                    + alteration_value;
-            }
+            this->update_requests();
+            if (this->train())
+                this->potential = this->calculate_potential();
         }
+
+        this->network->fire_counter++;
+        this->fire_counter++;
     }
+    usleep(10);
+    this->fire();
 }
 
 void Neuron::live(Neuron* neuron)
 {
-    for (;;) {
-        neuron->fire();
-        usleep(10);
-    }
+    neuron->fire();
 }
 
 
@@ -375,7 +416,7 @@ void Network::load(
         for (auto& neuron: this->nonsensory_neurons) {
             neuron->desired_potential = std::nan("None");
         }
-        this->freezer = false;
+        //this->freezer = false;
     } else {
         if (this->motor_neurons.size() != output_arr.size()) {
             std::cout << "Size of the output/target array: "
