@@ -7,7 +7,7 @@
 These are the core principles of **exceptionally bio-inspired**, a revolutionary approach to the artificial neural networks:
 
  - **Neurons** must be **objects** not tensors between matrices.
- - Each neuron should have **its own thread** (ideally).
+ - **Neurons** should be **GPU accelerated**. (ideally).
  - **Network** must be **architecture-free** (i.e. adaptive).
  - Network must have a **layerless design**.
  - There must be fundamentally two types of neurons: **sensory neuron**, **interneuron**.
@@ -18,9 +18,9 @@ These are the core principles of **exceptionally bio-inspired**, a revolutionary
  - Network must be **modular**. In other words: You must be able to train a small network and then plug that network into a bigger network (we are talking about some kind of **self-fusing** here).
  - Neurons must exhibit the characteristics of **cellular automata**.
  - **Number of neurons** in the network can be increased or decreased (**scalability**).
- - There must be **no** need for a network-wide **oscillation**. Yet the execution of neurons should follow a path very similar to flow of electric current nevertheless it's not compulsory.
+ - There must be **no** need for a network-wide **oscillation**. Yet the execution of neurons should follow a path very similar to flow of electric current nevertheless.
  - Network should use **randomness** and/or **uncertainty principle** flawlessly.
- - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible iterate the dataset on real life situations if the system is continuous like in robotics. Because of that the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network you should follow a path like; *on my left hand there is an apple and on my right hand there is a banana, apple... banana... apple, banana, apple, banana, ...* if you want to teach the difference between apple and banana and don't follow a path like; *apple, apple, apple, apple, banana, banana, banana, banana, ...* More technically; if you have two classes to train the network, use a diverse feed but not grouped feed (*ideally repetitive like 121212121212 but not 1111111222222*).
+ - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible to iterate whole the dataset on real life situations if the system is continuous like in robotics. Because of that; the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network, use a diverse feed but not a grouped feed (*like 123123123123123123 but not like 111111222222333333*).
 
 ### Activation function
 
@@ -83,7 +83,7 @@ There are eventually there types of neurons:
 
 Functionality of a neuron is relative to its type.
 
-**subscriptions** is neuron's indirect data feed. Each non-sensory neuron subscribes to some other neurons of any type. For sensory neurons subscriptions are completely meaningless and empty by default because it gets its data feed from outside world by assignments of the network. It is literally the Plexus Network equivalent of **Dendrites** in biological neurons. *subscriptions* is a dictionary that holds **Neuron(reference)** as key and **Weight** as value.
+**subscriptions** is neuron's indirect data feed. Each non-sensory neuron subscribes to some other neurons of any type. For sensory neurons, subscriptions are completely meaningless and empty by default because it gets its data feed from outside world by assignments of the network. Subscriptions are literally the Plexus Network equivalent of **Dendrites** in biological neurons. *subscriptions* is a dictionary that holds **Neuron(reference)** as key and **Weight** as value.
 
 **publications** holds literally the mirror data of *subscriptions* in the target neurons. In other words; any subscription creates also a publication reference in the target neuron. Similarly, *publications* is the Plexus Network equivalent of **Axons** in biological neurons.
 
@@ -99,7 +99,7 @@ Functionality of a neuron is relative to its type.
 </p>
 <!-- LaTeX of above image:  \underline{p}otential =  \varphi (t)  -->
 
-**desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then neuron don't learn anything and just calculates potential when it's fired.
+**desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then the neuron does not learn anything and just calculates potential when it's fired.
 
 **loss** is calculated not just at the output but in every neuron except sensory ones and it is equal to absolute difference (*distance*) between desired potential and current potential.
 
@@ -108,7 +108,7 @@ Functionality of a neuron is relative to its type.
 </p>
 <!-- LaTeX of above image:  \underline{f} ault = \left | \Delta p \right |  -->
 
-All numerical values inside a neuron are floating point numbers and all the calculations obey to precision that given at start.
+All numerical values inside a neuron are floating point numbers and all the calculations obey to the precision that given at start.
 
 ### Sensory and Motor Neurons
 
@@ -120,7 +120,7 @@ The difference of motor neurons form the other neurons is, they are only respons
 
 ### Partially Subscribe
 
-On the second phase of the network initiation, any non-sensory neurons are forced to subscribe to some non-motor neurons which are selected by random sampling. Length of this sample is also selected by a random sampling (*rounds to nearest integer*) is done from a normal distribution. Such a normal distribution that, the average number of subscriptions is the mean, and square root of the mean is the standard deviation. (*e.g. if neurons on average has 100 subscriptions then the mean is 100 and the standard deviation is 10*)
+On the second phase of the network initiation, any non-sensory neurons are forced to subscribe to some non-motor neurons which are selected by random sampling. Length of this sample is also selected by random sampling (*rounds to nearest integer*) is done from a normal distribution. Such a normal distribution that, the average number of subscriptions is the mean, and square root of the mean is the standard deviation. (*e.g. if neurons on average has 100 subscriptions then the mean is 100 and the standard deviation is 10*)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/normal_distribution.png" alt="Normal distribution"/>
@@ -333,7 +333,7 @@ Procedure **load** is the only method that you can feed your data to the network
 ### Installation of the Python Package
 
 ```Shell
-sudo pip install plexus
+pip install plexus
 ```
 
 If you want to install Plexus on development mode:
@@ -344,30 +344,69 @@ cd Plexus/
 pip install -e .
 ```
 
+or alternatively:
+
+```Shell
+make dev
+```
+
+and test the installation with:
+
+```Shell
+make cpp
+```
+
 ### Examples
 
-#### Basic Example
+#### Binary Classification Example
 
-<sup>*(you can alternatively run this example with `python examples/basic.py` command using a pre-written script version of below commands)*</sup>
+<sup>*(you can alternatively run this example with `python3 examples/classification_binary.py` command using a pre-written script version of below commands)*</sup>
 
 Suppose you need to train the network to figure out that the elements of given arrays are bigger than 0.5 or not (like `[0.9, 0.6, 1.0, 0.8]` or `[0.1, 0.3, 0.0, 0.4]`) and suppose it's a 4-element array. So let's create a network according to your needs:
 
 ```python
-net = plexus.Network(256,4,2,0.5,1)
+import cplexus as plexus
+
+SIZE = 14
+INPUT_SIZE = 4
+OUTPUT_SIZE = 2
+CONNECTIVITY = 1
+PRECISION = 2
+RANDOMLY_FIRE = False
+DYNAMIC_OUTPUT = True
+VISUALIZATION = False
+net = plexus.Network(
+    SIZE,
+    INPUT_SIZE,
+    OUTPUT_SIZE,
+    CONNECTIVITY,
+    PRECISION,
+    RANDOMLY_FIRE,
+    DYNAMIC_OUTPUT,
+    VISUALIZATION
+)
 ```
 
-Because our network is automatically initiated and ignited, now all we have to do is training the network. So let's train our network with 80 samples:
+If you want to visualize the network using [PyQtGraph](http://www.pyqtgraph.org/) enable `VISUALIZATION = False`. Because our network is automatically initiated and ignited, now all we have to do is training the network. So let's train our network with 80 samples:
 
 ```python
-for i in range(1,80):
+PRECISION = 2
+TRAINING_SAMPLE_SIZE = 20
+for i in range(1, TRAINING_SAMPLE_SIZE):
     if (i % 2) == 0:
-        net.load(get_a_bigger(), [1.0, 0.0])
+        output = [1.0, 0.0]
+        generated_list = generate_list_bigger()
+        notify_the_load(generated_list, output, TRAINING_DURATION)
+        net.load(generated_list, output)
     else:
-        net.load(get_a_smaller(), [0.0, 1.0])
-    time.sleep(3)
+        output = [0.0, 1.0]
+        generated_list = generate_list_smaller()
+        notify_the_load(generated_list, output, TRAINING_DURATION)
+        net.load(generated_list, output)
+    time.sleep(TRAINING_DURATION)
 ```
 
-You should load your data one by one from each kind, respectively. Because it will prevent over fitting to one specific kind. You must wait a short time like 3 seconds (which is a reasonable duration in such a case), after each load.
+You should load your data one by one from each kind, respectively. Because it will prevent over fitting to one specific kind. You must wait a short time like `TRAINING_DURATION = 0.01` seconds (which is a reasonable duration in such a case), after each load.
 
 `output[0]` will converge to detect **bigger than 0.5** inputs.
 
@@ -376,57 +415,176 @@ You should load your data one by one from each kind, respectively. Because it wi
 Before the testing you should define a criteria called `DOMINANCE_THRESHOLD` so you can catch the decision making. Now let's test the network:
 
 ```python
-net.load([0.6, 0.9, 0.7, 1.0])
-expected = [1.0, 0.0]
+error = 0
+error_divisor = 0
+for i in repeat(None, TESTING_SAMPLE_SIZE):
+    binary_random = random.randint(0, 1)
+    if binary_random == 0:
+        generated_list = generate_list_bigger()
+        expected = [1.0, 0.0]
+    else:
+        generated_list = generate_list_smaller()
+        expected = [0.0, 1.0]
 
-wave_zero = net.wave_counter
-while True:
-    wave_current = net.wave_counter
-    if wave_current > wave_zero:
-        wave_zero = wave_current
-        output = net.output
-        if abs(output[1] - output[0]) > DOMINANCE_THRESHOLD:
-            error += abs(expected[0] - output[0])
-            error += abs(expected[1] - output[1])
-            error_divisor += 2
-            break
-    time.sleep(0.001)
+    net.load(generated_list)
+    time.sleep(TRAINING_DURATION)
+
+    output = net.output
+    error += abs(expected[0] - output[0])
+    error += abs(expected[1] - output[1])
+    error_divisor += 2
 ```
 
-With the `while` loop given above, you will be able to check the output each time when a wave finished and if one element of the output dominated over the other, you will get that output as your ultimate result.
+With the `while` loop given above, you will be able to check the output by giving enough time to propagate your input throught the network. By giving `net.load()` only one parameter here, you automatically disable the training.
+
+Now freeze your network and calculate the overall error:
+
+```python
+net.freeze()
+error = error / error_divisor
+```
+
+which outputs:
+
+```text
+Overall error: 0.010249996604397894
+```
+
+#### Classifying Prime Numbers Example
+
+This example is quite simple to the previous example but this time we are teaching the network to understand if the given number is prime or not. Which is a relatively complex problem.
+
+Run `python3 examples/classification_prime.py 1 -l cpp` to see the result. You will observe that the network is able to learn the solution for such a complex problem in the matter of seconds.
+
+#### Sequence Basic Example
+
+In this example, instead of classification, we will train the network to detect a pattern in given sequence. The magic here is; without even changing anything related to network, just by changing logic we feed the data into the network, the network automatically turns into a [Recurrent Neural Network](https://en.wikipedia.org/wiki/Recurrent_neural_network).
+
+Run `python3 examples/sequence_basic.py` to see the output. This is the output you should see:
+
+```text
+___ PLEXUS NETWORK BASIC SEQUENCE RECOGNITION EXAMPLE ___
+
+Create a Plexus network with 14 neurons, 4 of them sensory, 1 of them motor, 1 connectivity rate, 2 digit precision
+
+Precision of the network will be 0.01
+Each individual non-sensory neuron will subscribe to 14 different neurons
+14 neurons created
+4 neuron picked as sensory neuron
+1 neuron picked as motor neuron
+Network has been ignited
+
+*** LEARNING ***
+
+Generate The Dataset (20 Items Long) To Recognize a Sequence & Learn for 0.1 Seconds Each
+Load Input: [1.0, 0.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 1.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 1.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 0.0, 1.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [1.0, 0.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 1.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 1.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 0.0, 1.0]	Output: [1.0]	and wait 0.1 seconds
+Load Input: [1.0, 0.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 1.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 1.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 0.0, 1.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [1.0, 0.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 1.0, 0.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 1.0, 0.0]	Output: [0.0]	and wait 0.1 seconds
+Load Input: [0.0, 0.0, 0.0, 1.0]	Output: [1.0]	and wait 0.1 seconds
+...
+```
+
+by looking at this output, you should be able to see the pattern. Now on testing stage you can see how successful the network is on detecting the pattern:
+
+```text
+*** TESTING ***
+
+Test the network with random data (20 times)
+Load Input: ([1.0, 0.0, 0.0, 0.0], [0.0])	RESULT: 0.019999999552965164
+Load Input: ([0.0, 1.0, 0.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 0.0, 1.0, 0.0], [0.0])	RESULT: 0.019999999552965164
+Load Input: ([0.0, 0.0, 0.0, 1.0], [0.0])	RESULT: 0.019999999552965164
+Load Input: ([1.0, 0.0, 0.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 1.0, 0.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 0.0, 1.0, 0.0], [0.0])	RESULT: 0.05999999865889549
+Load Input: ([0.0, 0.0, 0.0, 1.0], [1.0])	RESULT: 0.6600000262260437
+Load Input: ([1.0, 0.0, 0.0, 0.0], [0.0])	RESULT: 0.019999999552965164
+Load Input: ([0.0, 1.0, 0.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 0.0, 1.0, 0.0], [0.0])	RESULT: 0.05999999865889549
+Load Input: ([0.0, 0.0, 0.0, 1.0], [0.0])	RESULT: 0.6600000262260437
+Load Input: ([1.0, 0.0, 0.0, 0.0], [0.0])	RESULT: 0.019999999552965164
+Load Input: ([0.0, 1.0, 0.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 0.0, 1.0, 0.0], [0.0])	RESULT: 0.0
+Load Input: ([0.0, 0.0, 0.0, 1.0], [1.0])	RESULT: 0.9800000190734863
+...
+```
+
+and the overall error:
+
+```text
+Network is now frozen
+
+1786760 waves are executed throughout the network
+
+In total: 66110093 times a random non-sensory neuron is fired
+
+
+Overall error: 0.040124996623490006
+```
 
 #### CatDog Example
 
-<sup>*(you can alternatively run this example with `python examples/catdog.py` command using a pre-written script version of below commands)*</sup>
+<sup>*(you can alternatively run this example with `python3 examples/catdog.py` command using a pre-written script version of below commands)*</sup>
 
 Suppose you need to train the network to figure out that the given image (32x32 RGB) is an image of a cat or a dog and map them to blue and red respectively. So let's create a network according to your needs:
 
 ```python
-net = plexus.Network( (32 * 32 * 3 + 3 + 256), (32 * 32 * 3), 3, 0.05, 3 )
+SIZE = 32 * 32 * 3 + 3 + 256
+INPUT_SIZE = 32 * 32 * 3
+OUTPUT_SIZE = 3
+CONNECTIVITY = 0.005
+PRECISION = 3
+TRAINING_DURATION = 3
+RANDOMLY_FIRE = False
+DYNAMIC_OUTPUT = False
+VISUALIZATION = False
+net = plexus.Network(
+    SIZE,
+    INPUT_SIZE,
+    OUTPUT_SIZE,
+    CONNECTIVITY,
+    PRECISION,
+    RANDOMLY_FIRE,
+    DYNAMIC_OUTPUT,
+    VISUALIZATION
+)
 ```
 
 We will plug in 32x32 RGB to the network so we need 3072 sensory neurons. 3 motor neurons for see how RGB our result is and 256 cognitive neurons to train. We need 3 digits precision because we need to store 255 different values between 0.0 and 1.0 range.
 
-Explaining the answer of *How to load CIFAR-10 dataset and use it* is out of the scope of this paper but you can easily understand it by reading the code: `python examples/catdog.py` Once you get the numpy array of CIFAR-10 (or any other image data) just normalize it and load:
+Explaining the answer of *How to load CIFAR-10 dataset and use it* is out of the scope of this paper but you can easily understand it by reading the code: `examples/catdog.py` Once you get the numpy array of CIFAR-10 (or any other image data) just normalize it and load:
 
 ```python
-for i in range(1,80):
+TRAINING_SAMPLE_SIZE = 20
+for i in range(1, TRAINING_SAMPLE_SIZE):
     if (i % 2) == 0:
         cat = random.sample(cats, 1)[0]
         cat_normalized = np.true_divide(cat, 255).flatten()
         blue_normalized = np.true_divide(blue, 255).flatten()
         cv2.imshow("Input", cat)
-        net.load(cat_normalized,blue_normalized)
+        net.load(cat_normalized, blue_normalized)
     else:
         dog = random.sample(dogs, 1)[0]
         dog_normalized = np.true_divide(dog, 255).flatten()
         red_normalized = np.true_divide(red, 255).flatten()
         cv2.imshow("Input", dog)
-        net.load(dog_normalized,red_normalized)
+        net.load(dog_normalized, red_normalized)
     show_output(net)
 ```
 
-Catching the decision making is pretty much same with Basic Example. You will get an **Overall error** as the result very similar to Basic Example although this time the input length was 768 times bigger. This is because Plexus Network amalgamates the problems from all levels of difficulty on a single medium. It makes easy problems relatively hard, and hard problems relatively easy.
+You will get an **Overall error** as the result very similar to examples above although this time the input length was 768 times bigger. This is because Plexus Network amalgamates the problems from all levels of difficulty on a single medium. It makes easy problems relatively hard, and hard problems relatively easy.
 
 When you run this example, you will get a slightly better result when compared to flipping a coin. You will most likely get an **Overall error** between 0.35 - 0.45 which is the proof that the network is able to learn something.
 
@@ -434,4 +592,4 @@ By the way, don't forget that; Plexus Network does not iterate over the dataset 
 
 #### Note
 
-Because of this implementation of the Plexus network relies on the complex data structures and [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) of Python programming language and because [CPython](https://en.wikipedia.org/wiki/CPython) (the most common implementation of Python) has a headache called [GIL](https://wiki.python.org/moin/GlobalInterpreterLock), it is currently impossible to gain the advantage of multi-core processing. But I'm planning to implement a workaround in the future for this specific limitation.
+Implementation of GPU acceleration and saving the trained network to disk are in work-in-progress (WIP) state. Therefore some parts of the implementation are subject to change.
