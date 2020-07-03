@@ -24,21 +24,21 @@ if args['difficulty'] == 1:
     INPUT_SIZE = 4
     OUTPUT_SIZE = 2
     CONNECTIVITY = 1
-    VISUALIZATION = True
+    VISUALIZATION = False
     TRAINING_DURATION = 1
 elif args['difficulty'] == 2:
     SIZE = 32 + 2 + 16
     INPUT_SIZE = 32
     OUTPUT_SIZE = 2
     CONNECTIVITY = 0.5
-    VISUALIZATION = True
+    VISUALIZATION = False
     TRAINING_DURATION = 1
 elif args['difficulty'] == 3:
     SIZE = 256 + 2 + 32
     INPUT_SIZE = 256
     OUTPUT_SIZE = 2
     CONNECTIVITY = 0.5
-    VISUALIZATION = True
+    VISUALIZATION = False
     TRAINING_DURATION = 1
 elif args['difficulty'] == 4:
     SIZE = 512 + 2 + 32
@@ -120,7 +120,7 @@ net = plexus.Network(
     DYNAMIC_OUTPUT,
     VISUALIZATION
 )
-if args['language'] == 'cpp':
+if args['language'] == 'cpp' and VISUALIZATION:
     visualize(net)
 
 print("\n*** LEARNING ***")
