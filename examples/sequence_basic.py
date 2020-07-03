@@ -1,4 +1,4 @@
-import plexus
+import cplexus as plexus
 import time
 from itertools import repeat
 
@@ -48,7 +48,7 @@ def notify_the_load(generated_list, output, training_duration):
 
 print("\n___ PLEXUS NETWORK BASIC SEQUENCE RECOGNITION EXAMPLE ___\n")
 
-print("Create a Plexus network with {0} neurons, {1} of them sensory, {2} of\
+print("Create a Plexus network with {0} neurons, {1} of them sensory, {2} of \
 them motor, {3} connectivity rate, {4} digit precision".format(
     str(SIZE),
     str(INPUT_SIZE),
@@ -70,7 +70,7 @@ net = plexus.Network(
 
 print("\n*** LEARNING ***")
 
-print("\nGenerate The Dataset ({0} Items Long) To Recognize a Sequence & Learn\
+print("\nGenerate The Dataset ({0} Items Long) To Recognize a Sequence & Learn \
 for {1} Seconds Each".format(
     str(TRAINING_SAMPLE_SIZE),
     str(TRAINING_DURATION)
@@ -112,7 +112,7 @@ print("\n{0} waves are executed throughout the network".format(
     str(net.wave_counter)
 ))
 
-print("\nIn total: {0} times a random non-sensory neuron fired\n".format(
+print("\nIn total: {0} times a random non-sensory neuron is fired\n".format(
     str(net.fire_counter)
 ))
 

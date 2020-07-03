@@ -69,46 +69,43 @@ def show_output(net, testing=False):
     global error
     global error_divisor
 
-    try:
-        if testing:
-            time.sleep(TRAINING_DURATION/2)
-            output = net.output
-            output_init = output  # Only different line
-            output = [round(x*255) for x in output]
-            # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
-            #     str(output[2]),
-            #     str(output[1]),
-            #     str(output[0])
-            # ))
-            # sys.stdout.flush()
-            output = np.full((32, 32, 3), output, dtype='uint8')
-            cv2.imshow("Output", output)
-            cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
+    if testing:
+        time.sleep(TRAINING_DURATION/2)
+        output = net.output
+        output_init = output  # Only different line
+        output = [round(x*255) for x in output]
+        # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
+        #     str(output[2]),
+        #     str(output[1]),
+        #     str(output[0])
+        # ))
+        # sys.stdout.flush()
+        output = np.full((32, 32, 3), output, dtype='uint8')
+        cv2.imshow("Output", output)
+        cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
 
-            error += abs(testing[2] - output_init[2])
-            error += abs(testing[0] - output_init[0])
-            error_divisor += 2
-        else:
-            time.sleep(TRAINING_DURATION/2)
-            output = net.output
-            output = [round(x*255) for x in output]
-            # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
-            #     str(output[2]),
-            #     str(output[1]),
-            #     str(output[0])
-            # ))
-            # sys.stdout.flush()
-            output = np.full((32, 32, 3), output, dtype='uint8')
-            cv2.imshow("Output", output)
-            cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
-    except ValueError:
-        pass
+        error += abs(testing[2] - output_init[2])
+        error += abs(testing[0] - output_init[0])
+        error_divisor += 2
+    else:
+        time.sleep(TRAINING_DURATION/2)
+        output = net.output
+        output = [round(x*255) for x in output]
+        # print("Red: {0}\tGreen: {1}\tBlue: {2}\r".format(
+        #     str(output[2]),
+        #     str(output[1]),
+        #     str(output[0])
+        # ))
+        # sys.stdout.flush()
+        output = np.full((32, 32, 3), output, dtype='uint8')
+        cv2.imshow("Output", output)
+        cv2.waitKey(int(1000 * TRAINING_DURATION / 2))
 
 
 print("\n___ PLEXUS NETWORK CATDOG EXAMPLE ___\n")
 
 print("Load CIFAR-10 dataset")
-print("Pick random {0} cat and {0} dog images from the CIFAR-10 data batch to\
+print("Pick random {0} cat and {0} dog images from the CIFAR-10 data batch to \
 TRAIN the network".format(
     str(TRAINING_SAMPLE_SIZE)
 ))
@@ -169,7 +166,7 @@ red = np.array([0, 0, 255])
 blue_normalized = np.true_divide(blue, 255)
 red_normalized = np.true_divide(red, 255)
 
-print("Create a Plexus network with {0} neurons, {1} of them sensory, {2} of\
+print("Create a Plexus network with {0} neurons, {1} of them sensory, {2} of \
 them motor, {3} connectivity rate, {4} digit precision".format(
     str(SIZE),
     str(INPUT_SIZE),
@@ -191,8 +188,8 @@ net = plexus.Network(
 
 print("\n*** LEARNING ***")
 
-print("\nMap {0} Different Cat Images to Color Blue & {0} Different Dog Images\
-to Color Red - Training Duration: {1} seconds (OpenCV latency not\
+print("\nMap {0} Different Cat Images to Color Blue & {0} Different Dog Images \
+to Color Red - Training Duration: {1} seconds (OpenCV latency not \
 included)".format(
     str(TRAINING_SAMPLE_SIZE/2),
     str(TRAINING_DURATION * TRAINING_SAMPLE_SIZE)
@@ -214,7 +211,7 @@ for i in range(1, TRAINING_SAMPLE_SIZE):
     show_output(net)
 
 
-print("\nTest {0} Different Cat Images & {0} Different Dog Images\
+print("\nTest {0} Different Cat Images & {0} Different Dog Images \
 - Testing Duration: {1} seconds (OpenCV latency not included)".format(
     str(TRAINING_SAMPLE_SIZE/2),
     str(TRAINING_DURATION * TESTING_SAMPLE_SIZE)
@@ -243,7 +240,7 @@ print("\n{0} waves are executed throughout the network".format(
     str(net.wave_counter)
 ))
 
-print("\nIn total: {0} times a random non-sensory neuron fired\n".format(
+print("\nIn total: {0} times a random non-sensory neuron is fired\n".format(
     str(net.fire_counter)
 ))
 
