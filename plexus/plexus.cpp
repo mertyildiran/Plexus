@@ -123,6 +123,7 @@ bool Neuron::fire()
             }
         }
     }
+    return false;
 }
 
 
@@ -283,7 +284,7 @@ void Network::ignite()
 {
     this->freezer = false;
     this->thread1 = std::thread{Network::_ignite, this};
-    //this->thread1.detach();
+    this->thread1.detach();
     //this->thread1.join();
     std::cout << "Network has been ignited" << '\n';
 }
@@ -352,7 +353,6 @@ void Network::pick_neurons_by_type(int input_dim, NeuronType neuron_type)
 void Network::get_neurons_by_type(NeuronType neuron_type)
 {
     std::vector<Neuron*> available_neurons;
-    unsigned int i = 0;
     for (auto const& neuron: this->neurons) {
         switch (neuron_type) {
             case NON_SENSORY_NEURON:
