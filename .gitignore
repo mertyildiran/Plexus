@@ -126,3 +126,6 @@ examples/*_test.py
 
 # Visual Studio Code
 .vscode/
+
+# Training videos
+examples/videos
