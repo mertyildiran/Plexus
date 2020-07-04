@@ -452,10 +452,12 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     output = (self->ptrObj)->get_output();
 
     PyObject *PList = PyList_New(0);
-    Py_XINCREF(PList);
 
-    for (const auto& i: output)
-        PyList_Append(PList, Py_BuildValue("d", i));
+    for (const auto& i: output) {
+        PyObject *value = Py_BuildValue("d", i);
+        PyList_Append(PList, value);
+        Py_XDECREF(value);
+    }
 
     return PList;
 }
