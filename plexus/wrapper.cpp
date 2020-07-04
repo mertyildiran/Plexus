@@ -16,9 +16,9 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
         PyObject *next = PyIter_Next(iter);
         if (!next) {
             // nothing left in the iterator
+            Py_XDECREF(next);
             break;
         }
-        Py_XINCREF(next);
 
         if (!PyFloat_Check(next)) {
             throw
