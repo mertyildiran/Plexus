@@ -1,5 +1,6 @@
 dev:
-	pip3 install -e .
+	${MAKE} clean
+	pip3 install -e . -v
 
 py:
 	python3 examples/classification_binary.py 1
@@ -12,6 +13,9 @@ all:
 
 clean:
 	rm -rf *.out *.bin *.exe *.o *.a *.so test build
+
+clang:
+	CXX="clang" CC="clang" pip3 install -e . -v
 
 clang-dev-sanitizer-memory:
 	CXX="clang" LDFLAGS="-fsanitize=memory -fsanitize-memory-track-origins=2 -O1 -fno-optimize-sibling-calls" CC="clang -fsanitize=memory -fsanitize-memory-track-origins=2 -O1 -fno-optimize-sibling-calls" pip3 install -e . -v

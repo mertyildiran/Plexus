@@ -124,7 +124,7 @@ static int PyNeuron_init(PyNeuron *self, PyObject *args)
 
 static void PyNetwork_dealloc(PyNetwork * self)
 {
-    PyObject_GC_UnTrack(self);
+    //PyObject_GC_UnTrack(self);
     delete self->ptrObj;
     Py_TYPE(self)->tp_free(self);
 }
