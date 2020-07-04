@@ -18,7 +18,6 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
             // nothing left in the iterator
             break;
         }
-        Py_XINCREF(next);
 
         if (!PyFloat_Check(next)) {
             throw
@@ -28,7 +27,6 @@ void parse_iterable(std::vector<double> &arr, PyObject *iter)
         }
 
         double val = PyFloat_AsDouble(next);
-        Py_XDECREF(next);
         arr.push_back(val);
     }
 }
@@ -115,8 +113,6 @@ static int PyNeuron_init(PyNeuron *self, PyObject *args)
     if (! PyArg_ParseTuple(args, "O", &network))
         return -1;
 
-    Py_XINCREF(network);
-
     self->ptrObj = new Neuron(*network->ptrObj);
 
     return 0;
@@ -161,9 +157,6 @@ static PyObject * PyNetwork_load(
         return NULL;
     }
 
-    Py_XINCREF(input_obj);
-    Py_XINCREF(output_obj);
-
     PyObject *input_iter = PyObject_GetIter(input_obj);
     if (!input_iter) {
         PyErr_SetString(PyExc_TypeError, "Input argument is not iterable");
@@ -198,9 +191,6 @@ static PyObject * PyNetwork_load(
             return NULL;
         }
     }
-
-    Py_XDECREF(input_obj);
-    Py_XDECREF(output_obj);
 
     (self->ptrObj)->load(input_arr, output_arr);
 
@@ -357,7 +347,6 @@ static PyObject * PyNeuron_get_ban_counter(PyNeuron *self, void *closure)
 static PyObject * PyNeuron_get_position(PyNeuron *self, void *closure)
 {
     PyObject *PList = PyList_New(0);
-    Py_XINCREF(PList);
     PyList_Append(
         PList,
         Py_BuildValue(
@@ -416,7 +405,6 @@ static PyObject * PyNeuron_connections_PyDict_build(
 )
 {
     PyObject *PDict = PyDict_New();
-    Py_XINCREF(PDict);
 
     for (auto& it: connections) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
@@ -452,7 +440,6 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
     output = (self->ptrObj)->get_output();
 
     PyObject *PList = PyList_New(0);
-    Py_XINCREF(PList);
 
     for (const auto& i: output)
         PyList_Append(PList, Py_BuildValue("d", i));
@@ -463,7 +450,6 @@ static PyObject * PyNetwork_get_output(PyNetwork *self, void *closure)
 static PyObject * PyNetwork_neuron_PyList_builder(std::vector<Neuron*> neurons)
 {
     PyObject *PList = PyList_New(0);
-    Py_XINCREF(PList);
 
     for (Neuron* i: neurons) {
         PyNeuron * neuron = PyObject_New(PyNeuron, &PyNeuronType);
@@ -812,9 +798,6 @@ PyMODINIT_FUNC PyInit_cplexus(void) /* create the module */
     m = PyModule_Create(&moduledef);
     if (m == NULL)
         return NULL;
-
-    Py_INCREF(&PyNetworkType);
-    Py_INCREF(&PyNeuronType);
 
     /* Add Network object to the module */
     PyModule_AddObject(m, "Network", (PyObject *)&PyNetworkType);
