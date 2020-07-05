@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 import cv2
 import numpy as np
 from pydub import AudioSegment
@@ -6,6 +7,10 @@ from pydub.playback import play
 import cplexus as plexus
 
 VIDEO_FILE = 'videos/lower3.mp4'
+
+Path("videos/output/original").mkdir(parents=True, exist_ok=True)
+Path("videos/output/training").mkdir(parents=True, exist_ok=True)
+Path("videos/output/evaluation").mkdir(parents=True, exist_ok=True)
 
 audio = AudioSegment.from_file(VIDEO_FILE, "mp4")
 audio_samples = audio.get_array_of_samples()
@@ -77,6 +82,9 @@ for n in range(1):
         cv2.namedWindow('learn')
         cv2.imshow('learn', learn)
 
+        cv2.imwrite("videos/output/original/{0}.png".format(str(fc)), buf)
+        cv2.imwrite("videos/output/training/{0}.png".format(str(fc)), learn)
+
         cv2.waitKey(int(1000 * TRAINING_DURATION))
         fc += 1
     net.load(chunk)
@@ -102,6 +110,9 @@ while (fc < frameCount):
 
     cv2.namedWindow('output')
     cv2.imshow('output', buf)
+
+    cv2.imwrite("videos/output/evaluation/{0}.png".format(str(fc)), buf)
+
     cv2.waitKey(int(1000 * TRAINING_DURATION))
     fc += 1
 
