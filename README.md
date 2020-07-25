@@ -4,23 +4,23 @@
 
 ## Core Principles
 
-These are the core principles of **exceptionally bio-inspired**, a revolutionary approach to the artificial neural networks:
+These are the core principles of **object-oriented** approach to the current state of artificial neural networks that is inspired by **synaptic plasticity** between **biological** neurons:
 
- - **Neurons** must be **objects** not tensors between matrices.
- - **Neurons** should be **GPU accelerated**. (ideally).
- - **Network** must be **architecture-free** (i.e. adaptive).
- - Network must have a **layerless design**.
+ - Unlike the current ANN implementations, **neurons** must be **objects** not tensors between matrices.
+ - Just the current ANN implementations, **neurons** should be **GPU accelerated** (ideally) to provide the necessary parallelism.
+ - While the current ANN implementations can only create special cases, a **Plexus Network** must be **architecture-free** (i.e. adaptive) to create a generalized solution of all machine learning problems.
+ - Instead of dealing with decision of choosing an ANN layer combination(such as Convolution, Pooling or Recurrent layers), the network must have a **layerless design**.
  - There must be fundamentally two types of neurons: **sensory neuron**, **interneuron**.
- - Input of the network must be made of sensory neurons. Any interneuron can be picked as a **motor neuron** (an element of the output). There is literally no difference between an interneuron and a motor neuron except the intervene of the network for igniting the wick of learning process through the motor neurons. Any non-motor interneuron can be assumed as a **cognitive neuron** which collectively forms the cognition of network.
+ - Input of the network must be made of sensory neurons. Any interneuron can be picked as a **motor neuron** (an element of the output). There are literally no difference between an interneuron and a motor neuron except the intervene of the network for igniting the wick of learning process through the motor neurons. Any non-motor interneuron can be assumed as a **cognitive neuron** which collectively forms the cognition of network.
  - There can be arbitrary amount of I/O groups in a single network.
- - Forget about batch size, iteration, and epoch concepts, training examples must be fed on time basis with a manner like; *learn first sample for ten seconds, OK done? then learn second sample for twenty seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
+ - Instead of batch size, iteration, and epoch concepts, training examples must be fed on time basis with a manner like; *learn first sample for X seconds, OK done? then learn second sample for Y seconds*. By this approach, you can assign importance factors to your samples with maximum flexibility.
  - **Network** must be **retrainable**.
  - Network must be **modular**. In other words: You must be able to train a small network and then plug that network into a bigger network (we are talking about some kind of **self-fusing** here).
- - Neurons must exhibit the characteristics of **cellular automata**.
+ - Neurons must exhibit the characteristics of **cellular automata** just like Conway's Game of Life.
  - **Number of neurons** in the network can be increased or decreased (**scalability**).
  - There must be **no** need for a network-wide **oscillation**. Yet the execution of neurons should follow a path very similar to flow of electric current nevertheless.
- - Network should use **randomness** and/or **uncertainty principle** flawlessly.
- - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible to iterate whole the dataset on real life situations if the system is continuous like in robotics. Because of that; the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network, use a diverse feed but not a grouped feed (*like 123123123123123123 but not like 111111222222333333*).
+ - Network should use **randomness** and/or **uncertainty principle** flawlessly. Consciousness is an emergent property from cellular level to macro scale, the network. But it's also an emergent property for the neuron from quantum level uncertainty to cellular mechanisms. In such a way that **randomness** is the cause of the illusion of consciousness.
+ - Most importantly, the network **must and can not iterate** through the whole dataset. Besides that, it's also generally impossible to iterate the whole dataset on real life situations if the system is continuous like in robotics. Because of that; the network must be designed to handle such a **continuous data stream** that literally endless and must be designed to handle that data stream chunk by chunk. Therefore, when you are feeding the network, use a diverse feed but not a grouped feed (*like 123123123123123123 but not like 111111222222333333*).
 
 ### Activation function
 
@@ -87,26 +87,26 @@ Functionality of a neuron is relative to its type.
 
 **publications** holds literally the mirror data of *subscriptions* in the target neurons. In other words; any subscription creates also a publication reference in the target neuron. Similarly, *publications* is the Plexus Network equivalent of **Axons** in biological neurons.
 
-**potential** is the overall total potential value of all subscriptions multiplied by the corresponding weights. Only in sensory neurons, it is directly assigned by the network. Value of **potential** may only be updated by the neuron's itself and its being calculated by this simple formula each time when the neuron is fired:
+**potential** *`p`* is the overall total potential value of all subscriptions multiplied by the corresponding weights. Only in sensory neurons, it is directly assigned by the network. Value of **potential** may only be updated by the neuron's itself and its being calculated by this simple formula each time when the neuron is fired:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/total_potential.png" alt="Total potential"/>
 </p>
-<!-- LaTeX of above image:  \underline{t}otal = ( \underline{p}otential_{0} \times \underline{w}eight_{0} )\ +\ ( p_{1} \times w_{1} )\ +\ ( p_{2} \times w_{2} )\ +\ ...\ +\ ( p_{n} \times w_{n} )  -->
+<!-- LaTeX of above image:  t = \sum_{i=0}^{n} p_{i} \times w_{i}  -->
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/apply_activation.png" alt="Apply activation"/>
 </p>
-<!-- LaTeX of above image:  \underline{p}otential =  \varphi (t)  -->
+<!-- LaTeX of above image:  p =  \varphi (t)  -->
 
-**desired_potential** is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then the neuron does not learn anything and just calculates potential when it's fired.
+**desired_potential** *`p'`* is the ideal value of the neuron's potential that is desired to eventually reach. For sensory neurons, it is meaningless. For motor neurons, it is assigned by the network. If it's **None** then the neuron does not learn anything and just calculates potential when it's fired.
 
-**loss** is calculated not just at the output but in every neuron except sensory ones and it is equal to absolute difference (*distance*) between desired potential and current potential.
+**loss** *`l`* is calculated not just at the output but in every neuron except sensory ones and it is equal to absolute difference (*distance*) between desired potential and current potential.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/calc_of_loss.png" alt="Calculation of loss"/>
 </p>
-<!-- LaTeX of above image:  \underline{f} ault = \left | \Delta p \right |  -->
+<!-- LaTeX of above image:  l = \left | \Delta p \right | = \left | p' - p \right |  -->
 
 All numerical values inside a neuron are floating point numbers and all the calculations obey to the precision that given at start.
 
@@ -129,7 +129,7 @@ On the second phase of the network initiation, any non-sensory neurons are force
 
 ## Algorithm
 
-Even so the Python implementation of Plexus Network is easy to understand, it will be helpful for readers to explain the algorithm in pseudocode.
+Even so the Python implementation of Plexus Network is easy to understand, it will be helpful for readers to explain the algorithm in pseudocode;
 
 ### Initiation
 
