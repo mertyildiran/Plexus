@@ -24,20 +24,21 @@ These are the core principles of **object-oriented** approach to the current sta
 
 ### Activation function
 
-<sup>*( c : average connectivity of a neuron )*</sup>
+The activation function that used by Plexus is Sigmoid:
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation.png" alt="Activation function"/>
 </p>
-<!-- LaTeX of above image:  \varphi (x) = \left |  \sin \bigg(\frac{ x^2 }{ \sqrt{c} }\bigg) \right |  -->
+<!-- LaTeX of above image:  \sigma (x) = \frac{1}{1 + e^{-x}}  -->
 
-<sup>[Draw the graph](https://www.desmos.com/calculator/1al0bavp78) of this equation to see how it's insanely suitable to make random normalizations for any values between (-∞,+∞). It's also becoming more crazy, less stable when you move away from 0. In other words, it's not completely repetitive so a neuron freely walk on this equation without being trapped.</sup>
+and the derivative of the Sigmoid function:
 
-Plexus Network is an algorithm that implemented by following the criteria listed in Core Principles and by relying on the given activation function above. Rest of the paper will explain the algorithm's itself and usage.
+<p align="left">
+  <img src="https://raw.githubusercontent.com/mertyildiran/Plexus/master/docs/img/activation_derivative.png" alt="Derivative of the activation function"/>
+</p>
+<!-- LaTeX of above image:  \sigma ' (x) = x \times (1 - x)  -->
 
 Implementation of this algorithm in Python programming language is publicly accessible through this link: https://github.com/mertyildiran/Plexus/blob/master/plexus/plexus.py
-
-Reading this paper requires basic knowledge of Computer Science and Neuroscience.
 
 You can directly skip to [Application](https://github.com/mertyildiran/Plexus#application) part if you are not willing to understand the mathematical and algorithmic background.
 
